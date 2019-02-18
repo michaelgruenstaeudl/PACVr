@@ -5,4 +5,4 @@ citEntry(entry="Article",
     author = personList(as.person("M. Gruenstaeudl"), as.person("N. Jenke")),
     year = "submitted",
     journal = "Foo bar Baz",
-    textVersion = "Gruenstaeudl, M. and Jenke, N., 2018. PACViR: Plastome Assembly Coverage Visualization in R. Submitted.")
+    textVersion = "Gruenstaeudl, M. and Jenke, N., 2019. PACViR: Plastome Assembly Coverage Visualization in R. In Prep.")
