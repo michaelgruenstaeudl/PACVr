@@ -1,7 +1,7 @@
 #!/usr/bin/R
 #contributors = c("Michael Gruenstaeudl","Nils Jenke")
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2018.10.23.1700"
+#version = "2018.12.11.1630"
 
 #source("helpers.R")
 source("/home/michael_science/git/michaelgruenstaeudl_PACViR/PACViR/helpers.R")
