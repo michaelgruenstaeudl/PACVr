@@ -1,0 +1,14 @@
+Package: PACViR
+Type: Package
+Title: Plastome Assembly Coverage Visualization in R
+Version: 0.1
+Date: 2018-10-23
+Author: Michael Gruenstaeudl, Nils Jenke
+Maintainer: Michael Gruenstaeudl <m.gruenstaeudl@fu-berlin.de>, Nils Jenke <nilsj24@zedat.fu-berlin.de>
+Depends: R (>= 3.5.1)
+Imports: BiocManager (>= 1.30.3), optparse (>= 1.6.0), pacman (>= 0.5.0), RCircos (>= 1.2.0)
+Description: Foo bar baz
+License: GPL (>= 2)
+OS_type: unix
+NeedsCompilation: no
+SystemRequirements: none
