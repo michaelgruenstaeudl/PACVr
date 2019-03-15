@@ -1,10 +1,10 @@
 #!/usr/bin/R
-#contributors = c("Michael Gruenstaeudl","Nils Jenke")
+#contributors = c("Michael Gruenstaeudl", "Nils Jenke")
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2018.12.11.1630"
+#version = "2019.03.15.1800"
 
-#source("helpers.R")
-source("/home/michael_science/git/michaelgruenstaeudl_PACViR/PACViR/helpers.R")
+source("helpers.R")
+#source("/home/michael_science/git/michaelgruenstaeudl_PACViR/PACViR/helpers.R")
 
 ExtractAllGenes <- function(gbkData) {
   # Function to extract genes from genbank file
@@ -12,7 +12,7 @@ ExtractAllGenes <- function(gbkData) {
   #   gbkData: genbank file parsed by genbankr
   # RETURNS:
   #   genes in data frame format
-  gene <- as.data.frame(genbankr::genes(gbkData))
+  gene <- BiocGenerics::as.data.frame(genbankr::genes(gbkData))
   gene <- gene[ ,c(1:3,which(colnames(gene) == "gene"))]
   gene <- Rename_Df(gene,
                     "gene")

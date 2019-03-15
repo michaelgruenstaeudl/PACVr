@@ -1,17 +1,13 @@
 #!/usr/bin/R
-#contributors = c("Michael Gruenstaeudl","Nils Jenke")
+#contributors = c("Michael Gruenstaeudl", "Nils Jenke")
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2018.12.11.1630"
+#version = "2019.03.15.1800"
 
-
-
-PACViR.parseRegions <- function (gbkFile="/home/user/Desktop/myPlastome.gb") {
+PACViR.parseRegions <- function (gbkFile) {
     
   # 1. Source custom R functions
-    #source("parseRegions.R")
-    #source("helpers.R")
-    source("/home/michael_science/git/michaelgruenstaeudl_PACViR/PACViR/parseRegions.R")
-    source("/home/michael_science/git/michaelgruenstaeudl_PACViR/PACViR/helpers.R")
+    source("parseRegions.R")
+    source("helpers.R")
     
   # 2. Parse GenBank file
     gbkData <- genbankr::readGenBank(gbkFile)
@@ -20,14 +16,11 @@ PACViR.parseRegions <- function (gbkFile="/home/user/Desktop/myPlastome.gb") {
 }
 
 
-PACViR.parseGenes <- function (gbkFile="/home/user/Desktop/myPlastome.gb",
-                               raw_regions) {
+PACViR.parseGenes <- function (gbkFile, raw_regions) {
     
   # 1. Source custom R functions
-    #source("parseGenes.R")
-    #source("helpers.R")
-    source("/home/michael_science/git/michaelgruenstaeudl_PACViR/PACViR/parseGenes.R")
-    source("/home/michael_science/git/michaelgruenstaeudl_PACViR/PACViR/helpers.R")
+    source("parseGenes.R")
+    source("helpers.R")
     
   # 2. Parse GenBank file
     gbkData <- genbankr::readGenBank(gbkFile)
@@ -39,23 +32,21 @@ PACViR.parseGenes <- function (gbkFile="/home/user/Desktop/myPlastome.gb",
 }
 
 
-PACViR.calcCoverage <- function (bamFile="/home/user/Desktop/myBackmap.bam",
-                                 raw_regions,
+PACViR.calcCoverage <- function (bamFile, raw_regions,
                                  windowSize=250,
                                  outDir="./PACViR_output/",
                                  mosdepthCmd="mosdepth") {
     
   # 1. Source custom R functions
-    #source("calcCoverage.R")
-    #source("helpers.R")
-    source("/home/michael_science/git/michaelgruenstaeudl_PACViR/PACViR/calcCoverage.R")
-    source("/home/michael_science/git/michaelgruenstaeudl_PACViR/PACViR/helpers.R")
+    source("calcCoverage.R")
+    source("helpers.R")
     
   # 2. Coverage calculation
     raw_coverage <- CovCalc(bamFile, windowSize, outDir, mosdepthCmd)
     cov_withRegionInfo <- AssignRegionInfo(raw_coverage, raw_regions)
+    cov_inclSplitOnes <- SplitCovAtRegionBorders(cov_withRegionInfo, raw_regions)
     regions_withUpdRegions <- AdjustRegionLocation(raw_regions, raw_regions)
-    cov_withUpdRegions <- adjustCoverage(cov_withRegionInfo, regions_withUpdRegions)
+    cov_withUpdRegions <- adjustCoverage(cov_inclSplitOnes, regions_withUpdRegions)
     return(cov_withUpdRegions)
 }
 
@@ -63,10 +54,8 @@ PACViR.calcCoverage <- function (bamFile="/home/user/Desktop/myBackmap.bam",
 PACViR.generateIRGeneData <- function (genes_withUpdRegions) {
     
   # 1. Source custom R functions
-    #source("generateIRGeneData.R")
-    #source("helpers.R")
-    source("/home/michael_science/git/michaelgruenstaeudl_PACViR/PACViR/generateIRGeneData.R")
-    source("/home/michael_science/git/michaelgruenstaeudl_PACViR/PACViR/helpers.R")
+    source("generateIRGeneData.R")
+    source("helpers.R")
     
   # 2. Parse GenBank file
     linkData <- GenerateIRGeneData(genes_withUpdRegions)
@@ -77,10 +66,8 @@ PACViR.generateIRGeneData <- function (genes_withUpdRegions) {
 PACViR.GenerateHistogramData <- function (cov_withUpdRegions) {
     
   # 1. Source custom R functions
-    #source("generateHistogramData.R")
-    #source("helpers.R")
-    source("/home/michael_science/git/michaelgruenstaeudl_PACViR/PACViR/generateHistogramData.R")
-    source("/home/michael_science/git/michaelgruenstaeudl_PACViR/PACViR/helpers.R")
+    source("generateHistogramData.R")
+    source("helpers.R")
     
   # 2. Parse GenBank file
     lineData <- GenerateHistogramData(cov_withUpdRegions)
@@ -97,8 +84,7 @@ PACViR.visualizeWithRCircos <- function (gbkFile,
                                          linkData) {
     
   # 1. Source custom R functions
-    #source("visualizeWithRCircos.R")
-    source("/home/michael_science/git/michaelgruenstaeudl_PACViR/PACViR/visualizeWithRCircos.R")
+    source("visualizeWithRCircos.R")
 
   # 2. Get gbkData
     gbkData <- genbankr::readGenBank(gbkFile)

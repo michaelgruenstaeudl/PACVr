@@ -1,10 +1,10 @@
 #!/usr/bin/R
-#contributors = c("Michael Gruenstaeudl","Nils Jenke")
+#contributors = c("Michael Gruenstaeudl", "Nils Jenke")
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2018.12.11.1630"
+#version = "2019.03.15.1800"
 
-#source("helpers.R")
-source("/home/michael_science/git/michaelgruenstaeudl_PACViR/PACViR/helpers.R")
+source("helpers.R")
+#source("/home/michael_science/git/michaelgruenstaeudl_PACViR/PACViR/helpers.R")
 
 CovCalc <- function(bamFile, windowSize=250, outDir="./PACViR_output/", mosdepthCmd="mosdepth"){
   # Calculates coverage of a given bam file and stores data in data.frame format
@@ -23,9 +23,35 @@ CovCalc <- function(bamFile, windowSize=250, outDir="./PACViR_output/", mosdepth
   #system(paste("gzip -df", paste(outDir, "/coverage-output/output.windows.bed.gz", sep = "")))
   system(paste("gzip -df", paste(outDir, "/coverage-output/output.regions.bed.gz", sep = "")))
   #cov <-read.table(paste(outDir, "/coverage-output/output.windows.bed", sep = ""))
-  cov <-read.table(paste(outDir, "/coverage-output/output.regions.bed", sep = ""))
+  cov <-read.table(paste(outDir, "coverage-output/output.regions.bed", sep = ""))
   cov <- Rename_Df(cov, "coverage")
   return(cov)
+}
+
+SplitCovAtRegionBorders <- function(covData, regionData) {
+  # Function to split coverage data that occur in two different regions at
+  # the region borders
+  # ARGS:
+  #   covData: dataframe with gene data
+  #   regionData: dataframe with region data
+  # RETURNS:
+  #   covData dataframe with splitted covDatas
+  for (i in 1:nrow(regionData)) {
+    for (j in 1:nrow(covData)) {
+      if (as.integer(covData[j,2]) >= as.integer(regionData[i,2]) & 
+          as.integer(covData[j,3]) >  as.integer(regionData[i,3]) & 
+          as.integer(covData[j,2]) <  as.integer(regionData[i,3])){
+        covData[nrow(covData)+1,] <- c(as.character(covData[j,1]), regionData[i,3]+1, covData[j,3], covData[j,4])
+        covData[j,1] <- regionData[i,1]
+        covData[j,3] <- regionData[i,3]
+        covData[j,4] <- covData[j,4]
+      }
+    }
+  }
+  covData      <- covData[order(as.integer(covData[,2])), ]
+  covData[ ,2] <- as.integer(covData[ ,2])
+  covData[ ,3] <- as.integer(covData[ ,3])
+  return(covData)
 }
 
 
@@ -48,7 +74,6 @@ adjustCoverage <- function(cov, regions) {
   cov[cov[ ,1] == 'LSC',3][length(cov[cov[ ,1] == 'LSC',3])] = as.numeric(regions[,3][1])
   cov[cov[ ,1] == 'IRb',3][length(cov[cov[ ,1] == 'IRb',3])] = as.numeric(regions[,3][2])
   cov[cov[ ,1] == 'SSC',3][length(cov[cov[ ,1] == 'SSC',3])] = as.numeric(regions[,3][3])
-  #cov = cov[-nrow(cov),]
   cov[cov[ ,1] == 'IRa',3][length(cov[cov[ ,1] == 'IRa',3])] = as.numeric(regions[,3][4])
   chromosome <- as.character(cov[,1])
   chromStart <- as.numeric(cov[,2])

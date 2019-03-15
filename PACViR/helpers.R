@@ -1,7 +1,7 @@
 #!/usr/bin/R
-#contributors = c("Michael Gruenstaeudl","Nils Jenke")
+#contributors = c("Michael Gruenstaeudl", "Nils Jenke")
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2018.12.11.1630"
+#version = "2019.03.15.1800"
 
 
 In.Interval <- function(end, interval){

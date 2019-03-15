@@ -1,26 +1,29 @@
 #!/usr/bin/R
-#contributors = c("Michael Gruenstaeudl","Nils Jenke")
+#contributors = c("Michael Gruenstaeudl", "Nils Jenke")
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2018.12.11.1630"
+#version = "2019.03.15.1800"
 
-#source("helpers.R")
-source("/home/michael_science/git/michaelgruenstaeudl_PACViR/PACViR/helpers.R")
+source("helpers.R") 
+library(RCircos)
+#source("/home/michael_science/git/michaelgruenstaeudl_PACViR/PACViR/helpers.R")
 
 visualizeWithRCircos <- function(gbkData, genes_withUpdRegions, regions_withUpdRegions, cov_withUpdRegions, threshold=25, avg, lineData, linkData) {
-  # foo bar baz
+  # Generates the visualization of genome data and their tracks
   # ARGS:
-  #   gbkData: foo bar baz
-  #   genes_withUpdRegions: foo bar baz
-  #   regions_withUpdRegions: foo bar baz
-  #   cov_withUpdRegions: foo bar baz
-  #   threshold: foo bar baz
-  #   avg: foo bar baz
-  #   lineData: foo bar baz
-  #   linkData: foo bar baz
+  #   gbkData: 
+  #   genes_withUpdRegions: data frame that contains the genomic region, gene start, gene end and gene names
+  #   regions_withUpdRegions: data frame that contains the genomic region, region start, region end and two dummy columns
+  #   cov_withUpdRegions: data frame that contains the genomic region, coverage start, coverage end and coverage value
+  #   threshold: numeric value that indicate how many bases are covered at a given threshold 
+  #   avg:  numeric value of the average coverage value
+  #   lineData: data frame that contains IRb region information, gene start (IRb), gene end (IRb), gene names, IRa region
+  #             information, gene start (IRa), gene end (IRb)and gene names.
+  #   linkData: data frame that contains genomic region, coverage start, coverage end and coverage value
   # RETURNS:
   #   ---
 
   # 1. RCIRCOS INITIALIZATION
+
   RCircos::RCircos.Set.Core.Components(cyto.info      =  regions_withUpdRegions, 
                                        chr.exclude    =  NULL,
                                        tracks.inside  =  8, 
@@ -88,10 +91,12 @@ visualizeWithRCircos <- function(gbkData, genes_withUpdRegions, regions_withUpdR
                              genomic.columns = 3,
                              is.sorted       = TRUE
                             )
+  
 
   RCircos::RCircos.Link.Plot(link.data     =  linkData, 
                              track.num     = 8,
                              by.chromosome = TRUE
                             )
+  
 
 }

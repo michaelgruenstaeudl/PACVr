@@ -1,10 +1,10 @@
 #!/usr/bin/R
-#contributors = c("Michael Gruenstaeudl","Nils Jenke")
+#contributors = c("Michael Gruenstaeudl", "Nils Jenke")
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2018.12.11.1630"
+#version = "2019.03.15.1800"
 
-#source("helpers.R")
-source("/home/michael_science/git/michaelgruenstaeudl_PACViR/PACViR/helpers.R")
+source("helpers.R")
+#source("/home/michael_science/git/michaelgruenstaeudl_PACViR/PACViR/helpers.R")
 
 ExtractAllRegions <- function(gbkData) {
   # Function to extract specific regions from Genbank input data
@@ -12,7 +12,7 @@ ExtractAllRegions <- function(gbkData) {
   #   gbkData: Genbank input data parsed by genbankr
   # RETURNS:
   #   regions in data frame format
-  region <- as.data.frame(genbankr::otherFeatures(gbkData))
+  region <- BiocGenerics::as.data.frame(genbankr::otherFeatures(gbkData))
   region <- subset(region, grepl("IRb|IRa|repeat|inverted", region[,"note"], ignore.case = FALSE))
   if (nrow(region) > 2) {
     region <- region[order(region[,4],decreasing = TRUE),]
@@ -36,4 +36,5 @@ ExtractAllRegions <- function(gbkData) {
   }
   region <- cbind(region, Band  = c("","","",""), Stain = c("","","",""))
   region <- Rename_Df(region, c("Band","Stain"))
+  return(region)
 }
