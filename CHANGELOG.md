@@ -2,7 +2,9 @@ CHANGELOG
 ---------
 
 #### Version 0.3 (2019.05.24)
-* Several minor improvements
+* Several minor code improvements
+* Added preliminary manual
+* Added preliminary vignette
 
 #### Version 0.2 (2019.03.15)
 * Added function PACViR.complete

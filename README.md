@@ -38,9 +38,11 @@ python2 $SCRPT -n $INPUT -c $METAD -o ${INP%.nex*}.embl -d $DESCR -e $EMAIL -a $
 
 
 ## TO DO
-1. Add a manual; use the manual of P2C2M (see folder `man__TRANSFERRED`) as an example.
-
-2. Add a vignette; use the vignette of P2C2M (see folder `vignettes__TRANSFERRED`) as an example.
+Currently nothing.
+<!---
+1. Improve manual; see manual of P2C2M as reference.
+2. Improve vignette; use the vignette of P2C2M as reference.
+--->
 
 ## DEVELOPMENT
 Coming soon.
@@ -56,4 +58,3 @@ python -m unittest discover -s /home/michael_science/git/michaelgruenstaeudl_ann
 
 ## CHANGELOG
 See [`CHANGELOG.md`](CHANGELOG.md) for a list of recent changes to the software.
-
