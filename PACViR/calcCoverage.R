@@ -1,7 +1,7 @@
 #!/usr/bin/R
-#contributors = c("Michael Gruenstaeudl", "Nils Jenke")
+#contributors = c("Michael Gruenstaeudl","Nils Jenke")
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2019.03.15.1800"
+#version = "2019.05.24.1700"
 
 source("helpers.R")
 #source("/home/michael_science/git/michaelgruenstaeudl_PACViR/PACViR/helpers.R")
@@ -18,13 +18,22 @@ CovCalc <- function(bamFile, windowSize=250, outDir="./PACViR_output/", mosdepth
   if (!is.numeric(windowSize) | windowSize < 0) {
     stop("windowSize has to be greater than zero")
   }
-  system(paste("mkdir -p", paste(outDir, "/coverage-output" ,sep = "")))
-  system(paste(mosdepthCmd, "--by", windowSize, paste(outDir, "/coverage-output/output", sep = ""), bamFile))
-  #system(paste("gzip -df", paste(outDir, "/coverage-output/output.windows.bed.gz", sep = "")))
-  system(paste("gzip -df", paste(outDir, "/coverage-output/output.regions.bed.gz", sep = "")))
-  #cov <-read.table(paste(outDir, "/coverage-output/output.windows.bed", sep = ""))
-  cov <-read.table(paste(outDir, "coverage-output/output.regions.bed", sep = ""))
-  cov <- Rename_Df(cov, "coverage")
+  get_os <- Sys.info()[1]
+  
+  ### TODO: Windows console
+  
+  if(get_os == "Windows"){
+    system(paste("md", paste(outDir, "\ncoverage-output", sep = "")))
+    system(paste(mosdepthCmd, "--by", windowSize, paste(outDir, "\ncoverage-output\noutput", sep = ""), bamFile))
+    system(paste("gzip -df", paste(outDir, "\ncoverage-output\noutput.regions.bed.gz", sep = "")))
+    cov <- Rename_Df(cov, "coverage")
+  } else {
+    system(paste("mkdir -p", paste(outDir, "/coverage-output" ,sep = "")))
+    system(paste(mosdepthCmd, "--by", windowSize, paste(outDir, "/coverage-output/output", sep = ""), bamFile))
+    system(paste("gzip -df", paste(outDir, "/coverage-output/output.regions.bed.gz", sep = "")))
+    cov <-read.table(paste(outDir, "coverage-output/output.regions.bed", sep = ""))
+    cov <- Rename_Df(cov, "coverage")
+  }
   return(cov)
 }
 

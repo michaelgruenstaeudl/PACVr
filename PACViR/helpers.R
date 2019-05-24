@@ -1,7 +1,7 @@
 #!/usr/bin/R
-#contributors = c("Michael Gruenstaeudl", "Nils Jenke")
+#contributors = c("Michael Gruenstaeudl","Nils Jenke")
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2019.03.15.1800"
+#version = "2019.05.24.1700"
 
 
 In.Interval <- function(end, interval){
@@ -49,7 +49,7 @@ HistCol <- function(cov, threshold) {
     stop("threshold has to be greater than zero")
   }
   color <- rep("black",nrow(cov))
-  ind   <- cov[ ,4] < threshold
+  ind   <- cov[ ,4] <= threshold
   color <- replace(color,ind,"red")
   return(color)
 }

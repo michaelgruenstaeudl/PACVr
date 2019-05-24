@@ -1,11 +1,11 @@
 #!/usr/bin/R
-#contributors = c("Michael Gruenstaeudl", "Nils Jenke")
+#contributors = c("Michael Gruenstaeudl","Nils Jenke")
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2019.03.15.1800"
+#version = "2019.05.24.1700"
 
 source("helpers.R") 
+source("histogramPlotter.R")
 library(RCircos)
-#source("/home/michael_science/git/michaelgruenstaeudl_PACViR/PACViR/helpers.R")
 
 visualizeWithRCircos <- function(gbkData, genes_withUpdRegions, regions_withUpdRegions, cov_withUpdRegions, threshold=25, avg, lineData, linkData) {
   # Generates the visualization of genome data and their tracks
@@ -37,6 +37,7 @@ visualizeWithRCircos <- function(gbkData, genes_withUpdRegions, regions_withUpdR
   params$hist.width <- 1
   params$hist.color <- HistCol(cov_withUpdRegions, threshold)
   params$line.color <- "yellow3"
+  params$text.size <- 0.346
   RCircos::RCircos.Reset.Plot.Parameters(params)
   
   # 3. GRAPHIC DEVICE INITIALIZATION
@@ -47,7 +48,7 @@ visualizeWithRCircos <- function(gbkData, genes_withUpdRegions, regions_withUpdR
   title(paste(genbankr::definition(gbkData)),line = -1)
   legend(x= 1.5, y= 2,
          legend = c(paste("Coverage >", threshold), 
-                    paste("Coverage <", threshold),
+                    paste("Coverage <=", threshold),
                     paste("Average Coverage:"),
                     paste("-LSC:", avg[1]),
                     paste("-IRb:", avg[2]),
@@ -72,12 +73,12 @@ visualizeWithRCircos <- function(gbkData, genes_withUpdRegions, regions_withUpdR
                                   side       = "in"
                                   )
   
-  RCircos::RCircos.Histogram.Plot(hist.data     = cov_withUpdRegions,
-                                  data.col      = 4,
-                                  track.num     = 5, 
-                                  side          = "in",
-                                  outside.pos   = RCircos::RCircos.Get.Plot.Boundary(track.num = 5, "in")[1],
-                                  inside.pos    = RCircos::RCircos.Get.Plot.Boundary(track.num = 5, "in")[1]-0.3
+  PACViR.Histogram.Plot(hist.data   = cov_withUpdRegions,
+                        data.col    = 4,
+                        track.num   = 5, 
+                        side        = "in",
+                        outside.pos = RCircos::RCircos.Get.Plot.Boundary(track.num = 5, "in")[1],
+                        inside.pos  = RCircos::RCircos.Get.Plot.Boundary(track.num = 5, "in")[1]-0.3
                                  )
   
   RCircos::RCircos.Line.Plot(line.data       = lineData,

@@ -1,8 +1,0 @@
-citHeader("To cite PACViR in a publication, please use:")
-
-citEntry(entry="Article",
-    title = "PACViR: Plastome Assembly Coverage Visualization in R",
-    author = personList(as.person("M. Gruenstaeudl"), as.person("N. Jenke")),
-    year = "submitted",
-    journal = "Foo bar Baz",
-    textVersion = "Gruenstaeudl, M. and Jenke, N., 2019. PACViR: Plastome Assembly Coverage Visualization in R. In Prep.")

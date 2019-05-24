@@ -1,0 +1,108 @@
+#!/usr/bin/R
+#contributors = c("Michael Gruenstaeudl","Nils Jenke")
+#email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
+#version = "2019.05.24.1700"
+
+library(RCircos)
+
+# Those functions were extracted from RCircos to manually fix an issue that led to an erroneous visualization.
+
+PACViR.Get.Start.End.Locations <- function(plot.data, plot.width){
+  RCircos.Cyto <- RCircos.Get.Plot.Ideogram();
+
+  dataChroms <- as.character(plot.data[,1]);
+  chromosomes <- unique(dataChroms);
+  cyto.chroms <- as.character(RCircos.Cyto$Chromosome);
+
+  point.loc <- as.numeric(plot.data$Location)
+  locations <- cbind(point.loc-plot.width, point.loc+plot.width)
+
+  for(aChr in seq_len(length(chromosomes))){
+    cyto.rows <- which(cyto.chroms==chromosomes[aChr]);
+    chr.start <- min(RCircos.Cyto$StartPoint[cyto.rows]);
+    chr.end   <- max(RCircos.Cyto$EndPoint[cyto.rows]);
+
+    data.rows <- which(dataChroms==chromosomes[aChr]);
+  
+    start.outliers <- which(locations[data.rows, 1] < chr.start)
+    which(locations[data.rows, 1] < chr.start)
+    if(length(start.outliers)>0) 
+      locations[data.rows[start.outliers], 1] <- chr.start;
+  
+    end.outliers <- which(locations[data.rows, 2] > chr.end)
+    if(length(end.outliers)>0) 
+      locations[data.rows[end.outliers], 2] <- chr.end;
+  }
+  
+  return(locations)
+}
+
+PACViR.Histogram.Plot <- function(hist.data=NULL, data.col=4, 
+                                   track.num=NULL, side=c("in", "out"), min.value=NULL, 
+                                   max.value=NULL, inside.pos=NULL, outside.pos=NULL,
+                                   genomic.columns=3, is.sorted=TRUE)
+{
+  if(is.null(hist.data)) 
+    stop("Genomic data missing in RCircos.Histogram.Plot().\n");
+  
+  boundary <- RCircos.Get.Plot.Boundary(track.num, side, inside.pos, 
+                                        outside.pos, FALSE);
+  outerPos <- boundary[1];
+  innerPos  <- boundary[2];
+  
+  if(is.null(genomic.columns) || genomic.columns<2 || genomic.columns>3) 
+    stop("Incorrect number of columns for genomic position.\n");
+  if( is.null(data.col) || data.col <= genomic.columns)  
+    stop("Hist data column must be greater than", genomic.columns, ".\n"); 
+  
+  RCircos.Pos <- RCircos.Get.Plot.Positions();
+  RCircos.Par <- RCircos.Get.Plot.Parameters();
+  RCircos.Cyto <- RCircos.Get.Plot.Ideogram();
+  
+  #    Convert raw data to plot data. The raw data will be validated
+  #    first during the convertion
+  #    ============================================================
+  #
+  hist.data <- RCircos.Get.Single.Point.Positions(hist.data,
+                                                  genomic.columns);
+  locations <- PACViR.Get.Start.End.Locations(hist.data, 
+                                               RCircos.Par$hist.width)
+  
+  #    histgram colors and height
+  #    =========================================================
+  #
+  histColors <- RCircos.Get.Plot.Colors(hist.data, RCircos.Par$hist.color); 
+  
+  histValues <- as.numeric(hist.data[, data.col]);
+  if(is.null(max.value) || is.null(min.value)) {
+    max.value <- max(histValues);
+    min.value <- min(histValues);
+  } else {
+    if(min.value > max.value) stop("min.value > max.value.")
+  }
+  histHeight <- RCircos.Get.Data.Point.Height(histValues, min.value, 
+                                              max.value, plot.type="points", outerPos-innerPos);
+  
+  #    Draw histogram
+  #    =============================================================
+  #
+  RCircos.Track.Outline(outerPos, innerPos, RCircos.Par$sub.tracks);
+  
+  for(aPoint in seq_len(nrow(hist.data)))
+  {
+    height <- innerPos + histHeight[aPoint];
+    theStart <- locations[aPoint, 1];
+    theEnd <- locations[aPoint, 2];
+    
+    #    Plot rectangle with specific height for each data point
+    #    =========================================================
+    #
+    polygonX <- c(RCircos.Pos[theStart:theEnd,1]*height, 
+                  RCircos.Pos[theEnd:theStart,1]*innerPos);
+    polygonY <- c(RCircos.Pos[theStart:theEnd,2]*height, 
+                  RCircos.Pos[theEnd:theStart,2]*innerPos);
+    polygon(polygonX, polygonY, col=histColors[aPoint], border=NA);
+  }
+}
+
+
