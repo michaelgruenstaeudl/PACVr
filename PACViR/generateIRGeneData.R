@@ -12,7 +12,7 @@ GenerateIRGeneData <- function(sample_genes) {
   # RETURNS:
   #   data.frame with paired regions
   if (ncol(sample_genes) < 3) {
-    stop("Dataframe needs at least 3 columns containing chromosome name, chromosome start and chromosome end.\n")
+    stop("Dataframe must have at least 3 columns (containing chromosome name, chromosome start and chromosome end).\n")
   }
   ira <- sample_genes[sample_genes[1] == "IRa",]
   ira <- ira[nrow(ira):1,]
@@ -24,10 +24,10 @@ GenerateIRGeneData <- function(sample_genes) {
   ira <- ira[order(ira[,2],decreasing = TRUE),]
   irb <- irb[order(irb[,3],decreasing = FALSE),]
   if (length(irb[ ,4]) != length(ira[ ,4])) {
-    stop("repeat regions need to be identically")
+    stop("Repeat regions need to be identical in length.")
   }
   if (!identical(ira[,4],irb[,4])) {
-    stop("repeat regions need to be identically")
+    stop("Repeat regions need to be identical in annotations.")
   }
   ira <- as.integer(rowMeans(ira[,2:3]))
   irb <- as.integer(rowMeans(irb[,2:3]))

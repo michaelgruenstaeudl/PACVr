@@ -76,15 +76,25 @@ PACViR.complete(gbk.file = opt$gbkFile, bam.file = opt$bamFile,
 
 # SCHM2
 source("PACViR.R")
-PACViR.complete(gbk.file="/home/michael_science/Desktop/TEMP/testdata/Schlechtendalia_luzulaefolia_MH800324_forPACViR.gb", 
+PACViR.complete(
+gbk.file="/home/michael_science/Desktop/TEMP/testdata/Schlechtendalia_luzulaefolia_MH800324_forPACViR.gb", 
 bam.file="/home/michael_science/Desktop/TEMP/testdata/SCHM2_PlastomeReadsOnly_cappedMaxCoverage_BackMapping.sorted.bam", 
-windowSize=250, threshold=35, outDir="/home/michael_science/Desktop/")
+windowSize=250, 
+threshold=35, 
+outDir="/home/michael_science/Desktop/TEMP/testdata/"
+)
+q("no")
 
 
 # DAS01
 source("PACViR.R")
-PACViR.complete(gbk.file="/home/michael_science/Desktop/TEMP/testdata/Dasyphyllum_excelsum_MH899017_forPACViR.gb", 
-bam.file="/home/michael_science/Desktop/TEMP/testdata/DAS01_PlastomeReadsOnly_cappedMaxCoverage_BackMapping.sorted.bam", windowSize=250, threshold=35, outDir="/home/michael_science/Desktop/")
-
+PACViR.complete(
+gbk.file="/home/michael_science/Desktop/TEMP/testdata/Dasyphyllum_excelsum_MH899017_forPACViR.gb", 
+bam.file="/home/michael_science/Desktop/TEMP/testdata/DAS01_PlastomeReadsOnly_cappedMaxCoverage_BackMapping.sorted.bam", 
+windowSize=250, 
+threshold=35, 
+outDir="/home/michael_science/Desktop/TEMP/testdata/"
+)
+q("no")
 
 ###########
