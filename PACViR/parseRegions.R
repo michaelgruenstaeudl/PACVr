@@ -12,29 +12,39 @@ ExtractAllRegions <- function(gbkData) {
   #   gbkData: Genbank input data parsed by genbankr
   # RETURNS:
   #   regions in data frame format
-  region <- BiocGenerics::as.data.frame(genbankr::otherFeatures(gbkData))
-  region <- subset(region, grepl("IRb|IRa|repeat|inverted", region[,"note"], ignore.case = FALSE))
-  if (nrow(region) > 2) {
-    region <- region[order(region[,4],decreasing = TRUE),]
-    region <- region[1:2,]
+  allRegions_L <- BiocGenerics::as.data.frame(genbankr::otherFeatures(gbkData))
+  region_L <- tryCatch(
+    { 
+    out = subset(allRegions_L, grepl("IRb|IRa|repeat|inverted", allRegions_L[,"note"], ignore.case = FALSE))
+    if (nrow(out) < 1) {warning("Inverted repeat info not found under qualifier 'note'")}
+    return(out)
+    },
+    warning=function(cond) {
+        out = subset(allRegions_L, grepl("IRb|IRa|repeat|inverted", allRegions_L[,"standard_name"], ignore.case = FALSE))
+        return(out)
+    }
+  )
+  if (nrow(region_L) > 2) {
+    region_L <- region_L[order(region_L[,4],decreasing = TRUE),]
+    region_L <- region_L[1:2,]
   }
-  if (nrow(region) != 2) {
-    stop("Something wrong with IRb/IRa\n")
+  if (nrow(region_L) != 2) {
+    stop("ERROR: The number of detected inverted repeat regions is not two\n")
   }
-  region <- region[,1:3]
-  region <- region[order(region[,3],decreasing = FALSE),]
-  region[1] <- c("IRb","IRa")
-  LSC = c(1,region[1,2]-1)
-  SSC = c(region[1,3]+1,region[2,2]-1)
-  region[3, ] <- c("LSC", LSC)
-  region[4, ] <- c("SSC", SSC)
-  region[ ,2] <- as.integer(region[ ,2])
-  region[ ,3] <- as.integer(region[ ,3])
-  region <- region[order(region[ ,3], decreasing = FALSE), ]
-  if (nrow(region) != 4) {
-    stop("Could not find every region; Genbank file must at least contain notes on IRb/IRa.\n")
+  region_L <- region_L[,1:3]
+  region_L <- region_L[order(region_L[,3],decreasing = FALSE),]
+  region_L[1] <- c("IRb","IRa")
+  LSC = c(1,region_L[1,2]-1)
+  SSC = c(region_L[1,3]+1,region_L[2,2]-1)
+  region_L[3, ] <- c("LSC", LSC)
+  region_L[4, ] <- c("SSC", SSC)
+  region_L[ ,2] <- as.integer(region_L[ ,2])
+  region_L[ ,3] <- as.integer(region_L[ ,3])
+  region_L <- region_L[order(region_L[ ,3], decreasing = FALSE), ]
+  if (nrow(region_L) != 4) {
+    stop("ERROR: Could not find all necessary regions; Genbank file must at least contain note-qualifiers on IRb and IRa.\n")
   }
-  region <- cbind(region, Band  = c("","","",""), Stain = c("","","",""))
-  region <- Rename_Df(region, c("Band","Stain"))
-  return(region)
+  region_L <- cbind(region_L, Band  = c("","","",""), Stain = c("","","",""))
+  region_L <- Rename_Df(region_L, c("Band","Stain"))
+  return(region_L)
 }

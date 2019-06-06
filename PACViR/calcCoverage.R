@@ -1,39 +1,26 @@
 #!/usr/bin/R
 #contributors = c("Michael Gruenstaeudl","Nils Jenke")
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2019.05.24.1700"
+#version = "2019.06.05.1730"
 
 source("helpers.R")
-#source("/home/michael_science/git/michaelgruenstaeudl_PACViR/PACViR/helpers.R")
 
-CovCalc <- function(bamFile, windowSize=250, outDir="./PACViR_output/", mosdepthCmd="mosdepth"){
+CovCalc <- function(bamFile, windowSize=250, tmpDir, mosdepthCmd="mosdepth"){
   # Calculates coverage of a given bam file and stores data in data.frame format
   # ARGS:
   #     bamFile: bam file to calculate coverage
   #     windowSize: numeric value to specify the coverage calculation window
-  #     outDir: output directory
+  #     output: name and directory of output file
   #     mosdepthCmd: path to mosdepth
   # RETURNS:
   #     data.frame with region names, chromosome start, chromosome end and coverage calcucation
   if (!is.numeric(windowSize) | windowSize < 0) {
     stop("windowSize has to be greater than zero")
   }
-  get_os <- Sys.info()[1]
-  
-  ### TODO: Windows console
-  
-  if(get_os == "Windows"){
-    system(paste("md", paste(outDir, "\ncoverage-output", sep = "")))
-    system(paste(mosdepthCmd, "--by", windowSize, paste(outDir, "\ncoverage-output\noutput", sep = ""), bamFile))
-    system(paste("gzip -df", paste(outDir, "\ncoverage-output\noutput.regions.bed.gz", sep = "")))
-    cov <- Rename_Df(cov, "coverage")
-  } else {
-    system(paste("mkdir -p", paste(outDir, "/coverage-output" ,sep = "")))
-    system(paste(mosdepthCmd, "--by", windowSize, paste(outDir, "/coverage-output/output", sep = ""), bamFile))
-    system(paste("gzip -df", paste(outDir, "/coverage-output/output.regions.bed.gz", sep = "")))
-    cov <-read.table(paste(outDir, "coverage-output/output.regions.bed", sep = ""))
-    cov <- Rename_Df(cov, "coverage")
-  }
+  system(paste(mosdepthCmd, "--by", windowSize, paste(tmpDir, .Platform$file.sep, "coverage", sep = ""), bamFile))
+  system(paste("gzip -df", paste(tmpDir, .Platform$file.sep, "coverage.regions.bed.gz", sep = "")))
+  cov <-read.table(paste(tmpDir, .Platform$file.sep, "coverage.regions.bed", sep = ""))
+  cov <- Rename_Df(cov, "coverage")
   return(cov)
 }
 
