@@ -89,7 +89,7 @@ PACViR.complete(
 gbk.file="/home/michael_science/research/01_manuscripts/01_First_Author/01_PACViR/05_ANALYSES/02_improve_visualizations/MH800324.gb", 
 bam.file="/home/michael_science/research/01_manuscripts/01_First_Author/01_PACViR/05_ANALYSES/02_improve_visualizations/MH800324_PlastomeReadsOnly.sorted.bam", 
 windowSize=250, 
-threshold=35, 
+threshold=15, 
 delete=FALSE,
 output="/home/michael_science/research/01_manuscripts/01_First_Author/01_PACViR/05_ANALYSES/02_improve_visualizations/MH800324_AssemblyCoverage_viz.svg"
 )
@@ -100,7 +100,7 @@ PACViR.complete(
 gbk.file="/home/michael_science/research/01_manuscripts/01_First_Author/01_PACViR/05_ANALYSES/02_improve_visualizations/MH899017.gb", 
 bam.file="/home/michael_science/research/01_manuscripts/01_First_Author/01_PACViR/05_ANALYSES/02_improve_visualizations/MH899017_PlastomeReadsOnly.sorted.bam", 
 windowSize=250, 
-threshold=35, 
+threshold=15, 
 delete=FALSE,
 output="/home/michael_science/research/01_manuscripts/01_First_Author/01_PACViR/05_ANALYSES/02_improve_visualizations/MH899017_AssemblyCoverage_viz.svg"
 )
@@ -111,7 +111,7 @@ PACViR.complete(
 gbk.file="/home/michael_science/research/01_manuscripts/01_First_Author/01_PACViR/05_ANALYSES/02_improve_visualizations/MH161174.gb", 
 bam.file="/home/michael_science/research/01_manuscripts/01_First_Author/01_PACViR/05_ANALYSES/02_improve_visualizations/MH161174_PlastomeReadsOnly.sorted.bam", 
 windowSize=250, 
-threshold=35, 
+threshold=15, 
 delete=FALSE,
 output="/home/michael_science/research/01_manuscripts/01_First_Author/01_PACViR/05_ANALYSES/02_improve_visualizations/MH161174_AssemblyCoverage_viz.svg"
 )
@@ -122,7 +122,7 @@ PACViR.complete(
 gbk.file="/home/michael_science/research/01_manuscripts/01_First_Author/01_PACViR/05_ANALYSES/02_improve_visualizations/MH161175.gb", 
 bam.file="/home/michael_science/research/01_manuscripts/01_First_Author/01_PACViR/05_ANALYSES/02_improve_visualizations/MH161175_PlastomeReadsOnly.sorted.bam", 
 windowSize=250, 
-threshold=35, 
+threshold=15, 
 delete=FALSE,
 output="/home/michael_science/research/01_manuscripts/01_First_Author/01_PACViR/05_ANALYSES/02_improve_visualizations/MH161175_AssemblyCoverage_viz.svg"
 )
