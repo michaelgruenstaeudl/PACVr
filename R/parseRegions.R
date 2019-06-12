@@ -1,10 +1,7 @@
 #!/usr/bin/R
 #contributors = c("Michael Gruenstaeudl","Nils Jenke")
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2019.06.11.1530"
-
-source("helpers.R")
-#source("/home/michael_science/git/michaelgruenstaeudl_PACViR/PACViR/helpers.R")
+#version = "2019.06.12.1530"
 
 filter <- function(allRegions_L, where) {
   out = subset(allRegions_L, grepl("IRb|IRa|repeat|inverted", allRegions_L[,where], ignore.case = FALSE))

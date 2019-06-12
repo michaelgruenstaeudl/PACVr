@@ -37,10 +37,8 @@
   \begin{footnotesize}
   \begin{lstlisting}[linerange=\\begin\{Sinput\}-\\end\{Sinput\},includerangemarker=false]
 <<>>=
-    #require(PACViR)
-    require(RCircos)
-    require(genbankr)
-    require(optparse)
+    #library(PACViR)
+
 @
   \end{lstlisting}
   \end{footnotesize}
@@ -48,29 +46,37 @@
 
 \section{PACViR via R-function }
 
-  PACViR can be easily executed via the PACViR.complete() function in R. Therefore one can load the provided data from the   package.
+  PACViR can be easily executed via the PACViR.complete() function in R. Therefore one can load the provided data from the package.
 
   \begin{footnotesize}
   \begin{lstlisting}[linerange=\\begin\{Sinput\}-\\end\{Sinput\},includerangemarker=false]
 <<>>=
-    gbk.file <- "./SCHM2.gb"
-    bam.file <- "./SCHM2.bam"
+    # The absolute path to the input directory is set
+    inPath <- system.file("extdata", "MH161174/", package="PACViR")
+
+    # The names of the input files located in inPath are set
+    inFile_gb  <- "MH161174.gb"
+    inFile_bam <- "MH161174.bam"
+    
+    gbk.file <- paste(inPath,"/",inFile_gb)
+    bam.file <- paste(inPath,"/",inFile_bam)
     windowSize <- 250
     mosdepthCmd <- "mosdepth"
-    threshold <- 25 
+    threshold <- 15 
+    delete <- "TRUE"
     outDir <- "./output"
-    #PACViR.complete(gbk.file, bam.file, windowSize, mosdepthCmd, threshold, outDir)
+    #PACViR.complete(gbk.file, bam.file, windowSize, mosdepthCmd, threshold, delete, outDir)
 @
   \end{lstlisting}
   \end{footnotesize}
   
 
-  \begin{figure}[H]
-  \centering
-    \includegraphics{SCHM2_WS250_TH35.pdf}
-    \caption{Visualization of SCHM2 plastome with PACViR.complete()}
-  \centering
-  \end{figure}
+%  \begin{figure}[H]
+%  \centering
+%    \includegraphics{}
+%    \caption{Visualization of SCHM2 plastome with PACViR.complete()}
+%  \centering
+%  \end{figure}
 
 \section{PACViR via command line}
 
@@ -82,12 +88,12 @@
 \end{lstlisting}
 \end{footnotesize}
 
-  \begin{figure}[H]
-  \centering
-    \includegraphics{DAS01_WS250_TH35.pdf}
-    \caption{Visualization of DAS01 plastome with Rscript}
-  \centering
-  \end{figure}
+%  \begin{figure}[H]
+%  \centering
+%    \includegraphics{}
+%    \caption{Visualization of DAS01 plastome with Rscript}
+%  \centering
+%  \end{figure}
   
 \section{Modifying parameters}
 

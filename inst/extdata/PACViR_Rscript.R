@@ -5,6 +5,8 @@
 
 library("optparse")
 
+########################################################################
+
 CmdLineArgs <- function() {
   # Function to generate command line arguments
   # ARGS:---
@@ -72,62 +74,36 @@ opt <- CmdLineArgs()
 
 ########################################################################
 
-source("PACViR.R")
 PACViR.complete(gbk.file = opt$gbkFile, bam.file = opt$bamFile, 
                 windowSize = opt$windowSize, mosdepthCmd = opt$mosdepthCmd, 
                 threshold = opt$threshold, delete = opt$delete, 
                 output = opt$output)
 
+########################################################################
 
 ###########
 # TESTING #
 ###########
 
-# MH800324
-source("PACViR.R")
+# MH161174
 PACViR.complete(
-gbk.file="/home/michael_science/research/01_manuscripts/01_First_Author/01_PACViR/05_ANALYSES/02_improve_visualizations/MH800324.gb", 
-bam.file="/home/michael_science/research/01_manuscripts/01_First_Author/01_PACViR/05_ANALYSES/02_improve_visualizations/MH800324_PlastomeReadsOnly.sorted.bam", 
+gbk.file="/home/michael_science/git/michaelgruenstaeudl_PACViR/inst/extdata/MH161174/MH161174.gb", 
+bam.file="/home/michael_science/git/michaelgruenstaeudl_PACViR/inst/extdata/MH161174/MH161174_PlastomeReadsOnly.sorted.bam", 
 windowSize=250, 
 threshold=15, 
 delete=FALSE,
-output="/home/michael_science/research/01_manuscripts/01_First_Author/01_PACViR/05_ANALYSES/02_improve_visualizations/MH800324_AssemblyCoverage_viz.svg"
+output="/home/michael_science/git/michaelgruenstaeudl_PACViR/inst/extdata/MH161174/MH161174_AssemblyCoverage_viz.svg"
 )
 
 # MH899017
-source("PACViR.R")
 PACViR.complete(
-gbk.file="/home/michael_science/research/01_manuscripts/01_First_Author/01_PACViR/05_ANALYSES/02_improve_visualizations/MH899017.gb", 
-bam.file="/home/michael_science/research/01_manuscripts/01_First_Author/01_PACViR/05_ANALYSES/02_improve_visualizations/MH899017_PlastomeReadsOnly.sorted.bam", 
+gbk.file="/home/michael_science/git/michaelgruenstaeudl_PACViR/inst/extdata/MH899017/MH899017.gb", 
+bam.file="/home/michael_science/git/michaelgruenstaeudl_PACViR/inst/extdata/MH899017/MH899017_PlastomeReadsOnly.sorted.bam", 
 windowSize=250, 
 threshold=15, 
 delete=FALSE,
-output="/home/michael_science/research/01_manuscripts/01_First_Author/01_PACViR/05_ANALYSES/02_improve_visualizations/MH899017_AssemblyCoverage_viz.svg"
+output="/home/michael_science/git/michaelgruenstaeudl_PACViR/inst/extdata/MH899017/MH899017_AssemblyCoverage_viz.svg"
 )
 
-# MH161174
-source("PACViR.R")
-PACViR.complete(
-gbk.file="/home/michael_science/research/01_manuscripts/01_First_Author/01_PACViR/05_ANALYSES/02_improve_visualizations/MH161174.gb", 
-bam.file="/home/michael_science/research/01_manuscripts/01_First_Author/01_PACViR/05_ANALYSES/02_improve_visualizations/MH161174_PlastomeReadsOnly.sorted.bam", 
-windowSize=250, 
-threshold=15, 
-delete=FALSE,
-output="/home/michael_science/research/01_manuscripts/01_First_Author/01_PACViR/05_ANALYSES/02_improve_visualizations/MH161174_AssemblyCoverage_viz.svg"
-)
+########################################################################
 
-# MH161175
-source("PACViR.R")
-PACViR.complete(
-gbk.file="/home/michael_science/research/01_manuscripts/01_First_Author/01_PACViR/05_ANALYSES/02_improve_visualizations/MH161175.gb", 
-bam.file="/home/michael_science/research/01_manuscripts/01_First_Author/01_PACViR/05_ANALYSES/02_improve_visualizations/MH161175_PlastomeReadsOnly.sorted.bam", 
-windowSize=250, 
-threshold=15, 
-delete=FALSE,
-output="/home/michael_science/research/01_manuscripts/01_First_Author/01_PACViR/05_ANALYSES/02_improve_visualizations/MH161175_AssemblyCoverage_viz.svg"
-)
-
-q("no")
-
-###########
-###########

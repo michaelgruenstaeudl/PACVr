@@ -1,14 +1,12 @@
 #!/usr/bin/R
 #contributors = c("Michael Gruenstaeudl","Nils Jenke")
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2019.05.24.1700"
+#version = "2019.06.12.1530"
 
-library(RCircos)
-
-# Those functions were extracted from RCircos to manually fix an issue that led to an erroneous visualization.
+# Please note: The following R functions were taken from the original RCircos package and then modified. The modifications were necessary to fix several issues that caused erroneous visualizations in the original R code.
 
 PACViR.Get.Start.End.Locations <- function(plot.data, plot.width){
-  RCircos.Cyto <- RCircos.Get.Plot.Ideogram();
+  RCircos.Cyto <- RCircos::RCircos.Get.Plot.Ideogram();
 
   dataChroms <- as.character(plot.data[,1]);
   chromosomes <- unique(dataChroms);
@@ -45,7 +43,7 @@ PACViR.Histogram.Plot <- function(hist.data=NULL, data.col=4,
   if(is.null(hist.data)) 
     stop("Genomic data missing in RCircos.Histogram.Plot().\n");
   
-  boundary <- RCircos.Get.Plot.Boundary(track.num, side, inside.pos, 
+  boundary <- RCircos::RCircos.Get.Plot.Boundary(track.num, side, inside.pos, 
                                         outside.pos, FALSE);
   outerPos <- boundary[1];
   innerPos  <- boundary[2];
@@ -55,23 +53,23 @@ PACViR.Histogram.Plot <- function(hist.data=NULL, data.col=4,
   if( is.null(data.col) || data.col <= genomic.columns)  
     stop("Hist data column must be greater than", genomic.columns, ".\n"); 
   
-  RCircos.Pos <- RCircos.Get.Plot.Positions();
-  RCircos.Par <- RCircos.Get.Plot.Parameters();
-  RCircos.Cyto <- RCircos.Get.Plot.Ideogram();
+  RCircos.Pos <- RCircos::RCircos.Get.Plot.Positions();
+  RCircos.Par <- RCircos::RCircos.Get.Plot.Parameters();
+  RCircos.Cyto <- RCircos::RCircos.Get.Plot.Ideogram();
   
   #    Convert raw data to plot data. The raw data will be validated
   #    first during the convertion
   #    ============================================================
   #
-  hist.data <- RCircos.Get.Single.Point.Positions(hist.data,
+  hist.data <- RCircos::RCircos.Get.Single.Point.Positions(hist.data,
                                                   genomic.columns);
   locations <- PACViR.Get.Start.End.Locations(hist.data, 
-                                               RCircos.Par$hist.width)
+                                              RCircos.Par$hist.width)
   
   #    histgram colors and height
   #    =========================================================
   #
-  histColors <- RCircos.Get.Plot.Colors(hist.data, RCircos.Par$hist.color); 
+  histColors <- RCircos::RCircos.Get.Plot.Colors(hist.data, RCircos.Par$hist.color); 
   
   histValues <- as.numeric(hist.data[, data.col]);
   if(is.null(max.value) || is.null(min.value)) {
@@ -80,13 +78,13 @@ PACViR.Histogram.Plot <- function(hist.data=NULL, data.col=4,
   } else {
     if(min.value > max.value) stop("min.value > max.value.")
   }
-  histHeight <- RCircos.Get.Data.Point.Height(histValues, min.value, 
+  histHeight <- RCircos::RCircos.Get.Data.Point.Height(histValues, min.value, 
                                               max.value, plot.type="points", outerPos-innerPos);
   
   #    Draw histogram
   #    =============================================================
   #
-  RCircos.Track.Outline(outerPos, innerPos, RCircos.Par$sub.tracks);
+  RCircos::RCircos.Track.Outline(outerPos, innerPos, RCircos.Par$sub.tracks);
   
   for(aPoint in seq_len(nrow(hist.data)))
   {
@@ -104,5 +102,3 @@ PACViR.Histogram.Plot <- function(hist.data=NULL, data.col=4,
     polygon(polygonX, polygonY, col=histColors[aPoint], border=NA);
   }
 }
-
-

@@ -1,10 +1,7 @@
 #!/usr/bin/R
 #contributors = c("Michael Gruenstaeudl","Nils Jenke")
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2019.05.24.1700"
-
-source("helpers.R")
-#source("/home/michael_science/git/michaelgruenstaeudl_PACViR/PACViR/helpers.R")
+#version = "2019.06.12.1530"
 
 ExtractAllGenes <- function(gbkData) {
   # Function to extract genes from genbank file

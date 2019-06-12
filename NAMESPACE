@@ -1,10 +1,6 @@
 #exportPattern("^[[:alpha:]]+")
 
-export(PACViR.calcCoverage.R)
-export(PACViR.generateLineData.R)
-export(PACViR.generateLinkData.R)
-export(PACViR.PACViR.R)
-export(PACViR.PACViR_Rscript.R)
-export(PACViR.parseGenes.R)
-export(PACViR.parseRegions.R)
-export(PACViR.visualizeWithRCircos.R)
+export(PACViR.complete)
+
+import(optparse)
+import(RCircos)

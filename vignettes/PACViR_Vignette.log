@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016/Debian) (preloaded format=pdflatex 2018.9.24)  23 MAY 2019 13:01
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016/Debian) (preloaded format=pdflatex 2018.9.24)  12 JUN 2019 13:49
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -433,42 +433,31 @@ LaTeX Font Info:    Try loading font information for T1+aett on input line 36.
 
 (/usr/share/texlive/texmf-dist/tex/latex/ae/t1aett.fd
 File: t1aett.fd 1997/11/16 Font definitions for T1/aett.
-)
-<SCHM2_WS250_TH35.pdf, id=40, 505.89pt x 505.89pt>
-File: SCHM2_WS250_TH35.pdf Graphic file (type pdf)
- <use SCHM2_WS250_TH35.pdf>
-Package pdftex.def Info: SCHM2_WS250_TH35.pdf used on input line 72.
-(pdftex.def)             Requested size: 375.80544pt x 375.81166pt.
-
-[1
+) [1
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
-<DAS01_WS250_TH35.pdf, id=66, 505.89pt x 505.89pt>
-File: DAS01_WS250_TH35.pdf Graphic file (type pdf)
- <use DAS01_WS250_TH35.pdf>
-Package pdftex.def Info: DAS01_WS250_TH35.pdf used on input line 89.
-(pdftex.def)             Requested size: 375.80544pt x 375.81166pt.
+Overfull \hbox (9.4218pt too wide) in paragraph at lines 67--70
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
 
-[2 <./SCHM2_WS250_TH35.pdf>] [3 <./DAS01_WS250_TH35.pdf>]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 144.
- [4]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 144.
-
-(./PACViR_Vignette.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 144.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 144.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 132.
+[2]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 132.
+ (./PACViR_Vignette.aux)
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 132.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 132.
 Package rerunfilecheck Info: File `PACViR_Vignette.out' has not changed.
 (rerunfilecheck)             Checksum: 3DC72D502A238848153A7A17677CB382;361.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 144.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 132.
  ) 
 Here is how much of TeX's memory you used:
- 7965 strings out of 494852
- 116232 string characters out of 6177657
- 208346 words of memory out of 5000000
- 11136 multiletter control sequences out of 15000+600000
+ 7951 strings out of 494852
+ 115986 string characters out of 6177657
+ 212346 words of memory out of 5000000
+ 11124 multiletter control sequences out of 15000+600000
  25919 words of font info for 58 fonts, out of 8000000 for 9000
  36 hyphenation exceptions out of 8191
- 35i,6n,35p,224b,967s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 35i,6n,35p,224b,1694s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></us
 r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/shar
 e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texli
@@ -477,10 +466,10 @@ f-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texlive/texmf-dist/
 fonts/type1/public/amsfonts/cm/cmsltt10.pfb></usr/share/texlive/texmf-dist/font
 s/type1/public/amsfonts/cm/cmtt10.pfb></usr/share/texlive/texmf-dist/fonts/type
 1/public/amsfonts/cm/cmtt8.pfb>
-Output written on PACViR_Vignette.pdf (4 pages, 677412 bytes).
+Output written on PACViR_Vignette.pdf (2 pages, 109405 bytes).
 PDF statistics:
- 124 PDF objects out of 1000 (max. 8388607)
- 105 compressed objects within 2 object streams
+ 111 PDF objects out of 1000 (max. 8388607)
+ 97 compressed objects within 1 object stream
  30 named destinations out of 1000 (max. 500000)
- 71 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 61 words of extra memory for PDF output out of 10000 (max. 10000000)
 

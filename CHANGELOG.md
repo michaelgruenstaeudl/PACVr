@@ -1,5 +1,9 @@
 CHANGELOG
 ---------
+#### Version 0.4 (2019.06.12)
+* Several minor code improvements
+* Several minor improvements to DESCRIPTION and NAMESPACE
+* Added example data (inst/extdata)
 
 #### Version 0.3 (2019.05.24)
 * Several minor code improvements

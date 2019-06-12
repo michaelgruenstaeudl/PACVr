@@ -1,11 +1,7 @@
 #!/usr/bin/R
 #contributors = c("Michael Gruenstaeudl","Nils Jenke")
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2019.05.24.1700"
-
-source("helpers.R") 
-source("histogramPlotter.R")
-library(RCircos)
+#version = "2019.06.12.1530"
 
 visualizeWithRCircos <- function(gbkData, genes_withUpdRegions, regions_withUpdRegions, cov_withUpdRegions, threshold=25, avg, lineData, linkData) {
   # Generates the visualization of genome data and their tracks

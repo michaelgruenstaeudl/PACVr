@@ -1,11 +1,11 @@
 #!/usr/bin/R
 #contributors = c("Michael Gruenstaeudl","Nils Jenke")
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2019.06.05.1730"
+#version = "2019.06.12.1530"
 
 PACViR.parseName <- function (gbkFile) {
   
-  # 2. Parse sample name
+  # Parse sample name
     gbkData <- genbankr::readGenBank(gbkFile)
     sample_name = genbankr::accession(gbkData)
     return(sample_name)
@@ -13,11 +13,7 @@ PACViR.parseName <- function (gbkFile) {
 
 PACViR.parseRegions <- function (gbkFile, tmpDir) {
     
-  # 1. Source custom R functions
-    source("parseRegions.R")
-    source("helpers.R")
-    
-  # 2. Parse GenBank file
+  # Parse GenBank file
     gbkData <- genbankr::readGenBank(gbkFile)
     raw_regions <- ExtractAllRegions(gbkData)
     write.table(raw_regions, file = paste(tmpDir, .Platform$file.sep, "regions.PACViR.tmp", sep=""), 
@@ -28,11 +24,7 @@ PACViR.parseRegions <- function (gbkFile, tmpDir) {
 
 PACViR.parseGenes <- function (gbkFile, raw_regions) {
     
-  # 1. Source custom R functions
-    source("parseGenes.R")
-    source("helpers.R")
-    
-  # 2. Parse GenBank file
+  # Parse GenBank file
     gbkData <- genbankr::readGenBank(gbkFile)
     raw_genes <- ExtractAllGenes(gbkData)
     genes_inclSplitOnes <- SplitGenesAtRegionBorders(raw_genes, raw_regions)
@@ -47,11 +39,7 @@ PACViR.calcCoverage <- function (bamFile, raw_regions,
                                  output,
                                  mosdepthCmd="mosdepth") {
     
-  # 1. Source custom R functions
-    source("calcCoverage.R")
-    source("helpers.R")
-    
-  # 2. Coverage calculation
+  # Coverage calculation
     raw_coverage <- CovCalc(bamFile, windowSize, output, mosdepthCmd)
     cov_withRegionInfo <- AssignRegionInfo(raw_coverage, raw_regions)
     cov_inclSplitOnes <- SplitCovAtRegionBorders(cov_withRegionInfo, raw_regions)
@@ -63,11 +51,7 @@ PACViR.calcCoverage <- function (bamFile, raw_regions,
 
 PACViR.generateIRGeneData <- function (genes_withUpdRegions) {
     
-  # 1. Source custom R functions
-    source("generateIRGeneData.R")
-    source("helpers.R")
-    
-  # 2. Parse GenBank file
+  # Parse GenBank file
     linkData <- GenerateIRGeneData(genes_withUpdRegions)
     return(linkData)
 }
@@ -75,11 +59,7 @@ PACViR.generateIRGeneData <- function (genes_withUpdRegions) {
 
 PACViR.GenerateHistogramData <- function (cov_withUpdRegions) {
     
-  # 1. Source custom R functions
-    source("generateHistogramData.R")
-    source("helpers.R")
-    
-  # 2. Parse GenBank file
+  # Parse GenBank file
     lineData <- GenerateHistogramData(cov_withUpdRegions)
     return(lineData)
 }
@@ -93,16 +73,13 @@ PACViR.visualizeWithRCircos <- function (gbkFile,
                                          lineData,
                                          linkData) {
     
-  # 1. Source custom R functions
-    source("visualizeWithRCircos.R")
-
-  # 2. Get gbkData
+  # 1. Get gbkData
     gbkData <- genbankr::readGenBank(gbkFile)
 
-  # 3. Calculate average
+  # 2. Calculate average
     avg <- as.integer(unique(lineData[ ,4]))
     
-  # 4. Visualize
+  # 3. Visualize
     visualizeWithRCircos(gbkData, genes_withUpdRegions, regions_withUpdRegions, cov_withUpdRegions, threshold, avg, lineData, linkData)
 }
 
@@ -111,7 +88,6 @@ PACViR.complete <- function(gbk.file, bam.file,
                             windowSize = 250, mosdepthCmd = "mosdepth", 
                             threshold = 25, delete = TRUE,
                             output = "./PACViR_output.svg" ) {
-  source("helpers.R")
   
   # 1. Preparatory steps
   sample_name <- PACViR.parseName(gbk.file)

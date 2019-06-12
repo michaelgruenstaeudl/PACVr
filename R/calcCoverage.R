@@ -1,9 +1,7 @@
 #!/usr/bin/R
 #contributors = c("Michael Gruenstaeudl","Nils Jenke")
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2019.06.05.1730"
-
-source("helpers.R")
+#version = "2019.06.12.1530"
 
 CovCalc <- function(bamFile, windowSize=250, tmpDir, mosdepthCmd="mosdepth"){
   # Calculates coverage of a given bam file and stores data in data.frame format
@@ -49,7 +47,6 @@ SplitCovAtRegionBorders <- function(covData, regionData) {
   covData[ ,3] <- as.integer(covData[ ,3])
   return(covData)
 }
-
 
 adjustCoverage <- function(cov, regions) {
   # Shift of coverage regions so that they fit RCircos validation
