@@ -20,6 +20,9 @@ visualizeWithRCircos <- function(gbkData, genes_withUpdRegions, regions_withUpdR
 
   # 1. RCIRCOS INITIALIZATION
 
+  # We need the RCircos.Env object in the global namespace. (See: https://github.com/stianlagstad/chimeraviz/blob/master/R/plot_circle.R)
+  assign("RCircos.Env", RCircos::RCircos.Env, .GlobalEnv)
+
   RCircos::RCircos.Set.Core.Components(cyto.info      =  regions_withUpdRegions, 
                                        chr.exclude    =  NULL,
                                        tracks.inside  =  8, 

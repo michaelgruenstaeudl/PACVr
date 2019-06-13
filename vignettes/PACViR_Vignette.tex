@@ -1,57 +1,60 @@
 \documentclass[letterpaper]{article}
 
+% PACKAGE DEFINITION
 \usepackage{fancyvrb}
 \usepackage{fullpage}
 \usepackage{listings}
 \usepackage{xcolor}
 \usepackage{float}
 \usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{tcolorbox}
 
-\lstset{basicstyle=\ttfamily, 
-        backgroundcolor=\color[gray]{0.95}}
-        
+% CUSTOM FUNCTIONS
+\tcbuselibrary{skins,breakable}
+\newenvironment{BGVerbatim}
+ {\VerbatimEnvironment
+  \begin{tcolorbox}[
+    breakable,
+    colback=orange!10,
+    spartan
+  ]%
+  \begin{Verbatim}}
+ {\end{Verbatim}\end{tcolorbox}}
+
 \author{Michael Gruenstaeudl, Nils Jenke}
 \title{Using PACViR}
 
-\usepackage{Sweave}
+
 \begin{document}
-\input{PACViR_Vignette-concordance}
-%\SweaveUTF8
-
-
 \maketitle
-
 \tableofcontents
 
 \section{Introduction}
-
-  \textbf{PACViR} is a user-friendly software tool to visualize the coverage depth of a complete plastid genome as well as the equality of its IR regions while simultaneously accounting for the circular, quadripartite structure of the genome. This vignette provides two examples of executing PACViR on empirical data via the R function '\textit{PACViR.complete()}' from within the R interpreter and from the BASH commandline shell.
+PACViR is a user-friendly software tool to visualize the coverage depth of a complete plastid genome as well as the equality of its IR regions while simultaneously accounting for the circular, quadripartite structure of the genome. This vignette provides two examples of executing PACViR on empirical data via the R function \texttt{PACViR.complete()} from within the R interpreter and from the BASH commandline shell.
 
 \section{Requirements}
+To run PACViR, several dependencies have to be installed.
 
-  To run PACViR, several dependencies have to be installed.
-
-
-  \begin{footnotesize}
-  \begin{lstlisting}[linerange=\\begin\{Sinput\}-\\end\{Sinput\},includerangemarker=false]
-\begin{Schunk}
-\begin{Sinput}
->     #TO DO: List dependencies and their installation here.
->     #library(PACViR)
-\end{Sinput}
-\end{Schunk}
-  \end{lstlisting}
-  \end{footnotesize}
+\begin{BGVerbatim}[fontsize=\normalsize]
+# CRAN packages
+if (!require("pacman"))
+    install.packages("pacman")
+pacman::p_load("RCircos", "optparse", install=TRUE)
+# Bioconductor packages
+if (!requireNamespace("BiocManager", quietly=TRUE))
+    install.packages("BiocManager")
+if (!requireNamespace("genbankr", quietly=TRUE))
+    BiocManager::install("genbankr")
+\end{BGVerbatim}
 
 \pagebreak
 
 \section{Executing PACViR via R interpreter}
-PACViR can be executed via the R function '\textit{PACViR.complete()}' from within the R interpreter.
+PACViR can be executed via the R function \texttt{PACViR.complete()} from within the R interpreter.
 
-\begin{footnotesize}
-\begin{lstlisting}[linerange=\\begin\{Sinput\}-\\end\{Sinput\},includerangemarker=false]
-\begin{Schunk}
-\begin{Sinput}
+\begin{BGVerbatim}[fontsize=\normalsize]
+library(PACViR)
 # MH161174
 ## Specify input files
 gbkFile <- system.file("extdata", "MH161174/MH161174.gb", package="PACViR")
@@ -63,55 +66,45 @@ outFile <- paste(getwd(), "/MH161174_AssemblyCoverage_viz.svg", sep="")
 PACViR.complete(gbk.file=gbkFile, bam.file=bamFile, windowSize=250, 
                 mosdepthCmd='mosdepth', threshold=15, delete=FALSE, 
                 output=outFile)
-\end{Sinput}
-\end{Schunk}
-\end{lstlisting}
-\end{footnotesize}
+\end{BGVerbatim}
   
 \begin{figure}[H]
 \centering
-    \includegraphics{MH161174_AssemblyCoverage_viz.pdf}
-    \caption{File '\textit{MH161174\_AssemblyCoverage\_viz.svg}' as generated via '\textit{PACViR.complete()}'}
+    \includegraphics[width=0.75\textwidth]{MH161174_AssemblyCoverage_viz.pdf}
+    \caption{File \texttt{MH161174\_AssemblyCoverage\_viz.svg} as generated via \texttt{PACViR.complete()}}
 \centering
 \end{figure}
 
 \pagebreak
 
 \section{Executing PACViR via BASH shell}
-PACViR can be executed via the BASH shell command '\textit{PACViR\_Rscript.R}' from the BASH commandline shell.
+PACViR can be executed via the BASH shell command \texttt{PACViR\_Rscript.R} from the BASH commandline shell.
   
-\begin{footnotesize}
-\begin{lstlisting}
+\begin{BGVerbatim}[fontsize=\normalsize]
 # MH899017
 Rscript ./inst/extdata/PACViR_Rscript.R  \
      -k ./inst/extdata/MH899017.gb \
      -b ./inst/extdata/MH899017_PlastomeReadsOnly.sorted.bam \
      -o ./MH899017_AssemblyCoverage_viz.svg
-\end{lstlisting}
-\end{footnotesize}
+\end{BGVerbatim}
 
 \begin{figure}[H]
 \centering
-    \includegraphics{MH899017_AssemblyCoverage_viz.pdf}
-    \caption{File '\textit{MH899017\_AssemblyCoverage\_viz.svg}' as generated via '\textit{PACViR\_Rscript.R}'}
+    \includegraphics[width=0.75\textwidth]{MH899017_AssemblyCoverage_viz.pdf}
+    \caption{File \texttt{MH899017\_AssemblyCoverage\_viz.svg} as generated via \texttt{PACViR\_Rscript.R}}
 \centering
 \end{figure}
 
 \pagebreak
 
 %\section{Modifying parameters}
-
 %  Depending on which system PACViR will be executed
 
 %\section{More Information}
 
 \section{sessionInfo}
-
-\begin{Schunk}
-\begin{Sinput}
+\begin{Verbatim}
 > sessionInfo()
-\end{Sinput}
-\begin{Soutput}
 R version 3.3.3 (2017-03-06)
 Platform: x86_64-pc-linux-gnu (64-bit)
 Running under: Debian GNU/Linux 9 (stretch)
@@ -130,7 +123,6 @@ attached base packages:
 
 loaded via a namespace (and not attached):
 [1] tools_3.3.3
-\end{Soutput}
-\end{Schunk}
+\end{Verbatim}
 
 \end{document}

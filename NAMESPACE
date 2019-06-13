@@ -4,3 +4,9 @@ export(PACViR.complete)
 
 import(optparse)
 import(RCircos)
+
+importFrom("utils", "read.table", "write.table")
+importFrom("graphics", "polygon", "title", "legend")
+importFrom("grDevices", "svg", "dev.off")
+
+importFrom("RCircos", "RCircos.Env")

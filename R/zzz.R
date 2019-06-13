@@ -1,18 +1,16 @@
-
-
-#.onAttach = function(libname = find.package("PACViR"), pkgname = "PACViR") {
-#    if (!require("pacman")) install.packages("pacman")
-#    pacman::p_load("RCircos", "optparse")
-#    # Bioconductor packages
-#    if (!require("BiocManager")) install.packages("BiocManager")
-#    source("https://bioconductor.org/biocLite.R")
-#    pacman::p_load("BiocParallel", "genbankr")
-#}
-#
+.onAttach = function(libname = find.package("PACViR"), pkgname = "PACViR") {
+    ## CRAN packages
+    #if (!require("pacman"))
+    #    install.packages("pacman")
+    #pacman::p_load("RCircos", "optparse", install=TRUE)
+    ## Bioconductor packages
+    #if (!requireNamespace("BiocManager", quietly=TRUE))
+    #    install.packages("BiocManager")
+    #if (!requireNamespace("genbankr", quietly=TRUE))
+    #    BiocManager::install("genbankr")
+}
 
 .onLoad = function(libname = find.package("PACViR"), pkgname = "PACViR") {
-#    pacman::p_load("RCircos", "optparse", "genbankr")
-
-## The RCircos.Env object must be located in the global namespace.
-assign("RCircos.Env", RCircos::RCircos.Env, .GlobalEnv)
+    # The RCircos.Env object must be located in the global namespace.
+    #assign("RCircos.Env", RCircos::RCircos.Env, .GlobalEnv)
 }
