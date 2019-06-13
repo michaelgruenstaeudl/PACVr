@@ -8,6 +8,13 @@
     #    install.packages("BiocManager")
     #if (!requireNamespace("genbankr", quietly=TRUE))
     #    BiocManager::install("genbankr")
+    
+    system("conda install -y mosdepth")
+    
+    #install.packages("remotes")
+    #devtools::install_github("r-hub/sysreqs")
+    #library(sysreqs)
+    
 }
 
 .onLoad = function(libname = find.package("PACViR"), pkgname = "PACViR") {

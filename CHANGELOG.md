@@ -1,5 +1,9 @@
 CHANGELOG
 ---------
+#### Version 0.5 (2019.06.13)
+* Several minor improvements to DESCRIPTION and NAMESPACE
+* Several minor improvements to manual and vignette
+
 #### Version 0.4 (2019.06.12)
 * Several minor code improvements
 * Several minor improvements to DESCRIPTION and NAMESPACE
