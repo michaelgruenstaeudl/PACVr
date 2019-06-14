@@ -80,30 +80,3 @@ PACViR.complete(gbk.file = opt$gbkFile, bam.file = opt$bamFile,
                 output = opt$output)
 
 ########################################################################
-
-###########
-# TESTING #
-###########
-
-# MH161174
-PACViR.complete(
-gbk.file="/home/michael_science/git/michaelgruenstaeudl_PACViR/inst/extdata/MH161174/MH161174.gb", 
-bam.file="/home/michael_science/git/michaelgruenstaeudl_PACViR/inst/extdata/MH161174/MH161174_PlastomeReadsOnly.sorted.bam", 
-windowSize=250, 
-threshold=15, 
-delete=FALSE,
-output="/home/michael_science/git/michaelgruenstaeudl_PACViR/inst/extdata/MH161174/MH161174_AssemblyCoverage_viz.svg"
-)
-
-# MH899017
-PACViR.complete(
-gbk.file="/home/michael_science/git/michaelgruenstaeudl_PACViR/inst/extdata/MH899017/MH899017.gb", 
-bam.file="/home/michael_science/git/michaelgruenstaeudl_PACViR/inst/extdata/MH899017/MH899017_PlastomeReadsOnly.sorted.bam", 
-windowSize=250, 
-threshold=15, 
-delete=FALSE,
-output="/home/michael_science/git/michaelgruenstaeudl_PACViR/inst/extdata/MH899017/MH899017_AssemblyCoverage_viz.svg"
-)
-
-########################################################################
-

@@ -37,6 +37,8 @@ PACViR is a user-friendly software tool to visualize the coverage depth of a com
 To run PACViR, several dependencies have to be installed.
 
 \begin{BGVerbatim}[fontsize=\normalsize]
+# Mosdepth (a general dependency)
+system("conda install -y mosdepth")
 # CRAN packages
 if (!require("pacman"))
     install.packages("pacman")

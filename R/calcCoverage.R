@@ -22,6 +22,25 @@ CovCalc <- function(bamFile, windowSize=250, tmpDir, mosdepthCmd="mosdepth"){
   return(cov)
 }
 
+DummyCov <- function(chromName, raw_regions, windowSize=250){
+  # Generates data.frame with dummy coverage values
+  # ARGS:
+  #     raw_regions
+  #     windowSize
+  # RETURNS:
+  #     data.frame with region names, chromosome start, chromosome end and coverage calcucation
+  if (!is.numeric(windowSize) | windowSize < 0) {
+    stop("windowSize has to be greater than zero")
+  }
+  chromLen <- as.integer(raw_regions[4, "chromEnd"])
+  chromStart <- seq.int(0, chromLen, windowSize)
+  chromEnd <- c(seq.int(windowSize, chromLen, windowSize), chromLen)
+  Chromosome <- rep(chromName, length(chromStart))
+  coverage <- rep(1, length(chromStart))
+  cov <- data.frame(Chromosome, chromStart, chromEnd, coverage)
+  return(cov)
+}
+
 SplitCovAtRegionBorders <- function(covData, regionData) {
   # Function to split coverage data that occur in two different regions at
   # the region borders

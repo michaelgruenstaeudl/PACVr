@@ -3,10 +3,10 @@
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
 #version = "2019.06.12.1530"
 
-visualizeWithRCircos <- function(gbkData, genes_withUpdRegions, regions_withUpdRegions, cov_withUpdRegions, threshold=25, avg, lineData, linkData) {
+visualizeWithRCircos <- function(plotTitle, genes_withUpdRegions, regions_withUpdRegions, cov_withUpdRegions, threshold=25, avg, lineData, linkData) {
   # Generates the visualization of genome data and their tracks
   # ARGS:
-  #   gbkData: 
+  #   plotTitle: character string 
   #   genes_withUpdRegions: data frame that contains the genomic region, gene start, gene end and gene names
   #   regions_withUpdRegions: data frame that contains the genomic region, region start, region end and two dummy columns
   #   cov_withUpdRegions: data frame that contains the genomic region, coverage start, coverage end and coverage value
@@ -44,7 +44,7 @@ visualizeWithRCircos <- function(gbkData, genes_withUpdRegions, regions_withUpdR
   RCircos::RCircos.Chromosome.Ideogram.Plot()
   
   # 4. GENERATE TITLE AND LEGEND
-  title(paste(genbankr::definition(gbkData)),line = -1)
+  title(paste(plotTitle),line = -1)
   legend(x= 1.5, y= 2,
          legend = c(paste("Coverage >", threshold), 
                     paste("Coverage <=", threshold),

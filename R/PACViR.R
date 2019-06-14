@@ -34,13 +34,19 @@ PACViR.parseGenes <- function (gbkFile, raw_regions) {
 }
 
 
-PACViR.calcCoverage <- function (bamFile, raw_regions,
-                                 windowSize=250,
+PACViR.calcCoverage <- function (chromName, bamFile, 
+                                 raw_regions, windowSize=250,
                                  output,
-                                 mosdepthCmd="mosdepth") {
+                                 mosdepthCmd) {
     
   # Coverage calculation
-    raw_coverage <- CovCalc(bamFile, windowSize, output, mosdepthCmd)
+    mosdepth_present = suppressWarnings(system(paste("command -v", mosdepthCmd), intern=TRUE))
+    if (!(is.null(attr(mosdepth_present, "status")))) {
+      print('The software tool Mosdepth (https://github.com/brentp/mosdepth) was not detected on your system. Please install it, for example via R command: system("conda install -y mosdepth")')
+      raw_coverage <- DummyCov(chromName, raw_regions, windowSize)
+    } else {
+      raw_coverage <- CovCalc(bamFile, windowSize, output, mosdepthCmd)
+    }
     cov_withRegionInfo <- AssignRegionInfo(raw_coverage, raw_regions)
     cov_inclSplitOnes <- SplitCovAtRegionBorders(cov_withRegionInfo, raw_regions)
     regions_withUpdRegions <- AdjustRegionLocation(raw_regions, raw_regions)
@@ -71,16 +77,23 @@ PACViR.visualizeWithRCircos <- function (gbkFile,
                                          cov_withUpdRegions,
                                          threshold=25,
                                          lineData,
-                                         linkData) {
+                                         linkData,
+                                         mosdepthCmd) {
     
-  # 1. Get gbkData
+  # 1. Generate plot title
     gbkData <- genbankr::readGenBank(gbkFile)
+    mosdepth_present = suppressWarnings(system(paste("command -v", mosdepthCmd), intern=TRUE))
+    if (!(is.null(attr(mosdepth_present, "status")))) {
+      plotTitle <- paste("Dummy data -", genbankr::accession(gbkData), ". Please install mosdepth.")
+    } else {
+      plotTitle <- genbankr::definition(gbkData)
+    }
 
   # 2. Calculate average
     avg <- as.integer(unique(lineData[ ,4]))
     
   # 3. Visualize
-    visualizeWithRCircos(gbkData, genes_withUpdRegions, regions_withUpdRegions, cov_withUpdRegions, threshold, avg, lineData, linkData)
+    visualizeWithRCircos(plotTitle, genes_withUpdRegions, regions_withUpdRegions, cov_withUpdRegions, threshold, avg, lineData, linkData)
 }
 
 
@@ -100,13 +113,13 @@ PACViR.complete <- function(gbk.file, bam.file,
   raw_regions <- PACViR.parseRegions(gbk.file, tmpDir)
   genes_withUpdRegions <- PACViR.parseGenes(gbk.file, raw_regions)
   regions_withUpdRegions <- AdjustRegionLocation(raw_regions, raw_regions)
-  cov_withUpdRegions <- PACViR.calcCoverage(bam.file, raw_regions, windowSize, tmpDir, mosdepthCmd)
+  cov_withUpdRegions <- PACViR.calcCoverage(sample_name, bam.file, raw_regions, windowSize, tmpDir, mosdepthCmd)
   linkData <- PACViR.generateIRGeneData(genes_withUpdRegions)
   lineData <- PACViR.GenerateHistogramData(cov_withUpdRegions)
   
   # 3. Save plot
   svg(output)
-  PACViR.visualizeWithRCircos(gbk.file, genes_withUpdRegions, regions_withUpdRegions, cov_withUpdRegions, threshold, lineData, linkData)
+  PACViR.visualizeWithRCircos(gbk.file, genes_withUpdRegions, regions_withUpdRegions, cov_withUpdRegions, threshold, lineData, linkData, mosdepthCmd)
   dev.off()
   
   # 4. Delete temp files
