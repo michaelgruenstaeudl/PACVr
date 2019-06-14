@@ -31,10 +31,11 @@
 }
 
 \author{
-Michael Gruenstaeudl, Nils Jenke
-Maintainer: Michael Gruenstaeudl \email{m.gruenstaeudl@fu-berlin.de}, Nils Jenke \email{nilsj24@zedat.fu-berlin.de}
+  Michael Gruenstaeudl, Nils Jenke
+  
+  Maintainer: Michael Gruenstaeudl \email{m.gruenstaeudl@fu-berlin.de}
 }
 
 \references{
-Gruenstaeudl M., Jenke N. (2019) PACViR: Plastome Assembly Coverage Visualization in R. R package version 0.4.
+  Gruenstaeudl M., Jenke N. (2019) PACViR: Plastome Assembly Coverage Visualization in R. R package version 0.4.
 }

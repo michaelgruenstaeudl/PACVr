@@ -44,8 +44,9 @@ Gruenstaeudl M., Jenke N. (2019) PACViR: Plastome Assembly Coverage Visualizatio
 
 
 \author{
-Michael Gruenstaeudl, Nils Jenke
-Maintainer: Michael Gruenstaeudl \email{m.gruenstaeudl@fu-berlin.de}
+  Michael Gruenstaeudl, Nils Jenke
+  
+  Maintainer: Michael Gruenstaeudl \email{m.gruenstaeudl@fu-berlin.de}
 }
 
 
