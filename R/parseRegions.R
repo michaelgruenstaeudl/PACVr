@@ -1,7 +1,7 @@
 #!/usr/bin/R
 #contributors = c("Michael Gruenstaeudl","Nils Jenke")
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2019.06.12.1530"
+#version = "2019.07.03.1800"
 
 filter <- function(allRegions_L, where) {
   out = subset(allRegions_L, grepl("IRb|IRa|repeat|inverted", allRegions_L[,where], ignore.case = FALSE))
@@ -37,7 +37,8 @@ ExtractAllRegions <- function(gbkData) {
   if (nrow(region_L) != 4) {
     stop("ERROR: Could not find all necessary regions; Genbank file must at least contain note-qualifiers on IRb and IRa.\n")
   }
-  region_L <- cbind(region_L, Band  = c("","","",""), Stain = c("","","",""))
+  #region_L <- cbind(region_L, Band  = c("","","",""), Stain = c("","","",""))
+  region_L <- cbind(region_L, Band  = c("","","",""), Stain = c("gneg","gneg","gneg","gneg"))
   region_L <- Rename_Df(region_L, c("Band","Stain"))
   return(region_L)
 }

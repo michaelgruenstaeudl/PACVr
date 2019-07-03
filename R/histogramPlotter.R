@@ -1,7 +1,7 @@
 #!/usr/bin/R
 #contributors = c("Michael Gruenstaeudl","Nils Jenke")
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2019.06.12.1530"
+#version = "2019.07.03.1800"
 
 # Please note: The following R functions were taken from the original RCircos package and then modified. The modifications were necessary to fix several issues that caused erroneous visualizations in the original R code.
 

@@ -1,5 +1,8 @@
 CHANGELOG
 ---------
+#### Version 0.7 (2019.07.03)
+* Several minor bug fixes
+
 #### Version 0.6 (2019.06.14)
 * Several minor code improvements
 * Several minor improvements to DESCRIPTION and NAMESPACE

@@ -1,7 +1,7 @@
 #!/usr/bin/R
 #contributors = c("Michael Gruenstaeudl","Nils Jenke")
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2019.06.12.1530"
+#version = "2019.07.03.1800"
 
 PACViR.parseName <- function (gbkFile) {
   
@@ -40,8 +40,10 @@ PACViR.calcCoverage <- function (chromName, bamFile,
                                  mosdepthCmd) {
     
   # Coverage calculation
-    mosdepth_present = suppressWarnings(system(paste("command -v", mosdepthCmd), intern=TRUE))
-    if (!(is.null(attr(mosdepth_present, "status")))) {
+    #mosdepth_present = suppressWarnings(system(paste("command -v", mosdepthCmd), intern=TRUE))
+    #if (!(is.null(attr(mosdepth_present, "status")))) {
+    mosdepth_present = tryCatch(system2(command="command", args=c("-v", mosdepthCmd), stdout=TRUE), error=function(e) NULL)
+    if (is.null(mosdepth_present)) {
       print('The software tool Mosdepth (https://github.com/brentp/mosdepth) was not detected on your system. Please install it, for example via R command: system("conda install -y mosdepth")')
       raw_coverage <- DummyCov(chromName, raw_regions, windowSize)
     } else {
@@ -82,8 +84,10 @@ PACViR.visualizeWithRCircos <- function (gbkFile,
     
   # 1. Generate plot title
     gbkData <- genbankr::readGenBank(gbkFile)
-    mosdepth_present = suppressWarnings(system(paste("command -v", mosdepthCmd), intern=TRUE))
-    if (!(is.null(attr(mosdepth_present, "status")))) {
+    #mosdepth_present = suppressWarnings(system(paste("command -v", mosdepthCmd), intern=TRUE))
+    #if (!(is.null(attr(mosdepth_present, "status")))) {
+    mosdepth_present = tryCatch(system2(command="command", args=c("-v", mosdepthCmd), stdout=TRUE), error=function(e) NULL)
+    if (is.null(mosdepth_present)) {
       plotTitle <- paste("Dummy data -", genbankr::accession(gbkData), ". Please install mosdepth.")
     } else {
       plotTitle <- genbankr::definition(gbkData)
@@ -100,14 +104,15 @@ PACViR.visualizeWithRCircos <- function (gbkFile,
 PACViR.complete <- function(gbk.file, bam.file, 
                             windowSize = 250, mosdepthCmd = "mosdepth", 
                             threshold = 25, delete = TRUE,
-                            output = "./PACViR_output.svg" ) {
+                            output = "./PACViR_output.pdf" ) {
   
   # 1. Preparatory steps
   sample_name <- PACViR.parseName(gbk.file)
   outDir <- dirname(output)
   tmpDir <- file.path(outDir, paste(sample_name, ".tmp", sep=""))
   get_os <- Sys.info()[1]
-  if(get_os == "Windows"){system(paste("md", tmpDir))} else {system(paste("mkdir -p", tmpDir))}
+  #if(get_os == "Windows"){system(paste("md", tmpDir))} else {system(paste("mkdir -p", tmpDir))}
+  if(get_os == "Windows"){system2(command="md", args=tmpDir)} else {system2(command="mkdir", args=c("-p", tmpDir))}
   
   # 2. Conduct operations
   raw_regions <- PACViR.parseRegions(gbk.file, tmpDir)
@@ -118,12 +123,13 @@ PACViR.complete <- function(gbk.file, bam.file,
   lineData <- PACViR.GenerateHistogramData(cov_withUpdRegions)
   
   # 3. Save plot
-  svg(output)
+  pdf(output)
   PACViR.visualizeWithRCircos(gbk.file, genes_withUpdRegions, regions_withUpdRegions, cov_withUpdRegions, threshold, lineData, linkData, mosdepthCmd)
   dev.off()
   
   # 4. Delete temp files
   if (isTRUE(delete)) {
-      system(paste0("rm -r ", tmpDir))
+      #system(paste0("rm -r ", tmpDir))
+      system2(command="rm", args=c("-r", tmpDir))
   }
 }

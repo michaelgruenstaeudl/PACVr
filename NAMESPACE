@@ -7,6 +7,8 @@ import(RCircos)
 
 importFrom("utils", "read.table", "write.table")
 importFrom("graphics", "polygon", "title", "legend")
-importFrom("grDevices", "svg", "dev.off")
+
+#importFrom("grDevices", "svg", "dev.off")
+importFrom("grDevices", "pdf", "dev.off")
 
 importFrom("RCircos", "RCircos.Env")

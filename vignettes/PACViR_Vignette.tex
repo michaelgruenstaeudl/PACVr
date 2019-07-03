@@ -63,10 +63,10 @@ gbkFile <- system.file("extdata", "MH161174/MH161174.gb", package="PACViR")
 bamFile <- system.file("extdata", "MH161174/MH161174_PlastomeReadsOnly.sorted.bam", 
                        package="PACViR")
 ## Specify output file
-outFile <- paste(getwd(), "/MH161174_AssemblyCoverage_viz.svg", sep="")
+outFile <- paste(getwd(), "/MH161174_AssemblyCoverage_viz.pdf", sep="")
 ## Run PACViR
 PACViR.complete(gbk.file=gbkFile, bam.file=bamFile, windowSize=250, 
-                mosdepthCmd='mosdepth', threshold=15, delete=FALSE, 
+                mosdepthCmd='mosdepth', threshold=15, delete=TRUE, 
                 output=outFile)
 \end{BGVerbatim}
   
@@ -87,7 +87,7 @@ PACViR can be executed via the BASH shell command \texttt{PACViR\_Rscript.R} fro
 Rscript ./inst/extdata/PACViR_Rscript.R  \
      -k ./inst/extdata/MH899017.gb \
      -b ./inst/extdata/MH899017_PlastomeReadsOnly.sorted.bam \
-     -o ./MH899017_AssemblyCoverage_viz.svg
+     -o ./MH899017_AssemblyCoverage_viz.pdf
 \end{BGVerbatim}
 
 \begin{figure}[H]

@@ -1,7 +1,7 @@
 #!/usr/bin/R
 #contributors = c("Michael Gruenstaeudl","Nils Jenke")
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2019.06.12.1530"
+#version = "2019.07.03.1800"
 
 CovCalc <- function(bamFile, windowSize=250, tmpDir, mosdepthCmd="mosdepth"){
   # Calculates coverage of a given bam file and stores data in data.frame format
@@ -15,8 +15,10 @@ CovCalc <- function(bamFile, windowSize=250, tmpDir, mosdepthCmd="mosdepth"){
   if (!is.numeric(windowSize) | windowSize < 0) {
     stop("windowSize has to be greater than zero")
   }
-  system(paste(mosdepthCmd, "--by", windowSize, paste(tmpDir, .Platform$file.sep, "coverage", sep = ""), bamFile))
-  system(paste("gzip -df", paste(tmpDir, .Platform$file.sep, "coverage.regions.bed.gz", sep = "")))
+  #system(paste(mosdepthCmd, "--by", windowSize, paste(tmpDir, .Platform$file.sep, "coverage", sep = ""), bamFile))
+  #system(paste("gzip -df", paste(tmpDir, .Platform$file.sep, "coverage.regions.bed.gz", sep = "")))
+  system2(command=mosdepthCmd, args=c("--by", windowSize,paste(tmpDir, .Platform$file.sep, "coverage", sep = ""), bamFile))
+  system2(command="gzip", args=c("-df", paste(tmpDir, .Platform$file.sep, "coverage.regions.bed.gz", sep = "")))
   cov <-read.table(paste(tmpDir, .Platform$file.sep, "coverage.regions.bed", sep = ""))
   cov <- Rename_Df(cov, "coverage")
   return(cov)

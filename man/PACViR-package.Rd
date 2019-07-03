@@ -37,5 +37,5 @@
 }
 
 \references{
-  Gruenstaeudl M., Jenke N. (2019) PACViR: Plastome Assembly Coverage Visualization in R. R package version 0.4.
+  Gruenstaeudl M., Jenke N. (2019) PACViR: Plastome Assembly Coverage Visualization in R. R package version 0.7.
 }

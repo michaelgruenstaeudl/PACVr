@@ -1,7 +1,7 @@
 #!/usr/bin/R
 #contributors = c("Michael Gruenstaeudl","Nils Jenke")
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2019.06.05.1730"
+#version = "2019.07.03.1800"
 
 library("optparse")
 
@@ -52,7 +52,7 @@ CmdLineArgs <- function() {
                               metavar = "logical"),
                   make_option(opt_str = c("-o","--output"), 
                               type    = "character", 
-                              default = "./PACViR_output.svg", 
+                              default = "./PACViR_output.pdf", 
                               dest    = "output",
                               help    = "name of output file [default= %default]", 
                               metavar = "character"))
