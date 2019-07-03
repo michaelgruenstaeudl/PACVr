@@ -1,4 +1,9 @@
-\documentclass[letterpaper]{article}
+\documentclass{article}
+%\VignetteIndexEntry{PACViR}
+%\VignetteKeywords{PACViR}
+%\VignettePackage{PACViR}
+%\VignetteEncoding{UTF-8}
+
 
 % PACKAGE DEFINITION
 \usepackage{fancyvrb}

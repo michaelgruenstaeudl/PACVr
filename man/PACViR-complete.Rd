@@ -56,7 +56,8 @@ Gruenstaeudl M., Jenke N. (2019) PACViR: Plastome Assembly Coverage Visualizatio
 gbkFile <- system.file("extdata", "MH161174/MH161174.gb", package="PACViR")
 bamFile <- system.file("extdata", "MH161174/MH161174_PlastomeReadsOnly.sorted.bam", 
                        package="PACViR")
-outFile <- paste(getwd(), "/MH161174_AssemblyCoverage_viz.pdf", sep="")
+outFile <- paste(system.file("extdata", package="PACViR"), 
+                 "/testing/MH161174_AssemblyCoverage_viz.pdf", sep="")
 PACViR.complete(gbk.file=gbkFile, bam.file=bamFile, windowSize=250, 
                 mosdepthCmd='mosdepth', threshold=15, delete=TRUE, output=outFile)
 
@@ -64,7 +65,8 @@ PACViR.complete(gbk.file=gbkFile, bam.file=bamFile, windowSize=250,
 gbkFile <- system.file("extdata", "MH899017/MH899017.gb", package="PACViR")
 bamFile <- system.file("extdata", "MH899017/MH899017_PlastomeReadsOnly.sorted.bam", 
                        package="PACViR")
-outFile <- paste(getwd(), "/MH899017_AssemblyCoverage_viz.pdf", sep="")
+outFile <- paste(system.file("extdata", package="PACViR"), 
+                 "/testing/MH899017_AssemblyCoverage_viz.pdf", sep="")
 PACViR.complete(gbk.file=gbkFile, bam.file=bamFile, windowSize=250, 
                 mosdepthCmd='mosdepth', threshold=15, delete=TRUE, output=outFile)
 

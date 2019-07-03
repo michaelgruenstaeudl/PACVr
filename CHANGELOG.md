@@ -1,27 +1,27 @@
 CHANGELOG
 ---------
-#### Version 0.7 (2019.07.03)
+#### Version 0.7.0 (2019.07.03)
 * Several minor bug fixes
 
-#### Version 0.6 (2019.06.14)
+#### Version 0.6.0 (2019.06.14)
 * Several minor code improvements
 * Several minor improvements to DESCRIPTION and NAMESPACE
 
-#### Version 0.5 (2019.06.13)
+#### Version 0.5.0 (2019.06.13)
 * Several minor improvements to DESCRIPTION and NAMESPACE
 * Several minor improvements to manual and vignette
 
-#### Version 0.4 (2019.06.12)
+#### Version 0.4.0 (2019.06.12)
 * Several minor code improvements
 * Several minor improvements to DESCRIPTION and NAMESPACE
 * Added example data (inst/extdata)
 
-#### Version 0.3 (2019.05.24)
+#### Version 0.3.0 (2019.05.24)
 * Several minor code improvements
 * Added preliminary manual
 * Added preliminary vignette
 
-#### Version 0.2 (2019.03.15)
+#### Version 0.2.0 (2019.03.15)
 * Added function PACViR.complete
 * Added function SplitCovAtRegionBorders in calcCoverage.R to fix error 'error: One or more chromStart greater than chromEnd.'
 * Added preliminary documentation files.
