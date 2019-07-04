@@ -20,18 +20,18 @@ visualizeWithRCircos <- function(plotTitle, genes_withUpdRegions, regions_withUp
 
   # 1. RCIRCOS INITIALIZATION
 
-  # We need the RCircos.Env object in the global namespace. (See: https://github.com/stianlagstad/chimeraviz/blob/master/R/plot_circle.R)
-  assign("RCircos.Env", RCircos::RCircos.Env, .GlobalEnv)
-  #library(RCircos)
+  # See for explanation: https://stackoverflow.com/questions/56875962/r-package-transferring-environment-from-imported-package/56894153#56894153
+  RCircos.Env <- RCircos::RCircos.Env
 
-  #suppressMessages(RCircos::RCircos.Set.Core.Components(cyto.info      =  regions_withUpdRegions, 
-  suppressMessages(RCircos.Set.Core.Components(cyto.info      =  regions_withUpdRegions, 
+  suppressMessages(
+  RCircos.Set.Core.Components(cyto.info = regions_withUpdRegions, 
                                        chr.exclude    =  NULL,
                                        tracks.inside  =  8, 
-                                       tracks.outside =  0))
+                                       tracks.outside =  0)
+  )
 
   # 2. SET PARAMETER FOR IDEOGRAM
-  params <- RCircos::RCircos.Get.Plot.Parameters()
+  params <- RCircos.Get.Plot.Parameters()
   params$base.per.unit <- 225
   params$track.background <- NULL
   params$sub.tracks <- 1
@@ -39,11 +39,11 @@ visualizeWithRCircos <- function(plotTitle, genes_withUpdRegions, regions_withUp
   params$hist.color <- HistCol(cov_withUpdRegions, threshold)
   params$line.color <- "yellow3"
   params$text.size <- 0.346
-  suppressMessages(RCircos::RCircos.Reset.Plot.Parameters(params))
+  suppressMessages(RCircos.Reset.Plot.Parameters(params))
   
   # 3. GRAPHIC DEVICE INITIALIZATION
-  suppressMessages(RCircos::RCircos.Set.Plot.Area())
-  suppressMessages(RCircos::RCircos.Chromosome.Ideogram.Plot())
+  suppressMessages(RCircos.Set.Plot.Area())
+  suppressMessages(RCircos.Chromosome.Ideogram.Plot())
   
   # 4. GENERATE TITLE AND LEGEND
   title(paste(plotTitle),line = -1)
@@ -64,14 +64,14 @@ visualizeWithRCircos <- function(plotTitle, genes_withUpdRegions, regions_withUp
   
   # 5. GENERATE PLOT
   suppressMessages(
-  RCircos::RCircos.Gene.Connector.Plot(genomic.data = genes_withUpdRegions,
+  RCircos.Gene.Connector.Plot(genomic.data = genes_withUpdRegions,
                                        track.num    = 1,
                                        side         = "in"
                                       )
   )
   
   suppressMessages(
-  RCircos::RCircos.Gene.Name.Plot(gene.data  = genes_withUpdRegions,
+  RCircos.Gene.Name.Plot(gene.data  = genes_withUpdRegions,
                                   name.col   = 4,
                                   track.num  = 2,
                                   side       = "in"
@@ -83,20 +83,20 @@ visualizeWithRCircos <- function(plotTitle, genes_withUpdRegions, regions_withUp
                         data.col    = 4,
                         track.num   = 5, 
                         side        = "in",
-                        outside.pos = RCircos::RCircos.Get.Plot.Boundary(track.num = 5, "in")[1],
-                        inside.pos  = RCircos::RCircos.Get.Plot.Boundary(track.num = 5, "in")[1]-0.3
+                        outside.pos = RCircos.Get.Plot.Boundary(track.num = 5, "in")[1],
+                        inside.pos  = RCircos.Get.Plot.Boundary(track.num = 5, "in")[1]-0.3
                                  )
   )
   
   suppressMessages(
-  RCircos::RCircos.Line.Plot(line.data       = lineData,
+  RCircos.Line.Plot(line.data       = lineData,
                              data.col        = 4,
                              track.num       = 5,
                              side            = "in",
                              min.value       = min(cov_withUpdRegions[4]),
                              max.value       = max(cov_withUpdRegions[4]),
-                             outside.pos     = RCircos::RCircos.Get.Plot.Boundary(track.num = 5, "in")[1],
-                             inside.pos      = RCircos::RCircos.Get.Plot.Boundary(track.num = 5, "in")[1]-0.3,
+                             outside.pos     = RCircos.Get.Plot.Boundary(track.num = 5, "in")[1],
+                             inside.pos      = RCircos.Get.Plot.Boundary(track.num = 5, "in")[1]-0.3,
                              genomic.columns = 3,
                              is.sorted       = TRUE
                             )
@@ -104,7 +104,7 @@ visualizeWithRCircos <- function(plotTitle, genes_withUpdRegions, regions_withUp
   
 
   suppressMessages(
-  RCircos::RCircos.Link.Plot(link.data     =  linkData, 
+  RCircos.Link.Plot(link.data     =  linkData, 
                              track.num     = 8,
                              by.chromosome = TRUE
                             )

@@ -1,11 +1,11 @@
 #exportPattern("^[[:alpha:]]+")
 
 export(PACViR.complete)
+export(RCircos.Env)
 
 import(optparse)
 
 import(RCircos)
-#importFrom("RCircos", "RCircos.Set.Core.Components")
 
 importFrom("genbankr", "readGenBank", "accession", "definition", "genes", "otherFeatures")
 
@@ -14,5 +14,3 @@ importFrom("graphics", "polygon", "title", "legend")
 
 #importFrom("grDevices", "svg", "dev.off")
 importFrom("grDevices", "pdf", "dev.off")
-
-

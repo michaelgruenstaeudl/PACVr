@@ -62,7 +62,6 @@ PACViR can be executed via the R function \texttt{PACViR.complete()} from within
 
 \begin{BGVerbatim}[fontsize=\normalsize]
 library(PACViR)
-# MH161174
 ## Specify input files
 gbkFile <- system.file("extdata", "MH161174/MH161174.gb", package="PACViR")
 bamFile <- system.file("extdata", "MH161174/MH161174_PlastomeReadsOnly.sorted.bam", 
@@ -74,31 +73,21 @@ PACViR.complete(gbk.file=gbkFile, bam.file=bamFile, windowSize=250,
                 mosdepthCmd='mosdepth', threshold=15, delete=TRUE, 
                 output=outFile)
 \end{BGVerbatim}
-  
-\begin{figure}[H]
-\centering
-    \includegraphics[width=0.75\textwidth]{MH161174_AssemblyCoverage_viz.pdf}
-    \caption{File \texttt{MH161174\_AssemblyCoverage\_viz.svg} as generated via \texttt{PACViR.complete()}}
-\centering
-\end{figure}
-
-\pagebreak
 
 \section{Executing PACViR via BASH shell}
 PACViR can be executed via the BASH shell command \texttt{PACViR\_Rscript.R} from the BASH commandline shell.
   
 \begin{BGVerbatim}[fontsize=\normalsize]
-# MH899017
 Rscript ./inst/extdata/PACViR_Rscript.R  \
-     -k ./inst/extdata/MH899017.gb \
-     -b ./inst/extdata/MH899017_PlastomeReadsOnly.sorted.bam \
+     -k ./inst/extdata/MH161174.gb \
+     -b ./inst/extdata/MH161174_PlastomeReadsOnly.sorted.bam \
      -o ./MH899017_AssemblyCoverage_viz.pdf
 \end{BGVerbatim}
-
+  
 \begin{figure}[H]
 \centering
-    \includegraphics[width=0.75\textwidth]{MH899017_AssemblyCoverage_viz.pdf}
-    \caption{File \texttt{MH899017\_AssemblyCoverage\_viz.svg} as generated via \texttt{PACViR\_Rscript.R}}
+    \includegraphics[width=0.9\textwidth]{MH161174_AssemblyCoverage_viz.pdf}
+    \caption{File \texttt{MH161174\_AssemblyCoverage\_viz.svg} as generated via \texttt{PACViR.complete()}}
 \centering
 \end{figure}
 
