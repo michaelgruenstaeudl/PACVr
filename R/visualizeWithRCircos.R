@@ -1,7 +1,7 @@
 #!/usr/bin/R
 #contributors = c("Michael Gruenstaeudl","Nils Jenke")
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2019.07.03.1800"
+#version = "2019.07.04.1100"
 
 visualizeWithRCircos <- function(plotTitle, genes_withUpdRegions, regions_withUpdRegions, cov_withUpdRegions, threshold=25, avg, lineData, linkData) {
   # Generates the visualization of genome data and their tracks
@@ -21,7 +21,7 @@ visualizeWithRCircos <- function(plotTitle, genes_withUpdRegions, regions_withUp
   # 1. RCIRCOS INITIALIZATION
 
   # We need the RCircos.Env object in the global namespace. (See: https://github.com/stianlagstad/chimeraviz/blob/master/R/plot_circle.R)
-  assign("RCircos.Env", RCircos::RCircos.Env, .GlobalEnv)
+  #assign("RCircos.Env", RCircos::RCircos.Env, .GlobalEnv)
 
   RCircos::RCircos.Set.Core.Components(cyto.info      =  regions_withUpdRegions, 
                                        chr.exclude    =  NULL,

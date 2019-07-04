@@ -1,7 +1,7 @@
 #!/usr/bin/R
 #contributors = c("Michael Gruenstaeudl","Nils Jenke")
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2019.07.03.1800"
+#version = "2019.07.04.1100"
 
 PACViR.parseName <- function (gbkFile) {
   
@@ -105,6 +105,10 @@ PACViR.complete <- function(gbk.file, bam.file,
                             windowSize = 250, mosdepthCmd = "mosdepth", 
                             threshold = 25, delete = TRUE,
                             output = "./PACViR_output.pdf" ) {
+
+  # 0. Set Environment
+  #RCircos.Env <- globalenv()
+  library(RCircos)
   
   # 1. Preparatory steps
   sample_name <- PACViR.parseName(gbk.file)
