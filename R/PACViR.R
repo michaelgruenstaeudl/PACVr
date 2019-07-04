@@ -6,7 +6,7 @@
 PACViR.parseName <- function (gbkFile) {
   
   # Parse sample name
-    gbkData <- genbankr::readGenBank(gbkFile)
+    gbkData <- suppressMessages(suppressWarnings(genbankr::readGenBank(gbkFile)))
     sample_name = genbankr::accession(gbkData)
     return(sample_name)
 }
@@ -14,7 +14,7 @@ PACViR.parseName <- function (gbkFile) {
 PACViR.parseRegions <- function (gbkFile, tmpDir) {
     
   # Parse GenBank file
-    gbkData <- genbankr::readGenBank(gbkFile)
+    gbkData <- suppressMessages(suppressWarnings(genbankr::readGenBank(gbkFile)))
     raw_regions <- ExtractAllRegions(gbkData)
     write.table(raw_regions, file = paste(tmpDir, .Platform$file.sep, "regions.PACViR.tmp", sep=""), 
                 sep = " ", dec = ".", row.names = TRUE, col.names = TRUE)
@@ -25,7 +25,7 @@ PACViR.parseRegions <- function (gbkFile, tmpDir) {
 PACViR.parseGenes <- function (gbkFile, raw_regions) {
     
   # Parse GenBank file
-    gbkData <- genbankr::readGenBank(gbkFile)
+    gbkData <- suppressMessages(suppressWarnings(genbankr::readGenBank(gbkFile)))
     raw_genes <- ExtractAllGenes(gbkData)
     genes_inclSplitOnes <- SplitGenesAtRegionBorders(raw_genes, raw_regions)
     genes_withRegionInfo <- AssignRegionInfo(genes_inclSplitOnes, raw_regions)
@@ -83,7 +83,7 @@ PACViR.visualizeWithRCircos <- function (gbkFile,
                                          mosdepthCmd) {
     
   # 1. Generate plot title
-    gbkData <- genbankr::readGenBank(gbkFile)
+    gbkData <- suppressMessages(suppressWarnings(genbankr::readGenBank(gbkFile)))
     #mosdepth_present = suppressWarnings(system(paste("command -v", mosdepthCmd), intern=TRUE))
     #if (!(is.null(attr(mosdepth_present, "status")))) {
     mosdepth_present = tryCatch(system2(command="command", args=c("-v", mosdepthCmd), stdout=TRUE), error=function(e) NULL)
@@ -105,10 +105,6 @@ PACViR.complete <- function(gbk.file, bam.file,
                             windowSize = 250, mosdepthCmd = "mosdepth", 
                             threshold = 25, delete = TRUE,
                             output = "./PACViR_output.pdf" ) {
-
-  # 0. Set Environment
-  #RCircos.Env <- globalenv()
-  library(RCircos)
   
   # 1. Preparatory steps
   sample_name <- PACViR.parseName(gbk.file)

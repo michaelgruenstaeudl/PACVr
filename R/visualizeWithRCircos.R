@@ -21,12 +21,14 @@ visualizeWithRCircos <- function(plotTitle, genes_withUpdRegions, regions_withUp
   # 1. RCIRCOS INITIALIZATION
 
   # We need the RCircos.Env object in the global namespace. (See: https://github.com/stianlagstad/chimeraviz/blob/master/R/plot_circle.R)
-  #assign("RCircos.Env", RCircos::RCircos.Env, .GlobalEnv)
+  assign("RCircos.Env", RCircos::RCircos.Env, .GlobalEnv)
+  #library(RCircos)
 
-  RCircos::RCircos.Set.Core.Components(cyto.info      =  regions_withUpdRegions, 
+  #suppressMessages(RCircos::RCircos.Set.Core.Components(cyto.info      =  regions_withUpdRegions, 
+  suppressMessages(RCircos.Set.Core.Components(cyto.info      =  regions_withUpdRegions, 
                                        chr.exclude    =  NULL,
                                        tracks.inside  =  8, 
-                                       tracks.outside =  0)
+                                       tracks.outside =  0))
 
   # 2. SET PARAMETER FOR IDEOGRAM
   params <- RCircos::RCircos.Get.Plot.Parameters()
@@ -37,11 +39,11 @@ visualizeWithRCircos <- function(plotTitle, genes_withUpdRegions, regions_withUp
   params$hist.color <- HistCol(cov_withUpdRegions, threshold)
   params$line.color <- "yellow3"
   params$text.size <- 0.346
-  RCircos::RCircos.Reset.Plot.Parameters(params)
+  suppressMessages(RCircos::RCircos.Reset.Plot.Parameters(params))
   
   # 3. GRAPHIC DEVICE INITIALIZATION
-  RCircos::RCircos.Set.Plot.Area()
-  RCircos::RCircos.Chromosome.Ideogram.Plot()
+  suppressMessages(RCircos::RCircos.Set.Plot.Area())
+  suppressMessages(RCircos::RCircos.Chromosome.Ideogram.Plot())
   
   # 4. GENERATE TITLE AND LEGEND
   title(paste(plotTitle),line = -1)
@@ -61,17 +63,22 @@ visualizeWithRCircos <- function(plotTitle, genes_withUpdRegions, regions_withUp
         )
   
   # 5. GENERATE PLOT
+  suppressMessages(
   RCircos::RCircos.Gene.Connector.Plot(genomic.data = genes_withUpdRegions,
                                        track.num    = 1,
                                        side         = "in"
                                       )
+  )
   
+  suppressMessages(
   RCircos::RCircos.Gene.Name.Plot(gene.data  = genes_withUpdRegions,
                                   name.col   = 4,
                                   track.num  = 2,
                                   side       = "in"
                                   )
+  )
   
+  suppressMessages(
   PACViR.Histogram.Plot(hist.data   = cov_withUpdRegions,
                         data.col    = 4,
                         track.num   = 5, 
@@ -79,7 +86,9 @@ visualizeWithRCircos <- function(plotTitle, genes_withUpdRegions, regions_withUp
                         outside.pos = RCircos::RCircos.Get.Plot.Boundary(track.num = 5, "in")[1],
                         inside.pos  = RCircos::RCircos.Get.Plot.Boundary(track.num = 5, "in")[1]-0.3
                                  )
+  )
   
+  suppressMessages(
   RCircos::RCircos.Line.Plot(line.data       = lineData,
                              data.col        = 4,
                              track.num       = 5,
@@ -91,12 +100,15 @@ visualizeWithRCircos <- function(plotTitle, genes_withUpdRegions, regions_withUp
                              genomic.columns = 3,
                              is.sorted       = TRUE
                             )
+  )
   
 
+  suppressMessages(
   RCircos::RCircos.Link.Plot(link.data     =  linkData, 
                              track.num     = 8,
                              by.chromosome = TRUE
                             )
+  )
   
 
 }

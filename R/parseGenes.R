@@ -9,11 +9,11 @@ ExtractAllGenes <- function(gbkData) {
   #   gbkData: genbank file parsed by genbankr
   # RETURNS:
   #   genes in data frame format
-  gene <- BiocGenerics::as.data.frame(genbankr::genes(gbkData))
-  gene <- gene[ ,c(1:3,which(colnames(gene) == "gene"))]
-  gene <- Rename_Df(gene,
+  gene_L <- BiocGenerics::as.data.frame(genbankr::genes(gbkData))
+  gene_L <- gene_L[ ,c(1:3,which(colnames(gene_L) == "gene"))]
+  gene_L <- Rename_Df(gene_L,
                     "gene")
-  return(gene)
+  return(gene_L)
 }
 
 

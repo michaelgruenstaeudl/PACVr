@@ -3,7 +3,11 @@
 export(PACViR.complete)
 
 import(optparse)
+
 import(RCircos)
+#importFrom("RCircos", "RCircos.Set.Core.Components")
+
+importFrom("genbankr", "readGenBank", "accession", "definition", "genes", "otherFeatures")
 
 importFrom("utils", "read.table", "write.table")
 importFrom("graphics", "polygon", "title", "legend")
@@ -11,4 +15,4 @@ importFrom("graphics", "polygon", "title", "legend")
 #importFrom("grDevices", "svg", "dev.off")
 importFrom("grDevices", "pdf", "dev.off")
 
-importFrom("RCircos", "RCircos.Env")
+
