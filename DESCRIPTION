@@ -1,6 +1,6 @@
 Package: PACViR
-Version: 0.7.3
-Date: 2019-07-03
+Version: 0.7.4
+Date: 2019-07-05
 Title: Plastome Assembly Coverage Visualization in R
 Authors@R: c(person("Michael", "Gruenstaeudl", role = c("aut", "cre"), email = "m.gruenstaeudl@fu-berlin.de"), 
              person("Nils", "Jenke", role = c("ctb"), email = "nilsj24@zedat.fu-berlin.de"))

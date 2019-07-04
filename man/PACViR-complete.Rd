@@ -61,7 +61,8 @@ bamFile <- system.file("extdata", "MH161174/MH161174_PlastomeReadsOnly.sorted.ba
 #outFile <- paste(system.file("extdata", package="PACViR"), 
 #                 "/testing/MH161174_AssemblyCoverage_viz.pdf", sep="")
 outFile <- paste(getwd(), "/MH161174_AssemblyCoverage_viz.pdf", sep="")
+\dontrun{
 PACViR.complete(gbk.file=gbkFile, bam.file=bamFile, windowSize=250, 
                 mosdepthCmd='mosdepth', threshold=15, delete=TRUE, output=outFile)
-
+}
 }
