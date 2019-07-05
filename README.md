@@ -28,7 +28,7 @@ PACVr.complete(gbk.file=gbkFile, bam.file=bamFile, windowSize=250,
 ```
 
 ## OUTPUT
-![](vignettes/MH161174_AssemblyCoverage_viz.pdf)
+![](MH161174_AssemblyCoverage_viz.png)
 
 <!---
 ## CITATION
