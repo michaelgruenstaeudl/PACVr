@@ -1,7 +1,7 @@
-.onAttach = function(libname = find.package("PACViR"), pkgname = "PACViR") {
+.onAttach = function(libname = find.package("PACVr"), pkgname = "PACVr") {
     # nothing
 }
 
-.onLoad = function(libname = find.package("PACViR"), pkgname = "PACViR") {
+.onLoad = function(libname = find.package("PACVr"), pkgname = "PACVr") {
     # nothing
 }

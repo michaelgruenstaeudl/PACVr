@@ -1,9 +1,9 @@
 #!/usr/bin/R
 #contributors = c("Michael Gruenstaeudl","Nils Jenke")
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2019.07.04.1100"
+#version = "2019.07.05.1100"
 
-PACViR.parseName <- function (gbkFile) {
+PACVr.parseName <- function (gbkFile) {
   
   # Parse sample name
     gbkData <- suppressMessages(suppressWarnings(genbankr::readGenBank(gbkFile)))
@@ -11,18 +11,18 @@ PACViR.parseName <- function (gbkFile) {
     return(sample_name)
 }
 
-PACViR.parseRegions <- function (gbkFile, tmpDir) {
+PACVr.parseRegions <- function (gbkFile, tmpDir) {
     
   # Parse GenBank file
     gbkData <- suppressMessages(suppressWarnings(genbankr::readGenBank(gbkFile)))
     raw_regions <- ExtractAllRegions(gbkData)
-    write.table(raw_regions, file = paste(tmpDir, .Platform$file.sep, "regions.PACViR.tmp", sep=""), 
+    write.table(raw_regions, file = paste(tmpDir, .Platform$file.sep, "regions.PACVr.tmp", sep=""), 
                 sep = " ", dec = ".", row.names = TRUE, col.names = TRUE)
     return(raw_regions)
 }
 
 
-PACViR.parseGenes <- function (gbkFile, raw_regions) {
+PACVr.parseGenes <- function (gbkFile, raw_regions) {
     
   # Parse GenBank file
     gbkData <- suppressMessages(suppressWarnings(genbankr::readGenBank(gbkFile)))
@@ -34,7 +34,7 @@ PACViR.parseGenes <- function (gbkFile, raw_regions) {
 }
 
 
-PACViR.calcCoverage <- function (chromName, bamFile, 
+PACVr.calcCoverage <- function (chromName, bamFile, 
                                  raw_regions, windowSize=250,
                                  output,
                                  mosdepthCmd) {
@@ -57,7 +57,7 @@ PACViR.calcCoverage <- function (chromName, bamFile,
 }
 
 
-PACViR.generateIRGeneData <- function (genes_withUpdRegions) {
+PACVr.generateIRGeneData <- function (genes_withUpdRegions) {
     
   # Parse GenBank file
     linkData <- GenerateIRGeneData(genes_withUpdRegions)
@@ -65,7 +65,7 @@ PACViR.generateIRGeneData <- function (genes_withUpdRegions) {
 }
 
 
-PACViR.GenerateHistogramData <- function (cov_withUpdRegions) {
+PACVr.GenerateHistogramData <- function (cov_withUpdRegions) {
     
   # Parse GenBank file
     lineData <- GenerateHistogramData(cov_withUpdRegions)
@@ -73,7 +73,7 @@ PACViR.GenerateHistogramData <- function (cov_withUpdRegions) {
 }
 
 
-PACViR.visualizeWithRCircos <- function (gbkFile,
+PACVr.visualizeWithRCircos <- function (gbkFile,
                                          genes_withUpdRegions,
                                          regions_withUpdRegions,
                                          cov_withUpdRegions,
@@ -101,13 +101,13 @@ PACViR.visualizeWithRCircos <- function (gbkFile,
 }
 
 
-PACViR.complete <- function(gbk.file, bam.file, 
+PACVr.complete <- function(gbk.file, bam.file, 
                             windowSize = 250, mosdepthCmd = "mosdepth", 
                             threshold = 25, delete = TRUE,
-                            output = "./PACViR_output.pdf" ) {
+                            output = "./PACVr_output.pdf" ) {
   
   # 1. Preparatory steps
-  sample_name <- PACViR.parseName(gbk.file)
+  sample_name <- PACVr.parseName(gbk.file)
   outDir <- dirname(output)
   tmpDir <- file.path(outDir, paste(sample_name, ".tmp", sep=""))
   get_os <- Sys.info()[1]
@@ -115,16 +115,16 @@ PACViR.complete <- function(gbk.file, bam.file,
   if(get_os == "Windows"){system2(command="md", args=tmpDir)} else {system2(command="mkdir", args=c("-p", tmpDir))}
   
   # 2. Conduct operations
-  raw_regions <- PACViR.parseRegions(gbk.file, tmpDir)
-  genes_withUpdRegions <- PACViR.parseGenes(gbk.file, raw_regions)
+  raw_regions <- PACVr.parseRegions(gbk.file, tmpDir)
+  genes_withUpdRegions <- PACVr.parseGenes(gbk.file, raw_regions)
   regions_withUpdRegions <- AdjustRegionLocation(raw_regions, raw_regions)
-  cov_withUpdRegions <- PACViR.calcCoverage(sample_name, bam.file, raw_regions, windowSize, tmpDir, mosdepthCmd)
-  linkData <- PACViR.generateIRGeneData(genes_withUpdRegions)
-  lineData <- PACViR.GenerateHistogramData(cov_withUpdRegions)
+  cov_withUpdRegions <- PACVr.calcCoverage(sample_name, bam.file, raw_regions, windowSize, tmpDir, mosdepthCmd)
+  linkData <- PACVr.generateIRGeneData(genes_withUpdRegions)
+  lineData <- PACVr.GenerateHistogramData(cov_withUpdRegions)
   
   # 3. Save plot
   pdf(output)
-  PACViR.visualizeWithRCircos(gbk.file, genes_withUpdRegions, regions_withUpdRegions, cov_withUpdRegions, threshold, lineData, linkData, mosdepthCmd)
+  PACVr.visualizeWithRCircos(gbk.file, genes_withUpdRegions, regions_withUpdRegions, cov_withUpdRegions, threshold, lineData, linkData, mosdepthCmd)
   dev.off()
   
   # 4. Delete temp files

@@ -1,7 +1,7 @@
 #!/usr/bin/R
 #contributors = c("Michael Gruenstaeudl","Nils Jenke")
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2019.07.04.1100"
+#version = "2019.07.05.1100"
 
 visualizeWithRCircos <- function(plotTitle, genes_withUpdRegions, regions_withUpdRegions, cov_withUpdRegions, threshold=25, avg, lineData, linkData) {
   # Generates the visualization of genome data and their tracks
@@ -79,7 +79,7 @@ visualizeWithRCircos <- function(plotTitle, genes_withUpdRegions, regions_withUp
   )
   
   suppressMessages(
-  PACViR.Histogram.Plot(hist.data   = cov_withUpdRegions,
+  PACVr.Histogram.Plot(hist.data   = cov_withUpdRegions,
                         data.col    = 4,
                         track.num   = 5, 
                         side        = "in",

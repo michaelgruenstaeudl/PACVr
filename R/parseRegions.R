@@ -1,7 +1,7 @@
 #!/usr/bin/R
 #contributors = c("Michael Gruenstaeudl","Nils Jenke")
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2019.07.03.1800"
+#version = "2019.07.05.1100"
 
 filter <- function(allRegions_L, where) {
   out = subset(allRegions_L, grepl("IRb|IRa|repeat|inverted", allRegions_L[,where], ignore.case = FALSE))

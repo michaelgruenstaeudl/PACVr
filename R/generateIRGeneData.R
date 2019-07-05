@@ -1,7 +1,7 @@
 #!/usr/bin/R
 #contributors = c("Michael Gruenstaeudl","Nils Jenke")
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2019.07.03.1800"
+#version = "2019.07.05.1100"
 
 GenerateIRGeneData <- function(sample_genes) {
   # Function to generate link data for RCircos.Link.Line.Plot

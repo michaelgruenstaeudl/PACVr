@@ -1,7 +1,7 @@
 \documentclass{article}
-%\VignetteIndexEntry{PACViR}
-%\VignetteKeywords{PACViR}
-%\VignettePackage{PACViR}
+%\VignetteIndexEntry{PACVr}
+%\VignetteKeywords{PACVr}
+%\VignettePackage{PACVr}
 %\VignetteEncoding{UTF-8}
 
 
@@ -28,7 +28,7 @@
  {\end{Verbatim}\end{tcolorbox}}
 
 \author{Michael Gruenstaeudl, Nils Jenke}
-\title{Using PACViR}
+\title{Using PACVr}
 
 
 \begin{document}
@@ -36,10 +36,10 @@
 \tableofcontents
 
 \section{Introduction}
-PACViR is a user-friendly software tool to visualize the coverage depth of a complete plastid genome as well as the equality of its IR regions while simultaneously accounting for the circular, quadripartite structure of the genome. This vignette provides two examples of executing PACViR on empirical data via the R function \texttt{PACViR.complete()} from within the R interpreter and from the BASH commandline shell.
+PACVr is a user-friendly software tool to visualize the coverage depth of a complete plastid genome as well as the equality of its IR regions while simultaneously accounting for the circular, quadripartite structure of the genome. This vignette provides two examples of executing PACVr on empirical data via the R function \texttt{PACVr.complete()} from within the R interpreter and from the BASH commandline shell.
 
 \section{Requirements}
-To run PACViR, several dependencies have to be installed.
+To run PACVr, several dependencies have to be installed.
 
 \begin{BGVerbatim}[fontsize=\normalsize]
 # Mosdepth (a general dependency)
@@ -57,28 +57,28 @@ if (!requireNamespace("genbankr", quietly=TRUE))
 
 \pagebreak
 
-\section{Executing PACViR via R interpreter}
-PACViR can be executed via the R function \texttt{PACViR.complete()} from within the R interpreter.
+\section{Executing PACVr via R interpreter}
+PACVr can be executed via the R function \texttt{PACVr.complete()} from within the R interpreter.
 
 \begin{BGVerbatim}[fontsize=\normalsize]
-library(PACViR)
+library(PACVr)
 ## Specify input files
-gbkFile <- system.file("extdata", "MH161174/MH161174.gb", package="PACViR")
+gbkFile <- system.file("extdata", "MH161174/MH161174.gb", package="PACVr")
 bamFile <- system.file("extdata", "MH161174/MH161174_PlastomeReadsOnly.sorted.bam", 
-                       package="PACViR")
+                       package="PACVr")
 ## Specify output file
 outFile <- paste(getwd(), "/MH161174_AssemblyCoverage_viz.pdf", sep="")
-## Run PACViR
-PACViR.complete(gbk.file=gbkFile, bam.file=bamFile, windowSize=250, 
+## Run PACVr
+PACVr.complete(gbk.file=gbkFile, bam.file=bamFile, windowSize=250, 
                 mosdepthCmd='mosdepth', threshold=15, delete=TRUE, 
                 output=outFile)
 \end{BGVerbatim}
 
-\section{Executing PACViR via BASH shell}
-PACViR can be executed via the BASH shell command \texttt{PACViR\_Rscript.R} from the BASH commandline shell.
+\section{Executing PACVr via BASH shell}
+PACVr can be executed via the BASH shell command \texttt{PACVr\_Rscript.R} from the BASH commandline shell.
   
 \begin{BGVerbatim}[fontsize=\normalsize]
-Rscript ./inst/extdata/PACViR_Rscript.R  \
+Rscript ./inst/extdata/PACVr_Rscript.R  \
      -k ./inst/extdata/MH161174.gb \
      -b ./inst/extdata/MH161174_PlastomeReadsOnly.sorted.bam \
      -o ./MH899017_AssemblyCoverage_viz.pdf
@@ -87,14 +87,14 @@ Rscript ./inst/extdata/PACViR_Rscript.R  \
 \begin{figure}[H]
 \centering
     \includegraphics[width=0.9\textwidth]{MH161174_AssemblyCoverage_viz.pdf}
-    \caption{File \texttt{MH161174\_AssemblyCoverage\_viz.svg} as generated via \texttt{PACViR.complete()}}
+    \caption{File \texttt{MH161174\_AssemblyCoverage\_viz.svg} as generated via \texttt{PACVr.complete()}}
 \centering
 \end{figure}
 
 \pagebreak
 
 %\section{Modifying parameters}
-%  Depending on which system PACViR will be executed
+%  Depending on which system PACVr will be executed
 
 %\section{More Information}
 

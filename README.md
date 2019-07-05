@@ -1,60 +1,60 @@
+*PACVr*
+=======
 
-*PACViR*
-========
-
-A cool new secret project
-<!---
 Plastome Assembly Coverage Visualization in R
---->
-
 
 ## INSTALLATION
 Coming soon.
 
 <!---
 ```
-python2 setup.py install  # Installation
-python2 setup.py test     # Testing
+# In R:
+install.packages("PACVr")
 ```
 --->
-
 
 ## USAGE
-Coming soon.
+```
+# In R:
+library(PACVr)
+
+gbkFile <- system.file("extdata", "MH161174/MH161174.gb", package="PACVr")
+bamFile <- system.file("extdata", "MH161174/MH161174_PlastomeReadsOnly.sorted.bam", 
+                       package="PACVr")
+outFile <- paste(getwd(), "/MH161174_AssemblyCoverage_viz.pdf", sep="")
+
+PACVr.complete(gbk.file=gbkFile, bam.file=bamFile, windowSize=250, 
+                mosdepthCmd='mosdepth', threshold=15, delete=TRUE, output=outFile)
+```
+
+## OUTPUT
+![](vignettes/MH161174_AssemblyCoverage_viz.pdf)
 
 <!---
-#### Example with supplied test data
+## CITATION
+Using PACVr in your research? Please cite it!
+
+- Gruenstaeudl M., Jenke N. (2019). foo bar baz
+
 ```
-SCRPT=$PWD/scripts/annonex2embl_CMD.py
-INPUT=examples/DNA_Alignment.nex
-METAD=examples/Metadata.csv
-DESCR="description of alignment"
-EMAIL=your_email_here@gmail.com
-AUTHR="Your_name_here"
-
-python2 $SCRPT -n $INPUT -c $METAD -o ${INP%.nex*}.embl -d $DESCR -e $EMAIL -a $AUTHR
+@article {Gruenstaeudl435644,
+    author = {Gruenstaeudl, Michael and Hartmaring, Yannick},
+    title = {EMBL2checklists: A Python package to facilitate the user-friendly submission of plant DNA barcoding sequences to ENA},
+    elocation-id = {435644},
+    year = {2018},
+    doi = {10.1101/435644},
+    URL = {https://www.biorxiv.org/content/early/2018/10/05/435644},
+    journal = {bioRxiv}
+}
 ```
---->
+-->
 
-
-## TO DO
-Currently nothing.
 <!---
-1. Improve manual; see manual of P2C2M as reference.
-2. Improve vignette; use the vignette of P2C2M as reference.
---->
-
 ## DEVELOPMENT
-Coming soon.
-
-<!---
-#### Testing for development
-To run the unittests outside of 'python setup.py test':
-```
-python -m unittest discover -s /home/michael_science/git/michaelgruenstaeudl_annonex2embl/tests -p "*_test.py"
-```
+1. Currently nothing.
+2. Currently nothing.
 --->
-
 
 ## CHANGELOG
 See [`CHANGELOG.md`](CHANGELOG.md) for a list of recent changes to the software.
+

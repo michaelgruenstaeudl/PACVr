@@ -1,6 +1,6 @@
 #exportPattern("^[[:alpha:]]+")
 
-export(PACViR.complete)
+export(PACVr.complete)
 export(RCircos.Env)
 
 import(optparse)

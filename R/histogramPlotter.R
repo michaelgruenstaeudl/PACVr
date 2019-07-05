@@ -1,11 +1,11 @@
 #!/usr/bin/R
 #contributors = c("Michael Gruenstaeudl","Nils Jenke")
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2019.07.03.1800"
+#version = "2019.07.05.1100"
 
 # Please note: The following R functions were taken from the original RCircos package and then modified. The modifications were necessary to fix several issues that caused erroneous visualizations in the original R code.
 
-PACViR.Get.Start.End.Locations <- function(plot.data, plot.width){
+PACVr.Get.Start.End.Locations <- function(plot.data, plot.width){
   RCircos.Cyto <- RCircos::RCircos.Get.Plot.Ideogram();
 
   dataChroms <- as.character(plot.data[,1]);
@@ -35,7 +35,7 @@ PACViR.Get.Start.End.Locations <- function(plot.data, plot.width){
   return(locations)
 }
 
-PACViR.Histogram.Plot <- function(hist.data=NULL, data.col=4, 
+PACVr.Histogram.Plot <- function(hist.data=NULL, data.col=4, 
                                    track.num=NULL, side=c("in", "out"), min.value=NULL, 
                                    max.value=NULL, inside.pos=NULL, outside.pos=NULL,
                                    genomic.columns=3, is.sorted=TRUE)
@@ -63,7 +63,7 @@ PACViR.Histogram.Plot <- function(hist.data=NULL, data.col=4,
   #
   hist.data <- RCircos::RCircos.Get.Single.Point.Positions(hist.data,
                                                   genomic.columns);
-  locations <- PACViR.Get.Start.End.Locations(hist.data, 
+  locations <- PACVr.Get.Start.End.Locations(hist.data, 
                                               RCircos.Par$hist.width)
   
   #    histgram colors and height

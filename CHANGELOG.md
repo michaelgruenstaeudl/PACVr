@@ -1,5 +1,10 @@
 CHANGELOG
 ---------
+#### Version 0.7.5 (2019.07.05)
+* Several minor changes to make package compatible with CRAN
+* Several minor improvements to DESCRIPTION and NAMESPACE
+* Bug fix to import RCircos.Env
+
 #### Version 0.7.0 (2019.07.03)
 * Several minor bug fixes
 
@@ -22,6 +27,6 @@ CHANGELOG
 * Added preliminary vignette
 
 #### Version 0.2.0 (2019.03.15)
-* Added function PACViR.complete
-* Added function SplitCovAtRegionBorders in calcCoverage.R to fix error 'error: One or more chromStart greater than chromEnd.'
+* Added function PACVr.complete
+* Added function SplitCovAtRegionBorders in calcCoverage.R
 * Added preliminary documentation files.

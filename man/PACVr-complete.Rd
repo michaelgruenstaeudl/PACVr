@@ -1,23 +1,23 @@
-\name{PACViR.complete}
-\alias{PACViR.complete}
+\name{PACVr.complete}
+\alias{PACVr.complete}
 
 \title{
-Execute the complete PACViR pipeline via a single command
+Execute the complete PACVr pipeline via a single command
 }
 
 
 \description{
-This function executes the complete \pkg{PACViR} pipeline.
+This function executes the complete \pkg{PACVr} pipeline.
 }
 
 \usage{
-PACViR.complete(gbk.file,
+PACVr.complete(gbk.file,
                 bam.file,
                 windowSize=250,
                 mosdepthCmd='mosdepth',
                 threshold=25,
                 delete=TRUE,
-                output='./PACViR_output.pdf')
+                output='./PACVr_output.pdf')
 }
 
 
@@ -32,14 +32,14 @@ PACViR.complete(gbk.file,
 }
 
 \details{
-This is the main function of \pkg{PACViR} to execute the full pipeline. It takes a Genbank file and a BAM file that are used to visualize plastome data in a circular way using the \pkg{RCircos} package. Those two input arguments are mandatory. The visualization contains gene names, gene locations and coverage data displayed as histrogram. The pipeline will produce a svg file format containing the circular visualization of the plastome data. Additionally, it will give the mosdepth output.
+This is the main function of \pkg{PACVr} to execute the full pipeline. It takes a Genbank file and a BAM file that are used to visualize plastome data in a circular way using the \pkg{RCircos} package. Those two input arguments are mandatory. The visualization contains gene names, gene locations and coverage data displayed as histrogram. The pipeline will produce a svg file format containing the circular visualization of the plastome data. Additionally, it will give the mosdepth output.
 }
 
 \value{ invisible NULL.
 }
 
 \references{
-Gruenstaeudl M., Jenke N. (2019) PACViR: Plastome Assembly Coverage Visualization in R. R package version 0.7.
+Gruenstaeudl M., Jenke N. (2019) PACVr: Plastome Assembly Coverage Visualization in R. R package version 0.7.5. Manuscript in prep.
 }
 
 
@@ -52,17 +52,17 @@ Gruenstaeudl M., Jenke N. (2019) PACViR: Plastome Assembly Coverage Visualizatio
 
 \examples{
 
-#library(PACViR)
+#library(PACVr)
 
 # MH161174
-gbkFile <- system.file("extdata", "MH161174/MH161174.gb", package="PACViR")
+gbkFile <- system.file("extdata", "MH161174/MH161174.gb", package="PACVr")
 bamFile <- system.file("extdata", "MH161174/MH161174_PlastomeReadsOnly.sorted.bam", 
-                       package="PACViR")
-#outFile <- paste(system.file("extdata", package="PACViR"), 
+                       package="PACVr")
+#outFile <- paste(system.file("extdata", package="PACVr"), 
 #                 "/testing/MH161174_AssemblyCoverage_viz.pdf", sep="")
 outFile <- paste(getwd(), "/MH161174_AssemblyCoverage_viz.pdf", sep="")
 \dontrun{
-PACViR.complete(gbk.file=gbkFile, bam.file=bamFile, windowSize=250, 
+PACVr.complete(gbk.file=gbkFile, bam.file=bamFile, windowSize=250, 
                 mosdepthCmd='mosdepth', threshold=15, delete=TRUE, output=outFile)
 }
 }

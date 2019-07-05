@@ -1,7 +1,7 @@
 #!/usr/bin/R
 #contributors = c("Michael Gruenstaeudl","Nils Jenke")
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2019.07.03.1800"
+#version = "2019.07.05.1100"
 
 library("optparse")
 
@@ -52,7 +52,7 @@ CmdLineArgs <- function() {
                               metavar = "logical"),
                   make_option(opt_str = c("-o","--output"), 
                               type    = "character", 
-                              default = "./PACViR_output.pdf", 
+                              default = "./PACVr_output.pdf", 
                               dest    = "output",
                               help    = "name of output file [default= %default]", 
                               metavar = "character"))
@@ -74,7 +74,7 @@ opt <- CmdLineArgs()
 
 ########################################################################
 
-PACViR.complete(gbk.file = opt$gbkFile, bam.file = opt$bamFile, 
+PACVr.complete(gbk.file = opt$gbkFile, bam.file = opt$bamFile, 
                 windowSize = opt$windowSize, mosdepthCmd = opt$mosdepthCmd, 
                 threshold = opt$threshold, delete = opt$delete, 
                 output = opt$output)
