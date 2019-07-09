@@ -40,8 +40,6 @@ PACVr.calcCoverage <- function (chromName, bamFile,
                                  mosdepthCmd) {
     
   # Coverage calculation
-    #mosdepth_present = suppressWarnings(system(paste("command -v", mosdepthCmd), intern=TRUE))
-    #if (!(is.null(attr(mosdepth_present, "status")))) {
     mosdepth_present = tryCatch(system2(command="command", args=c("-v", mosdepthCmd), stdout=TRUE), error=function(e) NULL)
     if (is.null(mosdepth_present)) {
       print('The software tool Mosdepth (https://github.com/brentp/mosdepth) was not detected on your system. Please install it, for example via R command: system("conda install -y mosdepth")')
@@ -84,8 +82,6 @@ PACVr.visualizeWithRCircos <- function (gbkFile,
     
   # 1. Generate plot title
     gbkData <- suppressMessages(suppressWarnings(genbankr::readGenBank(gbkFile)))
-    #mosdepth_present = suppressWarnings(system(paste("command -v", mosdepthCmd), intern=TRUE))
-    #if (!(is.null(attr(mosdepth_present, "status")))) {
     mosdepth_present = tryCatch(system2(command="command", args=c("-v", mosdepthCmd), stdout=TRUE), error=function(e) NULL)
     if (is.null(mosdepth_present)) {
       plotTitle <- paste("Dummy data -", genbankr::accession(gbkData), ". Please install mosdepth.")

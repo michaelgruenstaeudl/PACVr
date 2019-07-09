@@ -39,11 +39,17 @@ visualizeWithRCircos <- function(plotTitle, genes_withUpdRegions, regions_withUp
   params$hist.color <- HistCol(cov_withUpdRegions, threshold)
   params$line.color <- "yellow3"
   params$text.size <- 0.346
-  suppressMessages(RCircos.Reset.Plot.Parameters(params))
+  suppressMessages(
+  RCircos.Reset.Plot.Parameters(params)
+  )
   
   # 3. GRAPHIC DEVICE INITIALIZATION
-  suppressMessages(RCircos.Set.Plot.Area())
-  suppressMessages(RCircos.Chromosome.Ideogram.Plot())
+  suppressMessages(
+  RCircos.Set.Plot.Area()
+  )
+  suppressMessages(
+  RCircos.Chromosome.Ideogram.Plot()
+  )
   
   # 4. GENERATE TITLE AND LEGEND
   title(paste(plotTitle),line = -1)
@@ -79,9 +85,9 @@ visualizeWithRCircos <- function(plotTitle, genes_withUpdRegions, regions_withUp
   )
   
   suppressMessages(
-  PACVr.Histogram.Plot(hist.data   = cov_withUpdRegions,
+  RCircos.Histogram.Plot(hist.data   = cov_withUpdRegions,
                         data.col    = 4,
-                        track.num   = 5, 
+                        track.num   = 5,
                         side        = "in",
                         outside.pos = RCircos.Get.Plot.Boundary(track.num = 5, "in")[1],
                         inside.pos  = RCircos.Get.Plot.Boundary(track.num = 5, "in")[1]-0.3
