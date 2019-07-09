@@ -1,7 +1,7 @@
 #!/usr/bin/R
 #contributors = c("Michael Gruenstaeudl","Nils Jenke")
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2019.07.05.1100"
+#version = "2019.07.09.1900"
 
 CovCalc <- function(bamFile, windowSize=250, tmpDir, mosdepthCmd="mosdepth"){
   # Calculates coverage of a given bam file and stores data in data.frame format
@@ -13,10 +13,9 @@ CovCalc <- function(bamFile, windowSize=250, tmpDir, mosdepthCmd="mosdepth"){
   # RETURNS:
   #     data.frame with region names, chromosome start, chromosome end and coverage calcucation
   if (!is.numeric(windowSize) | windowSize < 0) {
-    stop("windowSize has to be greater than zero")
+    warning("User-selected window size must be >= 1.")
+    stop()
   }
-  #system(paste(mosdepthCmd, "--by", windowSize, paste(tmpDir, .Platform$file.sep, "coverage", sep = ""), bamFile))
-  #system(paste("gzip -df", paste(tmpDir, .Platform$file.sep, "coverage.regions.bed.gz", sep = "")))
   system2(command=mosdepthCmd, args=c("--by", windowSize,paste(tmpDir, .Platform$file.sep, "coverage", sep = ""), bamFile))
   system2(command="gzip", args=c("-df", paste(tmpDir, .Platform$file.sep, "coverage.regions.bed.gz", sep = "")))
   cov <-read.table(paste(tmpDir, .Platform$file.sep, "coverage.regions.bed", sep = ""))
@@ -32,7 +31,8 @@ DummyCov <- function(chromName, raw_regions, windowSize=250){
   # RETURNS:
   #     data.frame with region names, chromosome start, chromosome end and coverage calcucation
   if (!is.numeric(windowSize) | windowSize < 0) {
-    stop("windowSize has to be greater than zero")
+    warning("User-selected window size must be >= 1.")
+    stop()
   }
   chromLen <- as.integer(raw_regions[4, "chromEnd"])
   chromStart <- seq.int(0, chromLen, windowSize)

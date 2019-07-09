@@ -1,6 +1,6 @@
 Package: PACVr
-Version: 0.7.5
-Date: 2019-07-05
+Version: 0.8.0
+Date: 2019-07-09
 Title: Plastome Assembly Coverage Visualization
 Authors@R: c(person("Michael", "Gruenstaeudl", role = c("aut", "cre"), email = "m.gruenstaeudl@fu-berlin.de"), 
              person("Nils", "Jenke", role = c("ctb"), email = "nilsj24@zedat.fu-berlin.de"))
@@ -11,6 +11,6 @@ Depends: R (>= 3.3.0)
 biocViews:
 Imports: RCircos (>= 1.2.0), optparse (>= 1.6.0), genbankr (>= 1.2.1), BiocGenerics (>= 0.20.0)
 SystemRequirements: mosdepth
-Description: A user-friendly software tool to visualize the coverage depth of a complete plastid genome as well as the equality of its IR regions while simultaneously accounting for the circular, quadripartite structure of the genome, thus providing an aid to optimize the process of plastid genome assembly.
+Description: Visualizes the coverage depth of a complete plastid genome as well as the equality of its inverted repeat regions in relation to the circular, quadripartite genome structure and the location of individual genes.
 License: BSD 3-clause License + file LICENSE
 OS_type: unix

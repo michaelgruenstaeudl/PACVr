@@ -1,11 +1,13 @@
 #!/usr/bin/R
 #contributors = c("Michael Gruenstaeudl","Nils Jenke")
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2019.07.05.1100"
+#version = "2019.07.09.1900"
 
 filter <- function(allRegions_L, where) {
   out = subset(allRegions_L, grepl("IRb|IRa|repeat|inverted", allRegions_L[,where], ignore.case = FALSE))
-  if (nrow(out) < 1) {warning(paste("Inverted repeat info not found under qualifier ", where))}
+  if (nrow(out) < 1) {
+      warning(paste("Inverted repeat info not found for qualifier ", where, ".", sep=""))
+      }
   return(out)
 }
 
@@ -22,7 +24,8 @@ ExtractAllRegions <- function(gbkData) {
     region_L <- region_L[1:2,]
   }
   if (nrow(region_L) != 2) {
-    stop("ERROR: The number of detected inverted repeat regions is not two\n")
+    warning("Number of inverted repeats not equal to 2.")
+    stop()
   }
   region_L <- region_L[,1:3]
   region_L <- region_L[order(region_L[,3],decreasing = FALSE),]
@@ -35,7 +38,8 @@ ExtractAllRegions <- function(gbkData) {
   region_L[ ,3] <- as.integer(region_L[ ,3])
   region_L <- region_L[order(region_L[ ,3], decreasing = FALSE), ]
   if (nrow(region_L) != 4) {
-    stop("ERROR: Could not find all necessary regions; Genbank file must at least contain note-qualifiers on IRb and IRa.\n")
+    warning("Insufficient regions in the input genome detected. Please note: The Genbank record must at least contain note-qualifiers for the inverted repeats.")
+    stop()
   }
   #region_L <- cbind(region_L, Band  = c("","","",""), Stain = c("","","",""))
   region_L <- cbind(region_L, Band  = c("","","",""), Stain = c("gneg","gneg","gneg","gneg"))

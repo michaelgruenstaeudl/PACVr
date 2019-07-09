@@ -4,27 +4,21 @@
 Plastome Assembly Coverage Visualization in R
 
 ## INSTALLATION
-Coming soon.
-
-<!---
 ```
-# In R:
-install.packages("PACVr")
+library(devtools)
+install_github("michaelgruenstaeudl/PACVr")
 ```
---->
 
 ## USAGE
 ```
 # In R:
 library(PACVr)
-
 gbkFile <- system.file("extdata", "MH161174/MH161174.gb", package="PACVr")
 bamFile <- system.file("extdata", "MH161174/MH161174_PlastomeReadsOnly.sorted.bam", 
                        package="PACVr")
-outFile <- paste(getwd(), "/MH161174_AssemblyCoverage_viz.pdf", sep="")
-
+outFile <- paste(tempdir(), "/MH161174_AssemblyCoverage_viz.pdf", sep="")
 PACVr.complete(gbk.file=gbkFile, bam.file=bamFile, windowSize=250, 
-                mosdepthCmd='mosdepth', threshold=15, delete=TRUE, output=outFile)
+               mosdepthCmd='mosdepth', threshold=15, delete=TRUE, output=outFile)
 ```
 
 ## OUTPUT

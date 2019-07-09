@@ -1,7 +1,7 @@
 #!/usr/bin/R
 #contributors = c("Michael Gruenstaeudl","Nils Jenke")
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2019.07.05.1100"
+#version = "2019.07.09.1900"
 
 In.Interval <- function(end, interval){
   # Check if a given interval is part of another given interval
@@ -12,7 +12,8 @@ In.Interval <- function(end, interval){
   #   Boolean vector
   # Error handling
   if(!is.numeric(end) == TRUE | !is.numeric(interval) == TRUE) {
-    stop("chromEnd and geneEnd must be numerical.\n")
+    warning("Vectors 'chromEnd' and 'geneEnd' must be numerical.")
+    stop()
   }
   return(interval >= end) 
 } 
@@ -45,7 +46,8 @@ HistCol <- function(cov, threshold) {
   #   color vector
   # Error handling
   if (!is.numeric(threshold) | threshold < 0) {
-    stop("threshold has to be greater than zero")
+    warning("User-defined coverage depth threshold must be >=1.")
+    stop()
   }
   color <- rep("black",nrow(cov))
   ind   <- cov[ ,4] <= threshold
@@ -62,7 +64,8 @@ AssignRegionInfo <- function(toAssign, genomic_regions) {
   # RETURNS:
   #   data.frame with assigned genomic regions
   if (ncol(genomic_regions) < 3 | ncol(toAssign) < 3) {
-    stop("Dataframe needs atleast 3 columns containing chromosome name, chromosome start and chromosome end.\n")
+    warning("Input data frame must have at least 3 columns (containing name, start position and end position of chromosome).")
+    stop()
   }
   region.rows   <- colnames(genomic_regions)
   assign.rows   <- colnames(toAssign)
@@ -88,7 +91,8 @@ AdjustRegionLocation <- function(toShift, genomic_regions){
   # RETURNS:
   #   data.frame with shifted regions
   if (ncol(genomic_regions) < 3 | ncol(toShift) < 3) {
-    stop("Dataframe needs at least 3 columns containing chromosome name, chromosome start and chromosome end.\n")
+    warning("Input data frame must have at least 3 columns (containing name, start position and end position of chromosome).")
+    stop()
   }
   i <- 0
   j <- 0

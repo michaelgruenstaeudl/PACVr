@@ -61,11 +61,13 @@ CmdLineArgs <- function() {
   opt <- optparse::parse_args(opt_parse)
   if (is.null(opt$gbkFile)){
     print_help(opt_parse)
-    stop("ERROR: No .gb file supplied", call.=FALSE)
+    warning("No .gb file supplied", call.=FALSE)
+    stop("Error")
   }
   if (is.null(opt$bamFile)) {
     print_help(opt_parse)
-    stop("ERROR: No .bam file supplied", call.=FALSE)
+    warning("No .bam file supplied", call.=FALSE)
+    stop("Error")
   }
   return(opt)
 }

@@ -1,7 +1,7 @@
 #!/usr/bin/R
 #contributors = c("Michael Gruenstaeudl","Nils Jenke")
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2019.07.05.1100"
+#version = "2019.07.09.1900"
 
 PACVr.parseName <- function (gbkFile) {
   
@@ -101,18 +101,22 @@ PACVr.visualizeWithRCircos <- function (gbkFile,
 }
 
 
-PACVr.complete <- function(gbk.file, bam.file, 
-                            windowSize = 250, mosdepthCmd = "mosdepth", 
-                            threshold = 25, delete = TRUE,
-                            output = "./PACVr_output.pdf" ) {
+PACVr.complete <- function(gbk.file,
+                           bam.file, 
+                           windowSize = 250,
+                           mosdepthCmd = "mosdepth", 
+                           threshold = 25,
+                           delete = TRUE,
+                           output = NA) {
   
   # 1. Preparatory steps
   sample_name <- PACVr.parseName(gbk.file)
   outDir <- dirname(output)
   tmpDir <- file.path(outDir, paste(sample_name, ".tmp", sep=""))
   get_os <- Sys.info()[1]
-  #if(get_os == "Windows"){system(paste("md", tmpDir))} else {system(paste("mkdir -p", tmpDir))}
-  if(get_os == "Windows"){system2(command="md", args=tmpDir)} else {system2(command="mkdir", args=c("-p", tmpDir))}
+  if(get_os == "Windows"){
+      system2(command="md", args=tmpDir)} else {system2(command="mkdir", args=c("-p", tmpDir))
+  }
   
   # 2. Conduct operations
   raw_regions <- PACVr.parseRegions(gbk.file, tmpDir)
@@ -122,14 +126,22 @@ PACVr.complete <- function(gbk.file, bam.file,
   linkData <- PACVr.generateIRGeneData(genes_withUpdRegions)
   lineData <- PACVr.GenerateHistogramData(cov_withUpdRegions)
   
-  # 3. Save plot
-  pdf(output)
-  PACVr.visualizeWithRCircos(gbk.file, genes_withUpdRegions, regions_withUpdRegions, cov_withUpdRegions, threshold, lineData, linkData, mosdepthCmd)
-  dev.off()
+  # 3. Generate visualization
+  myPlot <- PACVr.visualizeWithRCircos(gbk.file, genes_withUpdRegions, 
+                regions_withUpdRegions, cov_withUpdRegions, 
+                threshold, lineData, linkData, mosdepthCmd)
+  myPlot
   
-  # 4. Delete temp files
+  # 4. Save plot
+  if (!is.na(output)) {
+    pdf(output)
+    myPlot
+    dev.off()
+  }
+  
+  # 5. Delete temp files
   if (isTRUE(delete)) {
-      #system(paste0("rm -r ", tmpDir))
-      system2(command="rm", args=c("-r", tmpDir))
+    #system(paste0("rm -r ", tmpDir))
+    system2(command="rm", args=c("-r", tmpDir))
   }
 }

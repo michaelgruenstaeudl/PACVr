@@ -1,7 +1,7 @@
 #!/usr/bin/R
 #contributors = c("Michael Gruenstaeudl","Nils Jenke")
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2019.07.05.1100"
+#version = "2019.07.09.1900"
 
 GenerateIRGeneData <- function(sample_genes) {
   # Function to generate link data for RCircos.Link.Line.Plot
@@ -10,7 +10,8 @@ GenerateIRGeneData <- function(sample_genes) {
   # RETURNS:
   #   data.frame with paired regions
   if (ncol(sample_genes) < 3) {
-    stop("Dataframe must have at least 3 columns (containing chromosome name, chromosome start and chromosome end).\n")
+    warning("Input data frame must have at least 3 columns (containing name, start position and end position of chromosome).")
+    stop()
   }
   ira <- sample_genes[sample_genes[1] == "IRa",]
   ira <- ira[nrow(ira):1,]
@@ -22,10 +23,12 @@ GenerateIRGeneData <- function(sample_genes) {
   ira <- ira[order(ira[,2],decreasing = TRUE),]
   irb <- irb[order(irb[,3],decreasing = FALSE),]
   if (length(irb[ ,4]) != length(ira[ ,4])) {
-    stop("Repeat regions need to be identical in length.")
+    warning("Both inverted repeats must be identical in sequence length.")
+    stop()
   }
   if (!identical(ira[,4],irb[,4])) {
-    stop("Repeat regions need to be identical in annotations.")
+    warning("Both inverted repeats must be identical in gene annotations.")
+    stop()
   }
   ira <- as.integer(rowMeans(ira[,2:3]))
   irb <- as.integer(rowMeans(irb[,2:3]))

@@ -1,5 +1,8 @@
 CHANGELOG
 ---------
+#### Version 0.8.0 (2019.07.09)
+* Several minor changes to make package compatible with CRAN
+
 #### Version 0.7.5 (2019.07.05)
 * Several minor changes to make package compatible with CRAN
 * Several minor improvements to DESCRIPTION and NAMESPACE
