@@ -33,5 +33,5 @@
 }
 
 \references{
-  Gruenstaeudl M., Jenke N. (2019) PACVr: Plastome Assembly Coverage Visualization in R. R package version 0.7.5. Manuscript in prep.
+  Gruenstaeudl, M. and Jenke, N. (2019). PACVr: Plastome Assembly Coverage Visualization in R. bioRxiv 697821; doi: https://doi.org/10.1101/697821
 }

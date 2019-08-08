@@ -6,5 +6,6 @@ citEntry(
     author = personList(as.person("M. Gruenstaeudl"), as.person("N. Jenke")),
     year = "in prep",
     journal = "bioRxiv",
-    textVersion = "Gruenstaeudl, M. and Jenke, N., 2019. PACVr: Plastome Assembly Coverage Visualization in R. In Prep."
+    textVersion = "Gruenstaeudl, M. and Jenke, N. (2019). PACVr: Plastome Assembly Coverage Visualization in R. bioRxiv 697821; doi: https://doi.org/10.1101/697821"
     )
+

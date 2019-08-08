@@ -42,7 +42,7 @@ PACVr.calcCoverage <- function (chromName, bamFile,
   # Coverage calculation
     mosdepth_present = tryCatch(system2(command="command", args=c("-v", mosdepthCmd), stdout=TRUE), error=function(e) NULL)
     if (is.null(mosdepth_present)) {
-      print('The software tool Mosdepth (https://github.com/brentp/mosdepth) was not detected on your system. Please install it, for example via R command: system("conda install -y mosdepth")')
+      message('The software tool Mosdepth (https://github.com/brentp/mosdepth) was not detected on your system. Please install it, for example via R command: system("conda install -y mosdepth")')
       raw_coverage <- DummyCov(chromName, raw_regions, windowSize)
     } else {
       raw_coverage <- CovCalc(bamFile, windowSize, output, mosdepthCmd)
