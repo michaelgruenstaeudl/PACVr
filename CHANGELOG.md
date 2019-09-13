@@ -1,5 +1,8 @@
 CHANGELOG
 ---------
+#### Version 0.8.2 (2019.09.12)
+* Several minor bug fixes
+
 #### Version 0.8.0 (2019.07.09)
 * Several minor changes to make package compatible with CRAN
 

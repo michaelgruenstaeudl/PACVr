@@ -1,7 +1,7 @@
 #!/usr/bin/R
 #contributors = c("Michael Gruenstaeudl","Nils Jenke")
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2019.07.09.1900"
+#version = "2019.09.13.1800"
 
 visualizeWithRCircos <- function(plotTitle, genes_withUpdRegions, regions_withUpdRegions, cov_withUpdRegions, threshold=25, avg, lineData, linkData) {
   # Generates the visualization of genome data and their tracks
@@ -84,15 +84,15 @@ visualizeWithRCircos <- function(plotTitle, genes_withUpdRegions, regions_withUp
                                   )
   )
   
-  suppressMessages(
-  RCircos.Histogram.Plot(hist.data   = cov_withUpdRegions,
+  #suppressMessages(
+  PACVr.Histogram.Plot(hist.data   = cov_withUpdRegions,
                         data.col    = 4,
                         track.num   = 5,
                         side        = "in",
                         outside.pos = RCircos.Get.Plot.Boundary(track.num = 5, "in")[1],
                         inside.pos  = RCircos.Get.Plot.Boundary(track.num = 5, "in")[1]-0.3
                                  )
-  )
+  #)
   
   suppressMessages(
   RCircos.Line.Plot(line.data       = lineData,

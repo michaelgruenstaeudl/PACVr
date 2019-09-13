@@ -1,7 +1,7 @@
 #!/usr/bin/R
 #contributors = c("Michael Gruenstaeudl","Nils Jenke")
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2019.07.09.1900"
+#version = "2019.09.13.1800"
 
 PACVr.parseName <- function (gbkFile) {
   
@@ -107,8 +107,12 @@ PACVr.complete <- function(gbk.file,
   
   # 1. Preparatory steps
   sample_name <- PACVr.parseName(gbk.file)
-  outDir <- dirname(output)
-  tmpDir <- file.path(outDir, paste(sample_name, ".tmp", sep=""))
+  if (!is.na(output)) {
+    outDir <- dirname(output)
+    tmpDir <- file.path(outDir, paste(sample_name, ".tmp", sep=""))
+  } else {
+    tmpDir <- file.path(".", paste(sample_name, ".tmp", sep=""))
+  }
   get_os <- Sys.info()[1]
   if(get_os == "Windows"){
       system2(command="md", args=tmpDir)} else {system2(command="mkdir", args=c("-p", tmpDir))
@@ -122,17 +126,19 @@ PACVr.complete <- function(gbk.file,
   linkData <- PACVr.generateIRGeneData(genes_withUpdRegions)
   lineData <- PACVr.GenerateHistogramData(cov_withUpdRegions)
   
-  # 3. Generate visualization
-  myPlot <- PACVr.visualizeWithRCircos(gbk.file, genes_withUpdRegions, 
-                regions_withUpdRegions, cov_withUpdRegions, 
-                threshold, lineData, linkData, mosdepthCmd)
-  myPlot
   
-  # 4. Save plot
+  # 3. Save plot
   if (!is.na(output)) {
     pdf(output)
-    myPlot
+    PACVr.visualizeWithRCircos(gbk.file, genes_withUpdRegions, 
+                               regions_withUpdRegions, cov_withUpdRegions, 
+                               threshold, lineData, linkData, mosdepthCmd)
     dev.off()
+  } else {
+  # 4. Generate visualization
+    PACVr.visualizeWithRCircos(gbk.file, genes_withUpdRegions, 
+                               regions_withUpdRegions, cov_withUpdRegions, 
+                               threshold, lineData, linkData, mosdepthCmd)
   }
   
   # 5. Delete temp files

@@ -1,7 +1,7 @@
 #!/usr/bin/R
 #contributors = c("Michael Gruenstaeudl","Nils Jenke")
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2019.07.09.1900"
+#version = "2019.09.13.1800"
 
 # The following R functions were taken from the R package RCircos and then modified.
 # The modifications were necessary to fix several issues in the original package code.
@@ -40,50 +40,46 @@ PACVr.Histogram.Plot <- function(hist.data=NULL, data.col=4,
                                  max.value=NULL, inside.pos=NULL, outside.pos=NULL,
                                  genomic.columns=3, is.sorted=TRUE)
 {
-  if(is.null(hist.data)) 
+  if(is.null(hist.data)) {
     warning("Genomic data missing in input.")
     stop()
-  
+  }
   boundary <- RCircos::RCircos.Get.Plot.Boundary(track.num, side, inside.pos, 
                                         outside.pos, FALSE);
   outerPos <- boundary[1];
   innerPos  <- boundary[2];
-  
-  if(is.null(genomic.columns) || genomic.columns<2 || genomic.columns>3) 
+  if(is.null(genomic.columns) || genomic.columns<2 || genomic.columns>3) {
     warning("Number of columns for genomic position incorrect.")
     stop()
-  if( is.null(data.col) || data.col <= genomic.columns)  
+  }
+  if( is.null(data.col) || data.col <= genomic.columns)  {
     warning(paste("Number of input columns must be > ", genomic.columns, ".", sep=""))
     stop()
-  
+  }
   RCircos.Pos <- RCircos::RCircos.Get.Plot.Positions();
   RCircos.Par <- RCircos::RCircos.Get.Plot.Parameters();
   RCircos.Cyto <- RCircos::RCircos.Get.Plot.Ideogram();
-  
   # Convert raw data to plot data. The raw data will be validated first during the convertion
   hist.data <- RCircos::RCircos.Get.Single.Point.Positions(hist.data,
                                                   genomic.columns);
   locations <- PACVr.Get.Start.End.Locations(hist.data, 
                                               RCircos.Par$hist.width)
-  
   # Histgram colors and height
   histColors <- RCircos::RCircos.Get.Plot.Colors(hist.data, RCircos.Par$hist.color); 
-  
   histValues <- as.numeric(hist.data[, data.col]);
   if(is.null(max.value) || is.null(min.value)) {
     max.value <- max(histValues);
     min.value <- min(histValues);
   } else {
-    if(min.value > max.value) 
+    if(min.value > max.value) {
       warning("min.value must be greater than max.value.")
       stop()
+    }
   }
   histHeight <- RCircos::RCircos.Get.Data.Point.Height(histValues, min.value, 
                                               max.value, plot.type="points", outerPos-innerPos);
-  
   # Draw histogram
   RCircos::RCircos.Track.Outline(outerPos, innerPos, RCircos.Par$sub.tracks);
-  
   for(aPoint in seq_len(nrow(hist.data)))
   {
     height <- innerPos + histHeight[aPoint];

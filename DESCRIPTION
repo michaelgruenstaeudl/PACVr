@@ -1,6 +1,6 @@
 Package: PACVr
-Version: 0.8.1
-Date: 2019-07-21
+Version: 0.8.2
+Date: 2019-09-12
 Title: Plastome Assembly Coverage Visualization
 Authors@R: c(person("Michael", "Gruenstaeudl", role = c("aut", "cre"), email = "m.gruenstaeudl@fu-berlin.de"), 
              person("Nils", "Jenke", role = c("ctb"), email = "nilsj24@zedat.fu-berlin.de"))

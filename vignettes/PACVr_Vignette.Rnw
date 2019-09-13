@@ -38,24 +38,43 @@
 \section{Introduction}
 PACVr visualizes the coverage depth of a complete plastid genome as well as the equality of its inverted repeat regions in relation to the circular, quadripartite genome structure and the location of individual genes. This vignette provides examples of executing PACVr on an empirical dataset co-supplied with the R package: invokation from within the R interpreter via function \texttt{PACVr.complete()}, and invokation from the Unix command-line shell via script \texttt{PACVr\_Rscript.R}.
 
-\section{Requirements}
-Prior to running PACVr, several dependencies have to be installed.
+\section{Installation}
+Prior to running PACVr, several dependencies need to be installed. Below are some strategies that have been successful in installing PACVr and all its dependencies on Linux (Arch Linux 4.18, Debian 9.9, and Ubuntu 18.10) and MacOS (HighSierra 10.13.6 and Mojave 10.14.6), respectively.
 
-\begin{BGVerbatim}[fontsize=\normalsize]
-# Mosdepth (a general dependency)
-system("conda install -y mosdepth")
-# CRAN packages
-if (!require("pacman"))
-    install.packages("pacman")
-pacman::p_load("RCircos", "optparse", install=TRUE)
-# Bioconductor packages
-if (!requireNamespace("BiocManager", quietly=TRUE))
-    install.packages("BiocManager")
-if (!requireNamespace("genbankr", quietly=TRUE))
-    BiocManager::install("genbankr")
-\end{BGVerbatim}
+    \subsection{On Linux}
+    To install \href{https://doi.org/10.1093/bioinformatics/btx699}{mosdepth}, open a shell and type:
+    \begin{BGVerbatim}[fontsize=\normalsize]
+    system("conda install -y mosdepth")
+    \end{BGVerbatim}
+    
+    To install all R dependencies, open R and type:
+    \begin{BGVerbatim}[fontsize=\normalsize]    
+    # CRAN packages
+    if (!require("pacman"))
+        install.packages("pacman")
+    pacman::p_load("RCircos", "optparse", install=TRUE)
+    # Bioconductor packages
+    if (!requireNamespace("BiocManager", quietly=TRUE))
+        install.packages("BiocManager")
+    if (!requireNamespace("genbankr", quietly=TRUE))
+        BiocManager::install("genbankr")
+    \end{BGVerbatim}
 
-\pagebreak
+    \subsection{On MacOS}
+    To install \href{https://doi.org/10.1093/bioinformatics/btx699}{mosdepth}, do:
+    \begin{itemize}
+    \itemsep0em
+    \item Install \href{https://brew.sh/}{brew}
+    \item Install \href{https://nim-lang.org/}{nim} via brew: \texttt{brew install nim}
+    \item Install \href{https://www.htslib.org/}{hts-lib} via brew: \texttt{brew install htslib}
+    \item Obtain the source code of \href{https://doi.org/10.1093/bioinformatics/btx699}{mosdepth} from its \href{https://github.com/brentp/mosdepth/releases}{Github page}
+    \item In the unzipped mosdepth source code directory, open a terminal and type: \texttt{nimble build} (confirm when prompted) and \texttt{nim c -d:release mosdepth.nim}
+    \item When in the unzipped mosdepth source code directory, confirm the compilation of mosdepth by typing \texttt{./mosdepth -h}
+    \end{itemize}
+    
+    To install all R dependencies, open R and follow the instructions as given for Linux (see above).
+
+%\pagebreak
 
 \section{Executing PACVr via R interpreter}
 PACVr can be executed from within the R interpreter via function \texttt{PACVr.complete()}.
@@ -98,6 +117,7 @@ Rscript ./inst/extdata/PACVr_Rscript.R  \
 
 %\section{More Information}
 
+\iffalse
 \section{sessionInfo}
 \begin{Verbatim}
 > sessionInfo()
@@ -120,5 +140,6 @@ attached base packages:
 loaded via a namespace (and not attached):
 [1] tools_3.3.3
 \end{Verbatim}
+\fi
 
 \end{document}
