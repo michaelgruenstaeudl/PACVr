@@ -8,7 +8,7 @@ Plastome Assembly Coverage Visualization in R
 library(devtools)
 install_github("michaelgruenstaeudl/PACVr")
 ```
-Note: More installation instructions can be found in the package vignette.
+Note: Detailed installation instructions can be found in the package vignette.
 
 ## USAGE
 ```
