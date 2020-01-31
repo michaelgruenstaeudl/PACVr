@@ -1,5 +1,7 @@
 CHANGELOG
 ---------
+#### Version 0.9.0 (2020.01.31)
+
 #### Version 0.8.2 (2019.09.12)
 * Several minor bug fixes
 

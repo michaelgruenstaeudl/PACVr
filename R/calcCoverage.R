@@ -1,9 +1,10 @@
 #!/usr/bin/R
 #contributors = c("Michael Gruenstaeudl","Nils Jenke")
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2019.09.13.1800"
+#version = "2020.01.17.1800"
 
-CovCalc <- function(bamFile, windowSize=250, tmpDir, mosdepthCmd="mosdepth"){
+CovCalc <- function(bamFile, windowSize=250, tmpDir, logScale, mosdepthCmd="mosdepth"){
+  
   # Calculates coverage of a given bam file and stores data in data.frame format
   # ARGS:
   #     bamFile: bam file to calculate coverage
@@ -19,11 +20,18 @@ CovCalc <- function(bamFile, windowSize=250, tmpDir, mosdepthCmd="mosdepth"){
   system2(command=mosdepthCmd, args=c("--by", windowSize,paste(tmpDir, .Platform$file.sep, "coverage", sep = ""), bamFile))
   system2(command="gzip", args=c("-df", paste(tmpDir, .Platform$file.sep, "coverage.regions.bed.gz", sep = "")))
   cov <-read.table(paste(tmpDir, .Platform$file.sep, "coverage.regions.bed", sep = ""))
-  cov <- Rename_Df(cov, "coverage")
+  colnames(cov) <- c("Chromosome","chromStart","chromEnd","coverage")
+  cov$Chromosome <- ""
+  
+  if(logScale==TRUE){
+    cov$coverage <- log(cov$coverage)
+  }
   return(cov)
 }
 
-DummyCov <- function(chromName, raw_regions, windowSize=250){
+
+DummyCov <- function(chromName, regions, windowSize=250){
+  
   # Generates data.frame with dummy coverage values
   # ARGS:
   #     raw_regions
@@ -34,65 +42,11 @@ DummyCov <- function(chromName, raw_regions, windowSize=250){
     warning("User-selected window size must be >= 1.")
     stop()
   }
-  chromLen <- as.integer(raw_regions[4, "chromEnd"])
+  chromLen <- max(as.integer(regions[, "chromEnd"]))
   chromStart <- seq.int(0, chromLen, windowSize)
   chromEnd <- c(seq.int(windowSize, chromLen, windowSize), chromLen)
-  Chromosome <- rep(chromName, length(chromStart))
+  Chromosome <- rep("", length(chromStart))
   coverage <- rep(1, length(chromStart))
   cov <- data.frame(Chromosome, chromStart, chromEnd, coverage)
-  return(cov)
-}
-
-SplitCovAtRegionBorders <- function(covData, regionData) {
-  # Function to split coverage data that occur in two different regions at
-  # the region borders
-  # ARGS:
-  #   covData: dataframe with gene data
-  #   regionData: dataframe with region data
-  # RETURNS:
-  #   covData dataframe with splitted covDatas
-  for (i in 1:nrow(regionData)) {
-    for (j in 1:nrow(covData)) {
-      if (as.integer(covData[j,2]) >= as.integer(regionData[i,2]) & 
-          as.integer(covData[j,3]) >  as.integer(regionData[i,3]) & 
-          as.integer(covData[j,2]) <  as.integer(regionData[i,3])){
-        covData[nrow(covData)+1,] <- c(as.character(covData[j,1]), regionData[i,3]+1, covData[j,3], covData[j,4])
-        covData[j,1] <- regionData[i,1]
-        covData[j,3] <- regionData[i,3]
-        covData[j,4] <- covData[j,4]
-      }
-    }
-  }
-  covData      <- covData[order(as.integer(covData[,2])), ]
-  covData[ ,2] <- as.integer(covData[ ,2])
-  covData[ ,3] <- as.integer(covData[ ,3])
-  return(covData)
-}
-
-adjustCoverage <- function(cov, regions) {
-  # Shift of coverage regions so that they fit RCircos validation
-  # ARGS:
-  #   cov: data.frame with region names, chromosome begin, chromosome end and coverage
-  #   regions: data.frame with region names, chromosome begin and chromosome end
-  # RETURNS:
-  #   data.frame with shifted regions
-  irb <- as.numeric(cov[cov[ ,1] == 'IRb',2][1])
-  ssc <- as.numeric(cov[cov[ ,1] == 'SSC',2][1])
-  ira <- as.numeric(cov[cov[ ,1] == 'IRa',2][1])
-  cov[cov[ ,1] == 'IRb',2] = as.numeric(cov[cov[ ,1] == 'IRb',2] - irb)
-  cov[cov[ ,1] == 'SSC',2] = as.numeric(cov[cov[ ,1] == 'SSC',2] - ssc)
-  cov[cov[ ,1] == 'IRa',2] = as.numeric(cov[cov[ ,1] == 'IRa',2] - ira)
-  cov[cov[ ,1] == 'IRb',3] = as.numeric(cov[cov[ ,1] == 'IRb',3] - irb)
-  cov[cov[ ,1] == 'SSC',3] = as.numeric(cov[cov[ ,1] == 'SSC',3] - ssc)
-  cov[cov[ ,1] == 'IRa',3] = as.numeric(cov[cov[ ,1] == 'IRa',3] - ira)
-  cov[cov[ ,1] == 'LSC',3][length(cov[cov[ ,1] == 'LSC',3])] = as.numeric(regions[,3][1])
-  cov[cov[ ,1] == 'IRb',3][length(cov[cov[ ,1] == 'IRb',3])] = as.numeric(regions[,3][2])
-  cov[cov[ ,1] == 'SSC',3][length(cov[cov[ ,1] == 'SSC',3])] = as.numeric(regions[,3][3])
-  cov[cov[ ,1] == 'IRa',3][length(cov[cov[ ,1] == 'IRa',3])] = as.numeric(regions[,3][4])
-  chromosome <- as.character(cov[,1])
-  chromStart <- as.numeric(cov[,2])
-  chromEnd <- as.numeric(cov[,3])
-  coverage <- as.numeric(cov[,4])
-  cov <- data.frame(chromosome,chromStart,chromEnd,coverage)
   return(cov)
 }

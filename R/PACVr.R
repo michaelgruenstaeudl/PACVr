@@ -1,112 +1,101 @@
 #!/usr/bin/R
 #contributors = c("Michael Gruenstaeudl","Nils Jenke")
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2019.09.13.1800"
+#version = "2020.01.17.1800"
 
-PACVr.parseName <- function (gbkFile) {
-  
+
+PACVr.parseName <- function (gbkData) {
   # Parse sample name
-    gbkData <- suppressMessages(suppressWarnings(genbankr::readGenBank(gbkFile)))
     sample_name = genbankr::accession(gbkData)
     return(sample_name)
 }
 
-PACVr.parseRegions <- function (gbkFile, tmpDir) {
-    
-  # Parse GenBank file
-    gbkData <- suppressMessages(suppressWarnings(genbankr::readGenBank(gbkFile)))
+
+PACVr.parseRegions <- function (gbkData, tmpDir) {
     raw_regions <- ExtractAllRegions(gbkData)
-    write.table(raw_regions, file = paste(tmpDir, .Platform$file.sep, "regions.PACVr.tmp", sep=""), 
-                sep = " ", dec = ".", row.names = TRUE, col.names = TRUE)
-    return(raw_regions)
+    regions <- fillDataFrame(gbkData,raw_regions)
+    return(regions)
 }
 
 
-PACVr.parseGenes <- function (gbkFile, raw_regions) {
+PACVr.parseGenes <- function (gbkData) {
     
   # Parse GenBank file
-    gbkData <- suppressMessages(suppressWarnings(genbankr::readGenBank(gbkFile)))
-    raw_genes <- ExtractAllGenes(gbkData)
-    genes_inclSplitOnes <- SplitGenesAtRegionBorders(raw_genes, raw_regions)
-    genes_withRegionInfo <- AssignRegionInfo(genes_inclSplitOnes, raw_regions)
-    genes_withUpdRegions <- AdjustRegionLocation(genes_withRegionInfo, raw_regions)
-    return(genes_withUpdRegions)
+    genes <- ExtractAllGenes(gbkData)
+    return(genes)
 }
 
 
-PACVr.calcCoverage <- function (chromName, bamFile, 
-                                 raw_regions, windowSize=250,
-                                 output,
-                                 mosdepthCmd) {
+PACVr.calcCoverage <- function (chromName, bamFile, regions, 
+                                windowSize=250, output, logScale=FALSE,
+                                mosdepthCmd) {
     
   # Coverage calculation
     mosdepth_present = tryCatch(system2(command="command", args=c("-v", mosdepthCmd), stdout=TRUE), error=function(e) NULL)
     if (is.null(mosdepth_present)) {
       message('The software tool Mosdepth (https://github.com/brentp/mosdepth) was not detected on your system. Please install it, for example via R command: system("conda install -y mosdepth")')
-      raw_coverage <- DummyCov(chromName, raw_regions, windowSize)
+      coverage <- DummyCov(chromName, regions, windowSize)
     } else {
-      raw_coverage <- CovCalc(bamFile, windowSize, output, mosdepthCmd)
+      coverage <- CovCalc(bamFile, windowSize, output, 
+                          logScale, mosdepthCmd)
     }
-    cov_withRegionInfo <- AssignRegionInfo(raw_coverage, raw_regions)
-    cov_inclSplitOnes <- SplitCovAtRegionBorders(cov_withRegionInfo, raw_regions)
-    regions_withUpdRegions <- AdjustRegionLocation(raw_regions, raw_regions)
-    cov_withUpdRegions <- adjustCoverage(cov_inclSplitOnes, regions_withUpdRegions)
-    return(cov_withUpdRegions)
+    return(coverage)
 }
 
 
-PACVr.generateIRGeneData <- function (genes_withUpdRegions) {
-    
+PACVr.generateIRGeneData <- function(gbkData, genes, regions,
+                                     synteny, syntenyLineType) {
+  
   # Parse GenBank file
-    linkData <- GenerateIRGeneData(genes_withUpdRegions)
+  if("IRb" %in% regions[,4] && "IRa" %in% regions[,4] && synteny == TRUE){
+    checkIRSynteny(gbkData, regions)
+    linkData <- GenerateIRSynteny(genes, syntenyLineType)
     return(linkData)
+  }
+  return(-1)
 }
 
 
-PACVr.GenerateHistogramData <- function (cov_withUpdRegions) {
+PACVr.GenerateHistogramData <- function (regions,coverage) {
     
   # Parse GenBank file
-    lineData <- GenerateHistogramData(cov_withUpdRegions)
+    lineData <- GenerateHistogramData(regions,coverage)
     return(lineData)
 }
 
 
-PACVr.visualizeWithRCircos <- function (gbkFile,
-                                         genes_withUpdRegions,
-                                         regions_withUpdRegions,
-                                         cov_withUpdRegions,
-                                         threshold=25,
-                                         lineData,
-                                         linkData,
-                                         mosdepthCmd) {
+PACVr.visualizeWithRCircos <- function (gbkData, genes, regions,
+                                        coverage, threshold=25, relative,
+                                        mosdepthCmd, linkData, lineData, 
+                                        syntenyLineType) {
     
   # 1. Generate plot title
-    gbkData <- suppressMessages(suppressWarnings(genbankr::readGenBank(gbkFile)))
     mosdepth_present = tryCatch(system2(command="command", args=c("-v", mosdepthCmd), stdout=TRUE), error=function(e) NULL)
     if (is.null(mosdepth_present)) {
-      plotTitle <- paste("Dummy data -", genbankr::accession(gbkData), ". Please install mosdepth.")
+      plotTitle <- paste("Dummy data -", genbankr::sources(gbkData)$organism,genbankr::accession(gbkData), ". Please install mosdepth.")
     } else {
-      plotTitle <- genbankr::definition(gbkData)
+      plotTitle <- paste(genbankr::sources(gbkData)$organism,genbankr::accession(gbkData))
     }
 
   # 2. Calculate average
-    avg <- as.integer(unique(lineData[ ,4]))
+    #avg <- as.integer(unique(lineData[ ,4]))
     
   # 3. Visualize
-    visualizeWithRCircos(plotTitle, genes_withUpdRegions, regions_withUpdRegions, cov_withUpdRegions, threshold, avg, lineData, linkData)
+    visualizeWithRCircos(plotTitle, genes, regions, 
+                         coverage, threshold, relative, 
+                         linkData, lineData, syntenyLineType)
 }
 
 
-PACVr.complete <- function(gbk.file,
-                           bam.file, 
-                           windowSize = 250,
-                           mosdepthCmd = "mosdepth", 
-                           threshold = 25,
-                           delete = TRUE,
-                           output = NA) {
+PACVr.complete <- function(gbk.file, bam.file, windowSize = 250,
+                           mosdepthCmd = "mosdepth", logScale = FALSE, threshold = 0.5,
+                           synteny = FALSE, syntenyLineType="1", relative = TRUE, 
+                           delete = TRUE, output = NA) {
   
   # 1. Preparatory steps
-  sample_name <- PACVr.parseName(gbk.file)
+  #gbkData <- suppressMessages(genbankr::readGenBank(gbk.file,verbose = FALSE))
+  gbkData <- genbankr::readGenBank(gbk.file,verbose = FALSE)
+  sample_name <- PACVr.parseName(gbkData)
   if (!is.na(output)) {
     outDir <- dirname(output)
     tmpDir <- file.path(outDir, paste(sample_name, ".tmp", sep=""))
@@ -119,31 +108,34 @@ PACVr.complete <- function(gbk.file,
   }
   
   # 2. Conduct operations
-  raw_regions <- PACVr.parseRegions(gbk.file, tmpDir)
-  genes_withUpdRegions <- PACVr.parseGenes(gbk.file, raw_regions)
-  regions_withUpdRegions <- AdjustRegionLocation(raw_regions, raw_regions)
-  cov_withUpdRegions <- PACVr.calcCoverage(sample_name, bam.file, raw_regions, windowSize, tmpDir, mosdepthCmd)
-  linkData <- PACVr.generateIRGeneData(genes_withUpdRegions)
-  lineData <- PACVr.GenerateHistogramData(cov_withUpdRegions)
+  regions <- PACVr.parseRegions(gbkData, tmpDir)
+  genes <- PACVr.parseGenes(gbkData)
+  coverage <- PACVr.calcCoverage(sample_name, bam.file, regions, 
+                                 windowSize, tmpDir, logScale, 
+                                 mosdepthCmd)
+  linkData <- PACVr.generateIRGeneData(gbkData, genes, regions,
+                                       synteny, syntenyLineType)
+  lineData <- PACVr.GenerateHistogramData(regions,coverage)
   
   
   # 3. Save plot
   if (!is.na(output)) {
-    pdf(output)
-    PACVr.visualizeWithRCircos(gbk.file, genes_withUpdRegions, 
-                               regions_withUpdRegions, cov_withUpdRegions, 
-                               threshold, lineData, linkData, mosdepthCmd)
+    pdf(output, encoding="ISOLatin9.enc")
+    PACVr.visualizeWithRCircos(gbkData, genes, regions, 
+                               coverage, threshold, relative, 
+                               mosdepthCmd, linkData, lineData, 
+                               syntenyLineType)
     dev.off()
   } else {
   # 4. Generate visualization
-    PACVr.visualizeWithRCircos(gbk.file, genes_withUpdRegions, 
-                               regions_withUpdRegions, cov_withUpdRegions, 
-                               threshold, lineData, linkData, mosdepthCmd)
+    PACVr.visualizeWithRCircos(gbkData, genes, regions, 
+                               coverage, threshold, relative, 
+                               mosdepthCmd, linkData, lineData, 
+                               syntenyLineType)
   }
   
   # 5. Delete temp files
   if (isTRUE(delete)) {
-    #system(paste0("rm -r ", tmpDir))
     system2(command="rm", args=c("-r", tmpDir))
   }
 }

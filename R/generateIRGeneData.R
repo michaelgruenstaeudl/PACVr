@@ -1,42 +1,42 @@
 #!/usr/bin/R
 #contributors = c("Michael Gruenstaeudl","Nils Jenke")
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2019.09.13.1800"
+#version = "2020.01.17.1800"
 
-GenerateIRGeneData <- function(sample_genes) {
-  # Function to generate link data for RCircos.Link.Line.Plot
-  # ARGS:
-  #   sample_genes: data.frame of sample data
-  # RETURNS:
-  #   data.frame with paired regions
-  if (ncol(sample_genes) < 3) {
-    warning("Input data frame must have at least 3 columns (containing name, start position and end position of chromosome).")
-    stop()
+checkIRSynteny <- function(gbkData, regions){
+  
+  gbkSeq <- genbankr::getSeq(gbkData)
+  repeatB <- as.numeric(regions[which(regions[,4] == "IRb"),2:3])
+  repeatA <- as.numeric(regions[which(regions[,4] == "IRa"),2:3])
+  if(repeatB[2] - repeatB[1] != repeatA[2] - repeatA[1]){
+    message("Inverted repeats differ in sequence length")
   }
-  ira <- sample_genes[sample_genes[1] == "IRa",]
-  ira <- ira[nrow(ira):1,]
-  ira <- ira[1:4]
-  ira <- subset(ira,!grepl("IRb|IRa", ira[,"gene"],ignore.case = FALSE))
-  irb <- sample_genes[sample_genes[1] == "IRb",]
-  irb <- irb[1:4]
-  irb <- subset(irb,!grepl("IRb|IRa", irb[,"gene"],ignore.case = FALSE))
-  ira <- ira[order(ira[,2],decreasing = TRUE),]
-  irb <- irb[order(irb[,3],decreasing = FALSE),]
-  if (length(irb[ ,4]) != length(ira[ ,4])) {
-    warning("Both inverted repeats must be identical in sequence length.")
-    stop()
+  if(gbkSeq[[1]][repeatB[1]:repeatB[2]] != Biostrings::reverseComplement(gbkSeq[[1]][repeatA[1]:repeatA[2]])){
+    message("Inverted repeats differ in sequence")
   }
-  if (!identical(ira[,4],irb[,4])) {
-    warning("Both inverted repeats must be identical in gene annotations.")
-    stop()
-  }
-  ira <- as.integer(rowMeans(ira[,2:3]))
-  irb <- as.integer(rowMeans(irb[,2:3]))
-  link_data <- data.frame(Chromosome = rep("IRa",length(ira)), 
-                          chromStart = (ira),
-                          chromEnd   = (ira),
-                          Chromosome.01 = rep("IRb",length(irb)), 
-                          chromStart.01 = (irb),
-                          chromEnd.01   = (irb))
-  return(link_data)
+}
+
+GenerateIRSynteny <- function(genes, syntenyLineType) {
+  
+  n_occur <- data.frame(table(genes[,4]),stringsAsFactors = FALSE)
+  n_occur <- n_occur[n_occur$Freq == 2,]
+  ir_synteny <- c()
+  
+  if (syntenyLineType == "1"){
+    for (gene in n_occur$Var1) {
+      duplicateGene <- genes[which(gene == genes$gene),1:3]
+      ir_synteny <- rbind(ir_synteny,cbind(duplicateGene[1,],duplicateGene[2,],stringsAsFactors=FALSE),stringsAsFactors=FALSE) 
+    }
+  } else if (syntenyLineType == "2"){
+      for (gene in n_occur$Var1) {
+        duplicateGene <- genes[which(gene == genes$gene),1:3]
+        duplicateGene[1,2] <- mean(as.numeric(duplicateGene[1,2:3]))
+        duplicateGene[1,3] <- duplicateGene[1,2]
+        duplicateGene[2,2] <- mean(as.numeric(duplicateGene[2,2:3]))
+        duplicateGene[2,3] <- duplicateGene[2,2]
+        ir_synteny <- rbind(ir_synteny,cbind(duplicateGene[1,],duplicateGene[2,],stringsAsFactors=FALSE),stringsAsFactors=FALSE) 
+      }
+    }
+  ir_synteny$PlotColor <- "dodgerblue4"
+  return(ir_synteny)
 }
