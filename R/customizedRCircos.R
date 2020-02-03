@@ -355,3 +355,52 @@ PACVr.Gene.Connector.Plot <- function(genomic.data=NULL,
     }
   }
 }
+
+PACVr.Line.Plot <- function (line.data = NULL, data.col = 4, track.num = NULL, 
+          side = c("in", "out"), min.value = NULL, max.value = NULL, 
+          inside.pos = NULL, outside.pos = NULL, genomic.columns = 3, 
+          is.sorted = TRUE) 
+{
+  if (is.null(line.data)) 
+    stop("Genomic data missing in RCircos.Line.Plot().\n")
+  boundary <- RCircos.Get.Plot.Boundary(track.num, side, inside.pos, 
+                                        outside.pos, FALSE)
+  outerPos <- boundary[1]
+  innerPos <- boundary[2]
+  if (is.null(genomic.columns)) 
+    stop("Missing number of columns for genomic position.\n")
+  if (is.null(data.col) || data.col <= genomic.columns) 
+    stop("Line data column must be ", genomic.columns + 
+           1, " or bigger.\n")
+  RCircos.Pos <- RCircos.Get.Plot.Positions()
+  RCircos.Par <- RCircos.Get.Plot.Parameters()
+  line.data <- RCircos.Get.Single.Point.Positions(line.data, 
+                                                  genomic.columns)
+  pointValues <- as.numeric(line.data[, data.col])
+  if (is.null(min.value) || is.null(max.value)) {
+    min.value <- min(pointValues)
+    max.value <- max(pointValues)
+  }
+  else {
+    if (min.value > max.value) 
+      stop("min.value > max.value.")
+  }
+  pointHeight <- RCircos.Get.Data.Point.Height(pointValues, 
+                                               min.value, max.value, plot.type = "points", outerPos - 
+                                                 innerPos)
+  pointHeight <- pointHeight + innerPos
+  line.colors <- RCircos.Get.Plot.Colors(line.data, RCircos.Par$line.color)
+  #RCircos.Track.Outline(outerPos, innerPos, RCircos.Par$sub.tracks)
+  for (aPoint in seq_len((nrow(line.data) - 1))) {
+    if (line.data[aPoint, 1] != line.data[aPoint + 1, 1]) {
+      next
+    }
+    point.one <- line.data[aPoint, ncol(line.data)]
+    point.two <- line.data[aPoint + 1, ncol(line.data)]
+    lines(c(RCircos.Pos[point.one, 1] * pointHeight[aPoint], 
+            RCircos.Pos[point.two, 1] * pointHeight[aPoint + 
+                                                      1]), c(RCircos.Pos[point.one, 2] * pointHeight[aPoint], 
+                                                             RCircos.Pos[point.two, 2] * pointHeight[aPoint + 
+                                                                                                       1]), col = line.colors[aPoint])
+  }
+}
