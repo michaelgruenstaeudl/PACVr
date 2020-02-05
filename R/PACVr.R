@@ -44,7 +44,7 @@ PACVr.generateIRGeneData <- function(gbkData, genes, regions,
   
   # Parse GenBank file
   if("IRb" %in% regions[,4] && "IRa" %in% regions[,4] && syntenyLineType < 3){
-    checkIRSynteny(gbkData, regions)
+    checkIREquality(gbkData, regions)
     linkData <- GenerateIRSynteny(genes, syntenyLineType)
     return(linkData)
   }

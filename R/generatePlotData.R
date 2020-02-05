@@ -50,17 +50,32 @@ DummyCov <- function(chromName, regions, windowSize=250){
   return(cov)
 }
 
-checkIRSynteny <- function(gbkData, regions){
+checkIREquality <- function(gbkData, regions){
   
   gbkSeq <- genbankr::getSeq(gbkData)
   repeatB <- as.numeric(regions[which(regions[,4] == "IRb"),2:3])
   repeatA <- as.numeric(regions[which(regions[,4] == "IRa"),2:3])
   if(repeatB[2] - repeatB[1] != repeatA[2] - repeatA[1]){
-    message("Inverted repeats differ in sequence length")
+    message("WARNING: Inverted repeats differ in sequence length")
+    message(paste("The IRb has a total lengths of: ", repeatB[2]-repeatB[1], " bp", sep=""))
+    message(paste("The IRa has a total lengths of: ", repeatA[2]-repeatA[1], " bp", sep=""))
   }
   if(gbkSeq[[1]][repeatB[1]:repeatB[2]] != Biostrings::reverseComplement(gbkSeq[[1]][repeatA[1]:repeatA[2]])){
-    message("Inverted repeats differ in sequence")
+    IRa_seq = DNAString(gbkSeq[[1]][repeatB[1]:repeatB[2]])
+    IRb_seq = DNAString(Biostrings::reverseComplement(gbkSeq[[1]][repeatA[1]:repeatA[2]]))
+    subst_mat = Biostrings::nucleotideSubstitutionMatrix(match=1, mismatch=-3, baseOnly=TRUE)
+    globalAlign = Biostrings::pairwiseAlignment(IRa_seq, IRb_seq, substitutionMatrix=subst_mat, gapOpening=5, gapExtension=2)
+    IR_diff_SNPS = which(strsplit(Biostrings::compareStrings(globalAlign), "")[[1]]=="?")
+    IR_diff_gaps = which(strsplit(Biostrings::compareStrings(globalAlign), "")[[1]]=="-")
+    message("WARNING: Inverted repeats differ in sequence")
+    if(length(IR_diff_SNPS)>0){
+        message(paste("When aligned, the IRs differ through a total of ", length(IR_diff_SNPS)," SNPS. These SNPS are located at the following nucleotide positions: ", paste(unlist(IR_diff_SNPS), collapse=" "), sep=""))
+    }
+    if(length(IR_diff_gaps)>0){
+        message(paste("When aligned, the IRs differ through a total of ", length(IR_diff_gaps)," gaps. These gaps are located at the following nucleotide positions: ", paste(unlist(IR_diff_gaps), collapse=" "), sep=""))
+    }
   }
+  message("Proceeding with coverage depth visualization, but without quadripartite genome structure ...")
 }
 
 GenerateIRSynteny <- function(genes, syntenyLineType) {
