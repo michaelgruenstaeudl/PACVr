@@ -111,7 +111,7 @@ PACVr.Chromosome.Ideogram.Plot<-function(tick.interval=0)
 
 
 ##### tick length, text size, text orientation #####
-PACVr.Ideogram.Tick.Plot <- function(tick.num=10, track.for.ticks=3, text.size=0.1)
+PACVr.Ideogram.Tick.Plot <- function(tick.num=10, track.for.ticks=3, add.text.size = 0)
 {
   RCircos.Pos <- RCircos.Get.Plot.Positions();
   RCircos.Par <- RCircos.Get.Plot.Parameters();
@@ -173,7 +173,7 @@ PACVr.Ideogram.Tick.Plot <- function(tick.num=10, track.for.ticks=3, text.size=0
         
         lab.text <- paste0(round((a.tick-1)*tick.interval,1), "kb");
         text(lab.pos[tick.pos,1] , lab.pos[tick.pos,2], 
-             lab.text, cex=text.size,
+             lab.text, cex=RCircos.Par$text.size + add.text.size,
              srt=RCircos.Pos$degree[tick.pos]);
       }
       
@@ -209,7 +209,7 @@ PACVr.Ideogram.Tick.Plot <- function(tick.num=10, track.for.ticks=3, text.size=0
 ##### correction and rotate #####
 PACVr.Gene.Name.Plot <- function(gene.data=NULL, name.col=NULL, 
                                  track.num=NULL, side="in", inside.pos=NULL, outside.pos=NULL,
-                                 genomic.columns=3, is.sorted=FALSE,rotate=0,correction=0, text.size=0.4)
+                                 genomic.columns=3, is.sorted=FALSE,rotate=0,correction=0,add.text.size=0)
 {
   if(is.null(gene.data)) 
     stop("Genomic data missing in RCircos.Gene.Name.Plot().\n");
@@ -261,7 +261,7 @@ PACVr.Gene.Name.Plot <- function(gene.data=NULL, name.col=NULL,
     text(RCircos.Pos[thePoints[aText],1]*labelPos,
          RCircos.Pos[thePoints[aText],2]*labelPos,
          label=geneName, pos=textSide[aText], 
-         cex=text.size, srt=rotation, 
+         cex=RCircos.Par$text.size + add.text.size, srt=rotation, 
          offset=0, col=textColors[aText]);
   }
 }
@@ -402,5 +402,127 @@ PACVr.Line.Plot <- function (line.data = NULL, data.col = 4, track.num = NULL,
                                                       1]), c(RCircos.Pos[point.one, 2] * pointHeight[aPoint], 
                                                              RCircos.Pos[point.two, 2] * pointHeight[aPoint + 
                                                                                                        1]), col = line.colors[aPoint])
+  }
+}
+
+PACVr.Chromosome.Ideogram.Plot<-function(tick.interval=0)
+{
+  RCircos.Draw.Chromosome.Ideogram(ideo.pos=1.125,ideo.width = 0.05);
+  RCircos.Highligh.Chromosome.Ideogram(highlight.pos=1.2);
+  
+  if(tick.interval>0) {
+    RCircos.Ideogram.Tick.Plot(tick.interval);
+  }
+  
+  RCircos.Label.Chromosome.Names();
+}
+
+
+PACVr.Reset.Plot.Parameters <- function (new.params=NULL) 
+{
+  if(is.null(new.params)) stop("Missing function argument.\n");
+  old.params <- RCircos.Get.Plot.Parameters();
+  
+  #   1.  If parameters related to total number of data tracks 
+  #       need reset, use reset core components instead.
+  #   ==========================================================
+  #if( new.params$radius.len != old.params$radius.len ||
+  #    new.params$plot.radius != old.params$plot.radius ||
+  #    new.params$chr.ideo.pos != old.params$chr.ideo.pos ||
+  #    new.params$tracks.inside != old.params$tracks.inside ||
+  #    new.params$tracks.outside != old.params$tracks.outside )
+  #{ stop("Please use RCircos.Set.Core.Components() instead.\n") }
+  
+  #   2.  If parameters related to chromosome ideogram plot 
+  #       need reset, use customized plot methods instead.
+  #   ==========================================================
+  #if( new.params$chr.ideo.pos != old.params$chr.ideo.pos ||
+  #    new.params$highlight.pos != old.params$highlight.pos ||
+  #    new.params$chr.name.pos  != old.params$chr.name.pos )
+  #{ stop("Please use customized ideogram plot methods instead.\n")}
+  
+  #   3.  Validate the parameter values in case of multiple
+  #       parameters were reset in new.params such as nemeric
+  #       values and color values, and ideogram layout values.
+  #   ==========================================================
+  RCircos.Validate.Plot.Parameters(new.params);
+  
+  #   4.  Parameters related to ideogram width change.  
+  #       Note: chr.ideo.pos is a read-only parameter
+  #   ========================================================
+  if( new.params$chrom.width != old.params$chrom.width )
+  {
+    differ <- new.params$chrom.width - old.params$chrom.width;
+    new.params$highlight.pos <- old.params$highlight.pos + differ;
+    
+    new.name.pos <- old.params$chr.name.pos + differ;
+    if(new.params$chr.name.pos < new.name.pos)
+      new.params$chr.name.pos  <- new.name.pos;
+  }
+  
+  #   5.  In case user modified track.in.start and track.out.start
+  #   ===========================================================
+  #if(new.params$track.in.start >= new.params$chr.ideo.pos)
+  #  new.params$track.in.start <- new.params$chr.ideo.pos - 0.05;
+#  
+#  new.name.end <- new.params$chr.name.pos + 0.3;
+#  if(new.params$track.out.start < new.name.end)
+#    new.params$track.out.start <- new.name.end;
+  
+  #   6.  Parameters related to data track layout. If reset, total
+  #       tracks will be different. Just validate and give a prompt
+  #   ============================================================
+  #if(new.params$track.padding !=  old.params$track.padding ||
+  #   new.params$track.height != old.params$track.height )
+  #{ 
+  #  message(paste0("Track height and/or track padding have been ",
+  #                 "reset\n. Actual total data track plotted may differ.\n"));
+  #}
+  
+  #   7.  Adjust chromosome padding parameter with default constant
+  #       if base.per.unit was rest but chrom.padding was unchanged
+  #       or the new chrom.paddings is too big
+  #   =============================================================
+  if(old.params$base.per.unit != new.params$base.per.unit &&
+     old.params$chrom.paddings == new.params$chrom.paddings )
+  {
+    RCircos.Cyto <- RCircos.Get.Plot.Ideogram();
+    band.len <- RCircos.Cyto$ChromEnd - RCircos.Cyto$ChromStart;
+    genome.len <- sum(as.numeric(band.len));
+    padding.const <- RCircos.Get.Padding.Constant();
+    
+    total.units <- genome.len/new.params$base.per.unit;
+    new.padding <- round(padding.const*total.units, digits=0);
+    
+    if(new.padding != new.params$base.per.unit) {
+      message(paste("\nNote: chrom.padding", 
+                    new.params$chrom.paddings,
+                    " was reset to", new.padding, "\n"));
+      new.params$chrom.paddings <- new.padding;
+    }
+  }
+  
+  #   Save new parameters to RCircos Environment
+  #   =====================================================
+  RCircosEnvironment <- NULL;
+  RCircosEnvironment <- get("RCircos.Env", envir = globalenv());
+  RCircosEnvironment[["RCircos.PlotPar"]] <- NULL;
+  RCircosEnvironment[["RCircos.PlotPar"]] <- new.params;
+  
+  #   Ideogram/band positions are binded to base.per.unit and
+  #   chromosome padding so have to be reset if base.per.unit 
+  #   and/or chrom.paddings are reset.
+  #   ======================================================
+  if(old.params$base.per.unit != new.params$base.per.unit ||
+     old.params$chrom.paddings != new.params$chrom.paddings) 
+  {
+    RCircos.Cyto <- RCircos.Get.Plot.Ideogram();
+    RCircos.Cyto <- RCircos.Cyto[,1:5];
+    
+    RCircosEnvironment[["RCircos.Cytoband"]] <- NULL
+    RCircos.Set.Cytoband.Data(RCircos.Cyto);
+    
+    RCircosEnvironment[["RCircos.Base.Position"]] <- NULL
+    RCircos.Set.Base.Plot.Positions();
   }
 }
