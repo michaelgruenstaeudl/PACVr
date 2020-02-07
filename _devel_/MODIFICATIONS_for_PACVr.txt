@@ -1,8 +1,0 @@
-1.  Replace "),complement(" with ","
-
-2. 
-Replace 
-"),
-                     complement(" with ","
-
-3.  Keine Duplikate des qualifiers 'product=""', welches bei features manchmal durch Geneious dupliziert wird.
