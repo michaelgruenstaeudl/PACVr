@@ -19,7 +19,9 @@ bamFile <- system.file("extdata", "MH161174/MH161174_PlastomeReadsOnly.sorted.ba
                        package="PACVr")
 outFile <- paste(tempdir(), "/MH161174_AssemblyCoverage_viz.pdf", sep="")
 PACVr.complete(gbk.file=gbkFile, bam.file=bamFile, windowSize=250, 
-               mosdepthCmd='mosdepth', threshold=15, delete=TRUE, output=outFile)
+               mosdepthCmd='mosdepth', logScale = FALSE, threshold = 0.5,
+               syntenyLineType=3, relative = TRUE, textSize=0.5,
+               delete = TRUE, output=outFile)
 ```
 
 ## OUTPUT
