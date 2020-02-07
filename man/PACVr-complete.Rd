@@ -24,7 +24,11 @@ PACVr.complete(gbk.file,
 \item{bam.file}{a character vector that specifies the name of, and path to, the BAM input file}
 \item{windowSize}{a numeric value that specifies window size in which the coverage is calculated}
 \item{mosdepthCmd}{a character vector that specifies the command to execute mosdepth on system}
+\item{logScale}{foo bar baz}
 \item{threshold}{a numeric value that specifies the threshold for plotting coverage at different color}
+\item{syntenyLineType}{foo bar baz}
+\item{relative}{foo bar baz}
+\item{textSize}{foo bar baz}
 \item{delete}{the decision to delete temporary files upon program execution}
 \item{output}{a character vector that specifies the name of, and path to, the output file}
 }

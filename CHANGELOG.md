@@ -1,6 +1,14 @@
 CHANGELOG
 ---------
+#### Version 0.9.1 (2020.02.07)
+* Updated README file
+* Updated and improved package vignette
+
 #### Version 0.9.0 (2020.01.31)
+* Added functions that add tick marks and position information (in kb) in regular intervals to the genome visualization
+* Added functions that evaluate sequence equality among inverted repeats and, if detected, provide reports on differences
+* Added functions that enable users to specify the threshold value below which histogram bars are displayed in red as relative value
+* Improved the scaling of various vector elements (e.g., fonts) for visualizations of unusually small (<100kb) or unusually large (>200kb) plastid genomes
 
 #### Version 0.8.2 (2019.09.12)
 * Several minor bug fixes
