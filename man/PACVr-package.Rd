@@ -22,7 +22,7 @@
   
   \bold{Data Requirements}
 
-  The user-supplied GenBank flat file must contain a sequence record of a complete plastid genome that contains a sequence features for each of the inverted repeat regions. Specifically, the inverted repeat regions must be named 'IRa' and 'IRb', or 'Inverted Repeat a' and 'Inverted Repeat b'. Moreover, the total sequence length of the sequence record must be between 100kb and 200kb.
+  The user-supplied GenBank flat file must contain a sequence record of a complete plastid genome. For effective visualizations, the sequence record should contain a sequence feature for each of the inverted repeat regions, whereby the regions should be named 'IRa' and 'IRb' or 'Inverted Repeat a' and 'Inverted Repeat b', respectively. For effective visualizations, the total sequence length of the sequence record should be between 50 kb and 250 kb.
   
 }
 
