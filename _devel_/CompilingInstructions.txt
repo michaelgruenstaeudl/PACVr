@@ -1,0 +1,24 @@
+# Start R within your package directory (so that your package directory is R’s working directory).
+# Then type:
+
+require(devtools)
+devtools::build(vignettes=FALSE)  ## Note: This removes /inst/doc
+devtools::install(upgrade = "never")
+
+
+# Initial compilation
+R CMD build PACVr
+
+# Evaluating the package for submission to CRAN
+R CMD check PACVr_0.8.2.tar.gz --as-cran
+
+
+
+
+### COMPILING INSTRUCTIONS ###
+
+R CMD build PACVr
+
+R CMD check PACVr_0.8.2.tar.gz --as-cran
+
+R CMD check PACVr_0.8.2.tar.gz --as-cran --run-donttest
