@@ -14,7 +14,11 @@ PACVr.complete(gbk.file,
                bam.file,
                windowSize = 250,
                mosdepthCmd = 'mosdepth',
-               threshold = 25,
+               logScale = FALSE,
+               threshold = 0.5,
+               syntenyLineType = 3,
+               relative = TRUE,
+               textSize = 0.5,
                delete = TRUE,
                output = NA)
 }
@@ -40,7 +44,7 @@ bamFile <- system.file("extdata", "MH161174/MH161174_PlastomeReadsOnly.sorted.ba
 outFile <- paste(tempdir(), "/MH161174_AssemblyCoverage_viz.pdf", sep="")
 \donttest{
 PACVr.complete(gbk.file=gbkFile, bam.file=bamFile, windowSize=250, 
-               mosdepthCmd='mosdepth', threshold=15, delete=TRUE,
-               output=outFile)
+               mosdepthCmd='mosdepth', threshold=0.5, syntenyLineType=3,
+               relative=TRUE, textSize=0.5, delete=TRUE, output=outFile)
 }
 }

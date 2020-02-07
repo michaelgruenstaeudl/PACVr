@@ -10,7 +10,7 @@ import(RCircos)
 importFrom("genbankr", "readGenBank", "accession", "definition", "genes", "otherFeatures")
 
 importFrom("utils", "read.table", "write.table")
-importFrom("graphics", "polygon", "title", "legend")
+importFrom("graphics", "polygon", "title", "legend", "lines", "text")
 
 #importFrom("grDevices", "svg", "dev.off")
 importFrom("grDevices", "pdf", "dev.off")
