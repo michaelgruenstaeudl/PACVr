@@ -1,5 +1,9 @@
 CHANGELOG
 ---------
+#### Version 0.9.2 (2020.02.09)
+* Updated README file
+* Updated and improved package vignette
+
 #### Version 0.9.1 (2020.02.07)
 * Updated README file
 * Updated and improved package vignette
