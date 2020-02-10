@@ -37,41 +37,36 @@
 \tableofcontents
 
 \section{Introduction}
-PACVr visualizes the coverage depth of a complete plastid genome as well as the equality of its inverted repeat regions in relation to the circular, quadripartite genome structure and the location of individual genes. This vignette provides instructions for generating the necessary input files and for executing the software from within the R interpreter via function \texttt{PACVr.complete()}, and invocation from the Unix command-line shell via script \texttt{PACVr\_Rscript.R}. This vignette also illustrates the operation of PACVr on an empirical dataset co-supplied with the R package.
 
-\section{Creating BAM file}
-For PACVr to compute and visualize coverage depth along a given plastid genome, users must provide textual information on the mapping of sequence reads on the input genome. This information is supplied via a BAM file. The following is a minimal example code for generating a BAM file using the read mapper BWA (\href{https://doi.org/10.1093/bioinformatics/btp324}{Li and Durbin 2009}).
-\begin{BGVerbatim}[fontsize=\normalsize]
-bwa -index -a is <reference.fasta>
-bwa aln <reference.fasta> <forward_reads.fastq> > <forwards_reads.sai>
-bwa aln <reference.fasta> <backward_reads.fastq> > <backward_reads.sai>
-bwa mem -t 6 <reference.fasta> <forwards_reads.fastq> <backward_reads.fastq> \
-    | samtools view -Sb - > <Sample_BackMapping_bwa.bam>
-samtools sort <Sample_BackMapping_bwa.bam> -o <Sample_BackMapping_bwa.sorted.bam>
-samtools index <Sample_BackMapping_bwa.sorted.bam>
-\end{BGVerbatim}
+    PACVr visualizes the coverage depth of a complete plastid genome as well as the equality of its inverted repeat regions in relation to the circular, quadripartite genome structure and the location of individual genes. This vignette provides instructions for generating the necessary input files and for executing the software from within the R interpreter via function \texttt{PACVr.complete()}, and invocation from the Unix command-line shell via script \texttt{PACVr\_Rscript.R}. This vignette also illustrates the operation of PACVr on an empirical dataset co-supplied with the R package.
+
+
+\pagebreak
+
 
 \section{Installation}
-Prior to running PACVr, several dependencies need to be installed. Below are some strategies that have been successful in installing PACVr and all its dependencies on Linux (Arch Linux 4.18, Debian 9.9, and Ubuntu 18.10) and MacOS (HighSierra 10.13.6 and Mojave 10.14.6), respectively.
+
+    Prior to running PACVr, several dependencies need to be installed. Below are some strategies that have been successful in installing PACVr and all its dependencies on Linux (Arch Linux 4.18, Debian 9.9, and Ubuntu 18.10) and MacOS (HighSierra 10.13.6 and Mojave 10.14.6), respectively.
 
     \subsection{On Linux}
     To install \href{https://doi.org/10.1093/bioinformatics/btx699}{mosdepth}, open a shell and type:
-    \begin{BGVerbatim}[fontsize=\normalsize]
-    system("conda install -y mosdepth")
-    \end{BGVerbatim}
+\begin{BGVerbatim}[fontsize=\normalsize]
+system("conda install -y mosdepth")
+\end{BGVerbatim}
     
     To install all R dependencies, open R and type:
-    \begin{BGVerbatim}[fontsize=\normalsize]    
-    # CRAN packages
-    if (!require("pacman"))
-        install.packages("pacman")
-    pacman::p_load("RCircos", "optparse", install=TRUE)
-    # Bioconductor packages
-    if (!requireNamespace("BiocManager", quietly=TRUE))
-        install.packages("BiocManager")
-    if (!requireNamespace("genbankr", quietly=TRUE))
-        BiocManager::install("genbankr")
-    \end{BGVerbatim}
+\begin{BGVerbatim}[fontsize=\normalsize]
+# CRAN packages
+if (!require("pacman"))
+install.packages("pacman")
+pacman::p_load("RCircos", "optparse", install=TRUE)
+
+# Bioconductor packages
+if (!requireNamespace("BiocManager", quietly=TRUE))
+install.packages("BiocManager")
+if (!requireNamespace("genbankr", quietly=TRUE))
+BiocManager::install("genbankr")
+\end{BGVerbatim}
 
     \subsection{On MacOS}
     To install \href{https://doi.org/10.1093/bioinformatics/btx699}{mosdepth}, do:
@@ -87,73 +82,132 @@ Prior to running PACVr, several dependencies need to be installed. Below are som
     
     To install all R dependencies, open R and follow the instructions as given for Linux (see above).
 
-%\pagebreak
 
-\section{Executing PACVr via R interpreter}
-PACVr can be executed from within the R interpreter via function \texttt{PACVr.complete()}.
+\pagebreak
+
+
+\section{Creating BAM file}
+
+    For PACVr to compute and visualize coverage depth along a given plastid genome, users must provide textual information on the mapping of sequence reads on the input genome. This information is supplied via an input file in the binary alignment/map (BAM) format, which stores alignment and mapping information and is typically generated through the mapping of sequence reads to a reference genome with automated read-mappers in conjunction with the software samtools (\href{https://doi.org/10.1093/bioinformatics/btp352}{Li 2009}).
+
+
+    \subsection{Mapping via BWA}
+    The following is a minimal code example for mapping reads to a reference genome via BWA (\href{https://doi.org/10.1093/bioinformatics/btp324}{Li and Durbin 2009}).
+\begin{BGVerbatim}[fontsize=\normalsize]
+# Building the index
+bwa index <ref.fasta>
+
+# Mapping reads to reference
+bwa mem <ref.fasta> <reads_R1.fastq> <reads_R2.fastq> > <mapping_result.sam>
+\end{BGVerbatim}
+
+
+    \subsection{Mapping via Bowtie2}
+    The following is a minimal code example for mapping reads to a reference genome via Bowtie2 (\href{https://doi.org/10.1038/nmeth.1923}{Langmead and Salzberg 2012}).
+\begin{BGVerbatim}[fontsize=\normalsize]
+# Building the index
+mkdir -p db
+bowtie2-build <ref.fasta> db/<ref_name>
+
+# Mapping reads to reference
+bowtie2 -x db/<ref_name> -1 <reads_R1.fastq> -2 <reads_R2.fastq> -S <mapping_result.sam>
+\end{BGVerbatim}
+
+
+    \subsection{Indexing via samtools}
+    The following are code examples for generating sorted and indexed BAM files via samtools under different read filtering options.
+\begin{BGVerbatim}[fontsize=\normalsize]
+# Not filtered; 6877 reads in example dataset
+samtools view -Sb <mapping_result.sam> > <all_reads.bam>
+
+# Reads that map to one or more locations; 6854 reads in example dataset
+samtools view -Sb -F 0x04 <mapping_result.sam> > <map_to_one_or_more_locations.bam>
+
+# Reads that map to one location only; 6072 reads in example dataset
+samtools view -S <mapping_result.sam> | grep -v "XA:Z\|SA:Z" |\
+  samtools view -bS -T <ref.fasta> - > <map_to_one_location_only.bam>
+
+# Only reads that map to multiple locations; 2177 reads in example dataset
+# Note: Ideal for confirming location of IRs!
+samtools view -S <mapping_result.sam> | grep "XA:Z\|SA:Z" |\
+  samtools view -bS -T <ref.fasta> - > <must_map_to_multiple_locations.bam>
+
+# Only reads that map in proper pairs; 28 reads in example dataset
+samtools view -Sb -f 0x10 -f 0x20 <mapping_result.sam> > <map_in_proper_pairs.bam>
+
+samtools sort <mapping_result.bam> > <mapping_result.sorted.bam>
+samtools index <mapping_result.sorted.bam>
+\end{BGVerbatim}
+
+
+\pagebreak
+
+
+\section{Running PACVr}
+
+    \subsection{Via R interpreter}
+    PACVr can be executed from within the R interpreter via function \texttt{PACVr.complete()}.
 
 \begin{BGVerbatim}[fontsize=\normalsize]
 library(PACVr)
-## Specify input files
+
+# Specify input files
 gbkFile <- system.file("extdata", "MH161174/MH161174.gb", package="PACVr")
 bamFile <- system.file("extdata", "MH161174/MH161174_PlastomeReadsOnly.sorted.bam", 
                        package="PACVr")
-## Specify output file
+
+# Specify output file
 outFile <- paste(tempdir(), "/MH161174_AssemblyCoverage_viz.pdf", sep="")
-## Run PACVr
+
+# Run PACVr
 PACVr.complete(gbk.file=gbkFile, bam.file=bamFile, windowSize=250, 
                mosdepthCmd='mosdepth', logScale=FALSE, threshold=0.5,
                syntenyLineType=3, relative=TRUE, textSize=0.5,
                delete=TRUE, output=outFile)
 \end{BGVerbatim}
 
-\section{Executing PACVr via Unix shell}
-PACVr can also be executed from the Unix command-line shell via script \texttt{PACVr\_Rscript.R}.
-  
+    \subsection{Via Unix shell}
+    PACVr can also be executed from the Unix command-line shell via script \texttt{PACVr\_Rscript.R}.
+      
 \begin{BGVerbatim}[fontsize=\normalsize]
 Rscript ./inst/extdata/PACVr_Rscript.R \
      -k ./inst/extdata/MH161174.gb \
      -b ./inst/extdata/MH161174_PlastomeReadsOnly.sorted.bam \
+     -t 0.5 \
+     -r TRUE \
      -o ./inst/extdata/MH899017_AssemblyCoverage_viz.pdf
 \end{BGVerbatim}
-  
-\begin{figure}[H]
-\centering
-    \includegraphics[width=0.9\textwidth]{MH161174_AssemblyCoverage_viz.pdf}
-    \caption{File \texttt{MH161174\_AssemblyCoverage\_viz.pdf} as generated via \texttt{PACVr.complete()}}
-\centering
-\end{figure}
+
 
 \pagebreak
 
-%\section{Modifying parameters}
-%  Depending on which system PACVr will be executed
 
-%\section{More Information}
+    \begin{figure}[H]
+    \centering
+        \includegraphics[width=1.0\textwidth, keepaspectratio=true]{MH161174__all_reads.pdf}
+        \caption{Coverage depth of the example dataset (\textit{Nuphar japonica} NC_045072) as generated via \texttt{PACVr.complete()} when no filtering is conducted during read indexing via samtools.}
+    \centering
+    \end{figure}
 
-\iffalse
-\section{sessionInfo}
-\begin{Verbatim}
-> sessionInfo()
-R version 3.3.3 (2017-03-06)
-Platform: x86_64-pc-linux-gnu (64-bit)
-Running under: Debian GNU/Linux 9 (stretch)
 
-locale:
- [1] LC_CTYPE=de_DE.UTF-8       LC_NUMERIC=C              
- [3] LC_TIME=de_DE.UTF-8        LC_COLLATE=de_DE.UTF-8    
- [5] LC_MONETARY=de_DE.UTF-8    LC_MESSAGES=de_DE.UTF-8   
- [7] LC_PAPER=de_DE.UTF-8       LC_NAME=C                 
- [9] LC_ADDRESS=C               LC_TELEPHONE=C            
-[11] LC_MEASUREMENT=de_DE.UTF-8 LC_IDENTIFICATION=C       
+\pagebreak
 
-attached base packages:
-[1] stats     graphics  grDevices utils     datasets 
-[6] methods   base     
 
-loaded via a namespace (and not attached):
-[1] tools_3.3.3
-\end{Verbatim}
-\fi
+\section{Output under different samtools filtering options}
+
+    \begin{figure}[H]
+    \centering
+        \includegraphics[width=0.5\textwidth, keepaspectratio=true]{MH161174__map_to_one_location_only.pdf}
+        \caption{Coverage depth when only reads are used that map to one genome location.}
+    \centering
+    \end{figure}
+
+    \begin{figure}[H]
+    \centering
+        \includegraphics[width=0.5\textwidth, keepaspectratio=true]{MH161174__map_to_multiple_locations.pdf}
+        \caption{Coverage depth when only reads are used that to multiple genome locations; this setting is ideal to confirm the location of the IRs of a plastid genome.}
+    \centering
+    \end{figure}
+
 
 \end{document}

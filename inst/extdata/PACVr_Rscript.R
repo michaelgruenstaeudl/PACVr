@@ -1,7 +1,7 @@
 #!/usr/bin/R
 #contributors = c("Michael Gruenstaeudl","Nils Jenke")
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2019.07.05.1100"
+#version = "2020.02.10.1300"
 
 library("optparse")
 
@@ -18,43 +18,67 @@ CmdLineArgs <- function() {
                               type    = "character", 
                               default = NULL, 
                               dest    = "gbkFile",
-                              help    = "GenBank filename", 
+                              help    = "a character vector that specifies the name of, and path to, the GenBank input file", 
                               metavar = "character"),
                   make_option(opt_str = c("-b","--bamFile"), 
                               type    = "character", 
                               default = NULL, 
                               dest    = "bamFile",
-                              help    = "BAM filename", 
+                              help    = "a character vector that specifies the name of, and path to, the BAM input file", 
                               metavar = "character"),
-                  make_option(opt_str = c("-r","--windowSize"), 
+                  make_option(opt_str = c("-w","--windowSize"), 
                               type    = "numeric", 
                               default = 250, 
                               dest    = "windowSize",
-                              help    = "window size to calculate the coverage [default = %default]", 
+                              help    = "a numeric value that specifies window size in which the coverage is calculated [default = %default]", 
                               metavar = "integer"),
                   make_option(opt_str = c("-m","--mosdepthCmd"), 
                               type    = "character", 
                               default = "mosdepth", 
                               dest    = "mosdepthCmd",
-                              help    = "command to execute mosdepth on system [default = %default]", 
+                              help    = "a character vector that specifies the command to execute mosdepth on the system [default = %default]", 
                               metavar = "character"),
+                  make_option(opt_str = c("-l","--logScale"), 
+                              type    = "logical", 
+                              default = FALSE, 
+                              dest    = "logScale",
+                              help    = "a boolean that specifies if the coverage depth is to be log-transformed before visualizing it [default = %default]", 
+                              metavar = "logical"),
                   make_option(opt_str = c("-t","--threshold"), 
                               type    = "numeric", 
                               default = 25, 
                               dest    = "threshold",
-                              help    = "threshold for plotting coverage at different color [default = %default]", 
+                              help    = "a numeric value that specifies the threshold for plotting coverage depth bars in red as opposed to the default black [default = %default]", 
+                              metavar = "integer"),
+                  make_option(opt_str = c("-s","--syntenyLineType"), 
+                              type    = "numeric", 
+                              default = 1, 
+                              dest    = "syntenyLineType",
+                              help    = "a numeric value of 1, 2 or 3 that specifies the line type for visualizing IR gene synteny; 1 = ribbon lines, 2 = solid lines, 3 = no line [default = %default]", 
+                              metavar = "integer"),
+                  make_option(opt_str = c("-r","--relative"), 
+                              type    = "logical", 
+                              default = FALSE, 
+                              dest    = "relative",
+                              help    = "a boolean that specifies whether the threshold is a relative value of the average coverage instead of an absolute value [default = %default]", 
+                              metavar = "logical"),
+                  make_option(opt_str = c("-x","--textSize"), 
+                              type    = "numeric", 
+                              default = 0.5, 
+                              dest    = "textSize",
+                              help    = "a numeric value that specifies the font size of the text element in the visualization [default = %default]", 
                               metavar = "integer"),
                   make_option(opt_str = c("-d","--delete"), 
                               type    = "logical", 
                               default = TRUE, 
                               dest    = "delete",
-                              help    = "decision to delete temporary files upon program execution [default = %default]", 
+                              help    = "the decision to delete temporary files upon program execution [default = %default]", 
                               metavar = "logical"),
                   make_option(opt_str = c("-o","--output"), 
                               type    = "character", 
                               default = "./PACVr_output.pdf", 
                               dest    = "output",
-                              help    = "name of output file [default= %default]", 
+                              help    = "a character vector that specifies the name of, and path to, the output file [default= %default]", 
                               metavar = "character"))
   
   opt_parse <- optparse::OptionParser(option_list=option_list)
@@ -76,9 +100,18 @@ opt <- CmdLineArgs()
 
 ########################################################################
 
-PACVr.complete(gbk.file = opt$gbkFile, bam.file = opt$bamFile, 
-                windowSize = opt$windowSize, mosdepthCmd = opt$mosdepthCmd, 
-                threshold = opt$threshold, delete = opt$delete, 
-                output = opt$output)
+require("PACVr")
+PACVr.complete(gbk.file = opt$gbkFile,
+               bam.file = opt$bamFile,
+               windowSize = opt$windowSize,
+               mosdepthCmd = opt$mosdepthCmd,
+               logScale = opt$logScale,
+               threshold = opt$threshold,
+               syntenyLineType = opt$syntenyLineType,
+               relative = opt$relative,
+               textSize = opt$textSize,
+               delete = opt$delete,
+               output = opt$output)
 
 ########################################################################
+
