@@ -74,7 +74,7 @@ PACVr.visualizeWithRCircos <- function (gbkData, genes, regions,
 
 PACVr.complete <- function(gbk.file, bam.file, windowSize = 250,
                            mosdepthCmd = "mosdepth", logScale = FALSE, threshold = 0.5,
-                           syntenyLineType=3, relative = TRUE, textSize=0.5,
+                           syntenyLineType = 1, relative = TRUE, textSize=0.5,
                            delete = TRUE, output = NA) {
   
   # 1. Preparatory steps
