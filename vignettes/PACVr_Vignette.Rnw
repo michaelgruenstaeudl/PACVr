@@ -86,6 +86,56 @@ BiocManager::install("genbankr")
 \pagebreak
 
 
+\section{Running PACVr}
+
+    \subsection{Via R interpreter}
+    PACVr can be executed from within the R interpreter via function \texttt{PACVr.complete()}.
+
+\begin{BGVerbatim}[fontsize=\normalsize]
+library(PACVr)
+
+# Specify input files
+gbkFile <- system.file("extdata", "NC_045072/NC_045072.gb", package="PACVr")
+bamFile <- system.file("extdata", "NC_045072/NC_045072_PlastomeReadsOnly.sorted.bam", 
+                       package="PACVr")
+
+# Specify output file
+outFile <- paste(tempdir(), "/NC_045072_AssemblyCoverage_viz.pdf", sep="")
+
+# Run PACVr
+PACVr.complete(gbk.file=gbkFile, bam.file=bamFile, windowSize=250, 
+               mosdepthCmd='mosdepth', logScale=FALSE, threshold=0.5,
+               syntenyLineType=3, relative=TRUE, textSize=0.5,
+               delete=TRUE, output=outFile)
+\end{BGVerbatim}
+
+    \subsection{Via Unix shell}
+    PACVr can also be executed from the Unix command-line shell via script \texttt{PACVr\_Rscript.R}.
+      
+\begin{BGVerbatim}[fontsize=\normalsize]
+Rscript ./inst/extdata/PACVr_Rscript.R \
+     -k ./inst/extdata/NC_045072.gb \
+     -b ./inst/extdata/NC_045072_PlastomeReadsOnly.sorted.bam \
+     -t 0.5 \
+     -r TRUE \
+     -o ./inst/extdata/NC_045072__all_reads.pdf
+\end{BGVerbatim}
+
+
+\pagebreak
+
+
+    \begin{figure}[H]
+    \centering
+        \includegraphics[width=1.0\textwidth, keepaspectratio=true]{NC_045072__all_reads.pdf}
+        \caption{Coverage depth of the example dataset (\textit{Nuphar japonica} NC\_045072) as generated via \texttt{PACVr.complete()} when no filtering is conducted during read indexing via samtools.}
+    \centering
+    \end{figure}
+
+
+\pagebreak
+
+
 \section{Creating BAM file}
 
     For PACVr to compute and visualize coverage depth along a given plastid genome, users must provide textual information on the mapping of sequence reads on the input genome. This information is supplied via an input file in the binary alignment/map (BAM) format, which stores alignment and mapping information and is typically generated through the mapping of sequence reads to a reference genome with automated read-mappers in conjunction with the software samtools (\href{https://doi.org/10.1093/bioinformatics/btp352}{Li 2009}).
@@ -139,72 +189,18 @@ samtools sort <mapping_result.bam> > <mapping_result.sorted.bam>
 samtools index <mapping_result.sorted.bam>
 \end{BGVerbatim}
 
-
-\pagebreak
-
-
-\section{Running PACVr}
-
-    \subsection{Via R interpreter}
-    PACVr can be executed from within the R interpreter via function \texttt{PACVr.complete()}.
-
-\begin{BGVerbatim}[fontsize=\normalsize]
-library(PACVr)
-
-# Specify input files
-gbkFile <- system.file("extdata", "MH161174/MH161174.gb", package="PACVr")
-bamFile <- system.file("extdata", "MH161174/MH161174_PlastomeReadsOnly.sorted.bam", 
-                       package="PACVr")
-
-# Specify output file
-outFile <- paste(tempdir(), "/MH161174_AssemblyCoverage_viz.pdf", sep="")
-
-# Run PACVr
-PACVr.complete(gbk.file=gbkFile, bam.file=bamFile, windowSize=250, 
-               mosdepthCmd='mosdepth', logScale=FALSE, threshold=0.5,
-               syntenyLineType=3, relative=TRUE, textSize=0.5,
-               delete=TRUE, output=outFile)
-\end{BGVerbatim}
-
-    \subsection{Via Unix shell}
-    PACVr can also be executed from the Unix command-line shell via script \texttt{PACVr\_Rscript.R}.
-      
-\begin{BGVerbatim}[fontsize=\normalsize]
-Rscript ./inst/extdata/PACVr_Rscript.R \
-     -k ./inst/extdata/MH161174.gb \
-     -b ./inst/extdata/MH161174_PlastomeReadsOnly.sorted.bam \
-     -t 0.5 \
-     -r TRUE \
-     -o ./inst/extdata/MH899017_AssemblyCoverage_viz.pdf
-\end{BGVerbatim}
-
-
-\pagebreak
-
+    \subsection{Output under different samtools filtering options}
 
     \begin{figure}[H]
     \centering
-        \includegraphics[width=1.0\textwidth, keepaspectratio=true]{MH161174__all_reads.pdf}
-        \caption{Coverage depth of the example dataset (\textit{Nuphar japonica} NC_045072) as generated via \texttt{PACVr.complete()} when no filtering is conducted during read indexing via samtools.}
-    \centering
-    \end{figure}
-
-
-\pagebreak
-
-
-\section{Output under different samtools filtering options}
-
-    \begin{figure}[H]
-    \centering
-        \includegraphics[width=0.5\textwidth, keepaspectratio=true]{MH161174__map_to_one_location_only.pdf}
+        \includegraphics[width=0.75\textwidth, keepaspectratio=true]{NC_045072__map_to_one_location_only.pdf}
         \caption{Coverage depth when only reads are used that map to one genome location.}
     \centering
     \end{figure}
 
     \begin{figure}[H]
     \centering
-        \includegraphics[width=0.5\textwidth, keepaspectratio=true]{MH161174__map_to_multiple_locations.pdf}
+        \includegraphics[width=0.75\textwidth, keepaspectratio=true]{NC_045072__map_to_multiple_locations.pdf}
         \caption{Coverage depth when only reads are used that to multiple genome locations; this setting is ideal to confirm the location of the IRs of a plastid genome.}
     \centering
     \end{figure}

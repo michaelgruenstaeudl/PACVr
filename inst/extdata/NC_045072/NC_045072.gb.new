@@ -1,7 +1,7 @@
-LOCUS       MH161174      160761 bp    DNA     circular PLN 06-FEB-2020
+LOCUS       NC_045072      160761 bp    DNA     circular PLN 06-FEB-2020
 DEFINITION  Nuphar japonica chloroplast, complete genome.
-ACCESSION   MH161174
-VERSION     MH161174.1
+ACCESSION   NC_045072
+VERSION     NC_045072.1
 KEYWORDS    .
 SOURCE      chloroplast Nuphar japonica
   ORGANISM  Nuphar japonica

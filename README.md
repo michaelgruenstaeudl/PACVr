@@ -14,10 +14,10 @@ Note: Detailed installation instructions can be found in the package vignette.
 ```
 # In R:
 library(PACVr)
-gbkFile <- system.file("extdata", "MH161174/MH161174.gb", package="PACVr")
-bamFile <- system.file("extdata", "MH161174/MH161174_PlastomeReadsOnly.sorted.bam", 
+gbkFile <- system.file("extdata", "NC_045072/NC_045072.gb", package="PACVr")
+bamFile <- system.file("extdata", "NC_045072/NC_045072_PlastomeReadsOnly.sorted.bam", 
                        package="PACVr")
-outFile <- paste(tempdir(), "/MH161174_AssemblyCoverage_viz.pdf", sep="")
+outFile <- paste(tempdir(), "/NC_045072_AssemblyCoverage_viz.pdf", sep="")
 PACVr.complete(gbk.file=gbkFile, bam.file=bamFile, windowSize=250, 
                mosdepthCmd='mosdepth', logScale=FALSE, threshold=0.5,
                syntenyLineType=3, relative=TRUE, textSize=0.5,
@@ -25,7 +25,7 @@ PACVr.complete(gbk.file=gbkFile, bam.file=bamFile, windowSize=250,
 ```
 
 ## OUTPUT
-![](MH161174_AssemblyCoverage_viz.png)
+![](NC_045072__all_reads.pdf)
 
 <!--
 ## CITATION
