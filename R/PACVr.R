@@ -53,9 +53,9 @@ PACVr.generateIRGeneData <- function(gbkData, genes, regions,
 
 
 PACVr.visualizeWithRCircos <- function (gbkData, genes, regions,
-                                        coverage, windowSize, threshold,
-                                        relative, mosdepthCmd, linkData,
-                                        syntenyLineType, textSize) {
+                                        coverage, windowSize, logScale, 
+                                        threshold, relative, mosdepthCmd, 
+                                        linkData, syntenyLineType, textSize) {
     
   # 1. Generate plot title
     mosdepth_present = tryCatch(system2(command="command", args=c("-v", mosdepthCmd), stdout=TRUE), error=function(e) NULL)
@@ -68,8 +68,8 @@ PACVr.visualizeWithRCircos <- function (gbkData, genes, regions,
   # 2. Visualize
     visualizeWithRCircos(plotTitle, genes, regions, 
                          coverage, windowSize, threshold,
-                         relative, linkData, syntenyLineType,
-                         textSize)
+                         logScale, relative, linkData, 
+                         syntenyLineType, textSize)
 }
 
 PACVr.complete <- function(gbk.file, bam.file, windowSize = 250,
@@ -90,7 +90,7 @@ PACVr.complete <- function(gbk.file, bam.file, windowSize = 250,
   if(get_os == "Windows"){
       system2(command="md", args=tmpDir)} else {system2(command="mkdir", args=c("-p", tmpDir))
   }
-  
+
   # 2. Conduct operations
   regions <- PACVr.parseRegions(gbkData)
   genes <- PACVr.parseGenes(gbkData)
@@ -105,15 +105,15 @@ PACVr.complete <- function(gbk.file, bam.file, windowSize = 250,
     pdf(output,width=10,height = 10)
     PACVr.visualizeWithRCircos(gbkData, genes, regions, 
                                coverage, windowSize, threshold,
-                               relative, mosdepthCmd, linkData,
-                               syntenyLineType, textSize)
+                               logScale, relative, mosdepthCmd, 
+                               linkData, syntenyLineType, textSize)
     dev.off()
   } else {
   # 4. Generate visualization
     PACVr.visualizeWithRCircos(gbkData, genes, regions, 
                                coverage, windowSize, threshold,
-                               relative, mosdepthCmd, linkData,
-                               syntenyLineType, textSize)
+                               logScale, relative, mosdepthCmd, 
+                               linkData, syntenyLineType, textSize)
   }
   
   # 5. Delete temp files
