@@ -30,16 +30,15 @@ PACVr.complete(gbk.file=gbkFile, bam.file=bamFile, windowSize=250,
 ## CITATION
 Using PACVr in your research? Please cite it!
 
-- Gruenstaeudl M., Jenke N. (2019). foo bar baz
-
 ```
 @article {GruenstaeudlAndJenke2020,
     author = {Gruenstaeudl, M. and Jenke, N.},
     title = {PACVr: plastome assembly coverage visualization in R},
     year = {2020},
     doi = {10.1186/s12859-020-3475-0},
-    URL = {https://doi.org/10.1186/s12859-020-3475-0},
-    journal = {BMC Bioinformatics}
+    journal = {BMC Bioinformatics},
+    volume = {in press},
+    pages = {}
 }
 ```
 
