@@ -25,27 +25,23 @@ PACVr.complete(gbk.file=gbkFile, bam.file=bamFile, windowSize=250,
 ```
 
 ## OUTPUT
-![](NC_045072__all_reads.pdf)
+![](NC_045072__all_reads.png)
 
-<!--
 ## CITATION
 Using PACVr in your research? Please cite it!
 
 - Gruenstaeudl M., Jenke N. (2019). foo bar baz
 
 ```
-@article {Gruenstaeudl435644,
-    author = {Gruenstaeudl, Michael and Hartmaring, Yannick},
-    title = {EMBL2checklists: A Python package to facilitate the user-friendly submission of plant DNA barcoding sequences to ENA},
-    elocation-id = {435644},
-    year = {2018},
-    doi = {10.1101/435644},
-    URL = {https://www.biorxiv.org/content/early/2018/10/05/435644},
-    journal = {bioRxiv}
+@article {GruenstaeudlAndJenke2020,
+    author = {Gruenstaeudl, M. and Jenke, N.},
+    title = {PACVr: plastome assembly coverage visualization in R},
+    year = {2020},
+    doi = {10.1186/s12859-020-3475-0},
+    URL = {https://doi.org/10.1186/s12859-020-3475-0},
+    journal = {BMC Bioinformatics}
 }
 ```
--->
-
 
 <!--
 ## TO DO
