@@ -12,10 +12,10 @@ Note: Detailed installation instructions can be found in the package vignette.
 
 ## PRE-FORMATTING INPUT
 Due to the internal usage of R package [genbankr](https://bioconductor.org/packages/release/bioc/html/genbankr.html), any GenBank flatfile must conform to the following specifications: 
-- Flatfile must include a source feature at start of feature table.
-- All exon features (plus their qualifier lines) must be removed: `sed -i -e '/    exon/,+2d' input.gb`.
-- All duplicate lines must be removed: `sed -i '$!N; /^\(.*\)\n\1$/!P; D' input.gb`.
-- All redundant complement specifications must be removed (e.g., `join(complement(4316..4354),complement(1752..1790))  -->  join(complement(4316..4354,1752..1790))`)
+- Flatfile must include a _source_ feature at start of feature table
+- All exon features (plus their qualifier lines) must be removed: `sed -i -e '/    exon/,+2d' input.gb`
+- All duplicate lines must be removed: `sed -i '$!N; /^\(.*\)\n\1$/!P; D' input.gb`
+- All redundant complement specifications must be removed. For example: `join(complement(4316..4354),complement(1752..1790))  -->  join(complement(4316..4354,1752..1790))`)
 
 
 ## USAGE
