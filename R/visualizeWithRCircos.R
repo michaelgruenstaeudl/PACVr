@@ -16,9 +16,9 @@
 #'
 #' @examples
 visualizeWithRCircos <- function(plotTitle, genes, regions, 
-                                 coverage, windowSize, threshold,
-                                 relative, linkData, syntenyLineType=3,
-                                 textSize) {
+                                 coverage, windowSize, logScale,
+                                 threshold, relative, linkData, 
+                                 syntenyLineType=3, textSize) {
   
   # Generates the visualization of genome data and their tracks
   # ARGS:
@@ -48,16 +48,15 @@ visualizeWithRCircos <- function(plotTitle, genes, regions,
   )
 
   # 2. SET PARAMETER FOR IDEOGRAM
-
   rcircos.params <- RCircos.Get.Plot.Parameters()
   rcircos.params$base.per.unit <- 1
   rcircos.params$chrom.paddings <- 1
-  rcircos.params$track.height <- 0.07#0.07
+  rcircos.params$track.height <- 0.07
   rcircos.params$text.size <- textSize
   rcircos.params$track.background <- "gray71"
   rcircos.params$sub.tracks <- 4
-  rcircos.params$char.width <- 16666667/3*(max(regions$chromEnd)/50000)
-  rcircos.params$hist.color <- HistCol(coverage, threshold,relative)
+  rcircos.params$char.width <- 6000000*(max(regions$chromEnd)/(52669+310*(nrow(genes))))/textSize
+  rcircos.params$hist.color <- HistCol(coverage, threshold,relative, logScale)
   rcircos.params$line.color <- "yellow3"
   rcircos.params$chrom.width <- 0.05
   rcircos.params$track.in.start <- 1.08
@@ -76,12 +75,8 @@ visualizeWithRCircos <- function(plotTitle, genes, regions,
   suppressMessages(
     RCircos.Chromosome.Ideogram.Plot()
   )
-
-  
   # 4. GENERATE PLOT
   PACVr.Ideogram.Tick.Plot(tick.num=10, track.for.ticks=2, add.text.size=0.1)
-  #outside.pos <- 1.05
-  #inside.pos <- RCircos.Get.Plot.Boundary(track.num = 1, "in")[2]
   
   suppressMessages(
     PACVr.Gene.Connector.Plot(genomic.data=genes, track.num=1, side="in", 
@@ -89,11 +84,11 @@ visualizeWithRCircos <- function(plotTitle, genes, regions,
                               )
   )
   
-  suppressMessages(
+#  suppressMessages(
     PACVr.Gene.Name.Plot(gene.data=genes, name.col=4, track.num=2,
                          side="in"
                         )
-  )
+#  )
   
   PACVr.Gene.Name.Plot(gene.data=regions, name.col=4, track.num=1, 
                        side="out", rotate=90, correction=0.2, add.text.size=0.2
@@ -151,7 +146,7 @@ visualizeWithRCircos <- function(plotTitle, genes, regions,
                                     averageLines),
            pch = c(15, 15, NA, rep(NA,length(averageLines))), lty = c(NA, NA, 1, rep(NA,length(averageLines))), lwd = 2,
            col = c("black", "red", "yellow3",rep(NA,length(averageLines))), cex = 0.5, bty = "n"
-    )
+      )
   } else {
     absolute <- round(threshold/trunc(mean(coverage[,4]))*100)
     legend("bottomleft", legend = c(paste("Coverage > ", threshold,"X ", "(=",round(threshold/trunc(mean(coverage[,4]))*100),"% of avg. cov.)", sep = ""), 
