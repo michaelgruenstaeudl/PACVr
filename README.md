@@ -14,8 +14,10 @@ Note: Detailed installation instructions can be found in the package vignette.
 Due to the internal usage of R package [genbankr](https://bioconductor.org/packages/release/bioc/html/genbankr.html), any GenBank flatfile must conform to the following specifications: 
 - Flatfile must include a _source_ feature at start of feature table
 - All _exon_ features (plus their qualifier lines) must be removed: `sed -i -e '/    exon/,+2d' input.gb`
-- All redundant _complement_ specifications must be removed: `sed -i 's/),complement(/,/g' input.gb`
+- All redundant _complement_ specifications must be removed: `sed -i -z 's/),\s*complement(/,/g' input.gb`
+<!--
 - All duplicate lines, if any, must be removed: `sed -i '$!N; /^\(.*\)\n\1$/!P; D' input.gb`
+-->
 
 ## USAGE
 ```
