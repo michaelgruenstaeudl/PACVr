@@ -36,6 +36,23 @@ PACVr.complete(gbk.file=gbkFile, bam.file=bamFile, windowSize=250,
 ## OUTPUT
 ![](NC_045072__all_reads.png)
 
+## FULLY AUTOMATED
+```
+SMPLNME="Cb01A_IOGA"
+INFASTA=${SMPLNME}.fasta
+READSR1=Cb01A_PlastomeReadsOnly_R1.fastq
+READSR2=Cb01A_PlastomeReadsOnly_R2.fastq
+
+mkdir -p db
+bowtie2-build $INFASTA db/${SMPLNME}
+bowtie2 -x db/${SMPLNME} -1 $READSR1 -2 $READSR2 -S ${SMPLNME}_mapping.sam
+samtools view -Sb -F 0x04 ${SMPLNME}_mapping.sam > ${SMPLNME}_mapping_OneMoreLocations.bam
+samtools sort ${SMPLNME}_mapping_OneMoreLocations.bam > ${SMPLNME}_mapping_OneMoreLocations.sorted.bam
+rm $(ls *.?am | grep -v sorted)
+samtools index ${SMPLNME}_mapping_OneMoreLocations.sorted.bam
+Rscript PACVr/inst/extdata/PACVr_Rscript.R -k ${SMPLNME}.gb -b ${SMPLNME}_mapping_OneMoreLocations.sorted.bam -t 0.5 -r TRUE -o ${SMPLNME}_CoverageDepth.pdf
+```
+
 ## CITATION
 Using PACVr in your research? Please cite it!
 
