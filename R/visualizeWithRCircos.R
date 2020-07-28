@@ -33,6 +33,11 @@ visualizeWithRCircos <- function(plotTitle, genes, regions,
   #   linkData: data frame that contains genomic region, coverage start, coverage end and coverage value
   # RETURNS:
   #   ---
+  
+  if(logScale==TRUE){
+    coverage$coverage <- log(cov$coverage)
+  }
+  coverage$Chromosome <- ""
 
   # 1. RCIRCOS INITIALIZATION
 

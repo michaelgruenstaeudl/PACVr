@@ -3,7 +3,7 @@
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
 #version = "2020.01.17.1800"
 
-HistCol <- function(cov, threshold,relative, logScale) {
+HistCol <- function(cov, threshold, relative, logScale) {
   
   # Function to generate color vector for histogram data
   # ARGS:
@@ -16,7 +16,6 @@ HistCol <- function(cov, threshold,relative, logScale) {
     warning("User-defined coverage depth threshold must be >=1.")
     stop()
   }
-  
   
   if(relative == TRUE & logScale){
     threshold <- mean(cov[,4]) + log(threshold)
