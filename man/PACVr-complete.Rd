@@ -13,7 +13,6 @@ This function executes the complete pipeline of \pkg{PACVr} via a single command
 PACVr.complete(gbk.file,
                bam.file,
                windowSize = 250,
-               mosdepthCmd = 'mosdepth',
                logScale = FALSE,
                threshold = 0.5,
                syntenyLineType = 1,
@@ -27,7 +26,6 @@ PACVr.complete(gbk.file,
 \item{gbk.file}{a character vector that specifies the name of, and path to, the GenBank input file}
 \item{bam.file}{a character vector that specifies the name of, and path to, the BAM input file}
 \item{windowSize}{a numeric value that specifies window size in which the coverage is calculated}
-\item{mosdepthCmd}{a character vector that specifies the command to execute mosdepth on the system}
 \item{logScale}{a boolean that specifies if the coverage depth is to be log-transformed before visualizing it}
 \item{threshold}{a numeric value that specifies the threshold for plotting coverage depth bars in red as opposed to the default black}
 \item{syntenyLineType}{a numeric value of 1, 2 or 3 that specifies the line type for visualizing IR gene synteny; 1 = ribbon lines, 2 = solid lines, 3 = no line}
@@ -44,7 +42,7 @@ bamFile <- system.file("extdata", "NC_045072/NC_045072_PlastomeReadsOnly.sorted.
 outFile <- paste(tempdir(), "/NC_045072__all_reads.pdf", sep="")
 \donttest{
 PACVr.complete(gbk.file=gbkFile, bam.file=bamFile, windowSize=250, 
-               mosdepthCmd='mosdepth', threshold=0.5, syntenyLineType=1,
-               relative=TRUE, textSize=0.5, delete=TRUE, output=outFile)
+               threshold=0.5, syntenyLineType=1, relative=TRUE, 
+               textSize=0.5, delete=TRUE, output=outFile)
 }
 }

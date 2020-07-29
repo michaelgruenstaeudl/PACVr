@@ -1,7 +1,7 @@
 #!/usr/bin/R
 #contributors = c("Michael Gruenstaeudl","Nils Jenke")
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2020.01.17.1800"
+#version = "2020.07.29.1700"
 
 PACVr.parseName <- function (gbkData) {
   # Parse sample name
@@ -58,6 +58,8 @@ PACVr.visualizeWithRCircos <- function (gbkData, genes, regions,
                          syntenyLineType, textSize)
 }
 
+
+
 PACVr.complete <- function(gbk.file, bam.file, windowSize = 250,
                            logScale = FALSE, threshold = 0.5, syntenyLineType = 1, 
                            relative = TRUE, textSize=0.5, delete = TRUE, 
@@ -80,25 +82,25 @@ PACVr.complete <- function(gbk.file, bam.file, windowSize = 250,
     tmpDir <- file.path(outDir, paste(sample_name, ".tmp", sep=""))
   } else {
     tmpDir <- file.path(".", paste(sample_name, ".tmp", sep=""))
-  }
+    }
   
   if (dir.exists(tmpDir) == FALSE) {
     dir.create(tmpDir)
   }
   
-  utils::write.table(coverage[,c("chromStart","chromEnd","coverage")],
-                     paste(tmpDir, .Platform$file.sep, "coverage.regions.txt",sep=""), 
-                     row.names = FALSE, sep = "\t", quote = FALSE)
+  write.csv(coverage[,c("chromStart","chromEnd","coverage")],
+            paste(tmpDir, .Platform$file.sep, "coverage_regions.csv", sep=""), 
+            row.names = FALSE, quote = FALSE)
   
   if (relative == TRUE){
-  utils::write.csv(coverage[coverage$coverage < mean(coverage$coverage) * threshold,c("chromStart","chromEnd","coverage")], 
-                   paste(tmpDir, .Platform$file.sep, sample_name,"_low_coverage.csv",sep=""), 
-                   row.names = FALSE, quote = FALSE)
+    write.csv(coverage[coverage$coverage < mean(coverage$coverage) * threshold, c("chromStart","chromEnd","coverage")], 
+              paste(tmpDir, .Platform$file.sep, sample_name,"_low_coverage.csv", sep=""), 
+              row.names = FALSE, quote = FALSE)
   } else {
-    utils::write.csv(coverage[coverage$coverage < threshold,c("chromStart","chromEnd","coverage")], 
-                     paste(tmpDir, .Platform$file.sep, sample_name,"_low_coverage.csv",sep=""), 
-                     row.names = FALSE, quote = FALSE)
-  }
+      write.csv(coverage[coverage$coverage < threshold,c("chromStart","chromEnd","coverage")], 
+                paste(tmpDir, .Platform$file.sep, sample_name, "_low_coverage.csv", sep=""), 
+                row.names = FALSE, quote = FALSE)
+    }
 
   
   # 4. Save plot

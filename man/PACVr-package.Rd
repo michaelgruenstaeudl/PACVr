@@ -12,10 +12,7 @@
 }
 
 \note{
-  \bold{Software Dependencies}
-  
-  For full functionality, \pkg{PACVr} requires the installation of mosdepth (\url{https://github.com/brentp/mosdepth}) on the system.
-  
+
   \bold{Input Requirements}
   
   The input to \pkg{PACVr} consists of two input files that contain information on (a) genome sequence and structure, and (b) on coverage depth. Specifically, users must provide (a) a file in GenBank flat file format that complies with the GenBank record specifications (\url{https://www.ncbi.nlm.nih.gov/Sitemap/samplerecord.html}), and (b) a file in BAM format that complies with the specifications described in the Sequence Alignment/Map Format documentation (\url{https://samtools.github.io/hts-specs/SAMv1.pdf}) and is accompanied by an ancillary index file.
