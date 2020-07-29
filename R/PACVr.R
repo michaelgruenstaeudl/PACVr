@@ -1,7 +1,7 @@
 #!/usr/bin/R
 #contributors = c("Michael Gruenstaeudl","Nils Jenke")
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2020.01.17.1800"
+#version = "2020.07.29.1700"
 
 PACVr.parseName <- function (gbkData) {
   # Parse sample name
@@ -22,19 +22,9 @@ PACVr.parseGenes <- function (gbkData) {
     return(genes)
 }
 
-PACVr.calcCoverage <- function (chromName, bamFile, regions, 
-                                windowSize=250, output, logScale=FALSE,
-                                mosdepthCmd) {
+PACVr.calcCoverage <- function (bamFile, regions, windowSize=250) {
     
-  # Coverage calculation
-    mosdepth_present = tryCatch(system2(command="command", args=c("-v", mosdepthCmd), stdout=TRUE), error=function(e) NULL)
-    if (is.null(mosdepth_present)) {
-      message('The software tool Mosdepth (https://github.com/brentp/mosdepth) was not detected on your system. Please install it, for example via R command: system("conda install -y mosdepth")')
-      coverage <- DummyCov(chromName, regions, windowSize)
-    } else {
-      coverage <- CovCalc(bamFile, windowSize, output, 
-                          logScale, mosdepthCmd)
-    }
+    coverage <- CovCalc(bamFile, windowSize)
     return(coverage)
 }
 
@@ -54,17 +44,13 @@ PACVr.generateIRGeneData <- function(gbkData, genes, regions,
 
 PACVr.visualizeWithRCircos <- function (gbkData, genes, regions,
                                         coverage, windowSize, logScale, 
-                                        threshold, relative, mosdepthCmd, 
-                                        linkData, syntenyLineType, textSize) {
-    
-  # 1. Generate plot title
-    mosdepth_present = tryCatch(system2(command="command", args=c("-v", mosdepthCmd), stdout=TRUE), error=function(e) NULL)
-    if (is.null(mosdepth_present)) {
-      plotTitle <- paste("Dummy data -", genbankr::sources(gbkData)$organism,genbankr::accession(gbkData), ". Please install mosdepth.")
-    } else {
-      plotTitle <- paste(genbankr::sources(gbkData)$organism,genbankr::accession(gbkData))
-    }
+                                        threshold, relative, linkData, 
+                                        syntenyLineType, textSize) {
 
+  # 1. Generate plot title
+  plotTitle <- paste(genbankr::sources(gbkData)$organism,genbankr::accession(gbkData))
+  
+  
   # 2. Visualize
     visualizeWithRCircos(plotTitle, genes, regions, 
                          coverage, windowSize, threshold,
@@ -72,52 +58,71 @@ PACVr.visualizeWithRCircos <- function (gbkData, genes, regions,
                          syntenyLineType, textSize)
 }
 
+
+
 PACVr.complete <- function(gbk.file, bam.file, windowSize = 250,
-                           mosdepthCmd = "mosdepth", logScale = FALSE, threshold = 0.5,
-                           syntenyLineType = 1, relative = TRUE, textSize=0.5,
-                           delete = TRUE, output = NA) {
+                           logScale = FALSE, threshold = 0.5, syntenyLineType = 1, 
+                           relative = TRUE, textSize=0.5, delete = TRUE, 
+                           output = NA) {
   
   # 1. Preparatory steps
   gbkData <- genbankr::readGenBank(gbk.file,verbose = FALSE)
   sample_name <- PACVr.parseName(gbkData)
+  
+  # 2. Conduct operations
+  regions <- PACVr.parseRegions(gbkData)
+  genes <- PACVr.parseGenes(gbkData)
+  coverage <- PACVr.calcCoverage(bam.file, regions, windowSize)
+  linkData <- PACVr.generateIRGeneData(gbkData, genes, regions,
+                                       syntenyLineType)
+  
+  # 3. Save files
   if (!is.na(output)) {
     outDir <- dirname(output)
     tmpDir <- file.path(outDir, paste(sample_name, ".tmp", sep=""))
   } else {
     tmpDir <- file.path(".", paste(sample_name, ".tmp", sep=""))
-  }
-  get_os <- Sys.info()[1]
-  if(get_os == "Windows"){
-      system2(command="md", args=tmpDir)} else {system2(command="mkdir", args=c("-p", tmpDir))
-  }
-
-  # 2. Conduct operations
-  regions <- PACVr.parseRegions(gbkData)
-  genes <- PACVr.parseGenes(gbkData)
-  coverage <- PACVr.calcCoverage(sample_name, bam.file, regions, 
-                                 windowSize, tmpDir, logScale, 
-                                 mosdepthCmd)
-  linkData <- PACVr.generateIRGeneData(gbkData, genes, regions,
-                                       syntenyLineType)
+    }
   
-  # 3. Save plot
+  if (dir.exists(tmpDir) == FALSE) {
+    dir.create(tmpDir)
+  }
+  
+  write.csv(coverage[,c("chromStart","chromEnd","coverage")],
+            paste(tmpDir, .Platform$file.sep, "coverage_regions.csv", sep=""), 
+            row.names = FALSE, quote = FALSE)
+  
+  if (relative == TRUE){
+    write.csv(coverage[coverage$coverage < mean(coverage$coverage) * threshold, c("chromStart","chromEnd","coverage")], 
+              paste(tmpDir, .Platform$file.sep, sample_name,"_low_coverage.csv", sep=""), 
+              row.names = FALSE, quote = FALSE)
+  } else {
+      write.csv(coverage[coverage$coverage < threshold,c("chromStart","chromEnd","coverage")], 
+                paste(tmpDir, .Platform$file.sep, sample_name, "_low_coverage.csv", sep=""), 
+                row.names = FALSE, quote = FALSE)
+    }
+
+  
+  # 4. Save plot
   if (!is.na(output)) {
     pdf(output,width=10,height = 10)
     PACVr.visualizeWithRCircos(gbkData, genes, regions, 
                                coverage, windowSize, threshold,
-                               logScale, relative, mosdepthCmd, 
-                               linkData, syntenyLineType, textSize)
+                               logScale, relative, linkData, 
+                               syntenyLineType, textSize)
     dev.off()
   } else {
   # 4. Generate visualization
     PACVr.visualizeWithRCircos(gbkData, genes, regions, 
                                coverage, windowSize, threshold,
-                               logScale, relative, mosdepthCmd, 
-                               linkData, syntenyLineType, textSize)
+                               logScale, relative, linkData,
+                               syntenyLineType, textSize)
+    dev.off()
   }
+
   
   # 5. Delete temp files
   if (isTRUE(delete)) {
-    system2(command="rm", args=c("-r", tmpDir))
+    unlink(tmpDir,recursive = TRUE)
   }
 }

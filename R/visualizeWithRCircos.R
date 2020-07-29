@@ -1,7 +1,7 @@
 #!/usr/bin/R
 #contributors = c("Michael Gruenstaeudl","Nils Jenke")
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2020.01.17.1800"
+#version = "2020.07.29.1700"
 
 #' Title
 #'
@@ -33,6 +33,11 @@ visualizeWithRCircos <- function(plotTitle, genes, regions,
   #   linkData: data frame that contains genomic region, coverage start, coverage end and coverage value
   # RETURNS:
   #   ---
+  
+  if(logScale==TRUE){
+    coverage$coverage <- log(cov$coverage)
+  }
+  coverage$Chromosome <- ""
 
   # 1. RCIRCOS INITIALIZATION
 

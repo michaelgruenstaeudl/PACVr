@@ -1,5 +1,16 @@
 CHANGELOG
 ---------
+#### Version 0.9.3 (2020.07.27)
+* Updated README file
+* Updated DESCRIPTION file
+* Updated PACVr-complete.Rd file
+* Updated PACVr-package.rd file
+* Updated package vignette
+* Updated Unix command-line shell script of PACVr
+* Removed system requirement mosdepth
+* Added Windows compatibility
+* Added low coverage output
+
 #### Version 0.9.2 (2020.02.10)
 * Updated README file
 * Updated and improved package vignette
