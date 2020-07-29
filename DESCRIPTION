@@ -11,4 +11,3 @@ Depends: R (>= 3.3.0)
 Imports: RCircos (>= 1.2.0), optparse (>= 1.6.0), genbankr (>= 1.2.1), BiocGenerics (>= 0.20.0), Biostrings (>= 2.48.0), GenomicAlignments (>= 1.18.1)
 Description: Visualizes the coverage depth of a complete plastid genome as well as the equality of its inverted repeat regions in relation to the circular, quadripartite genome structure and the location of individual genes. For more information, please see Gruenstaeudl and Jenke (2019) <doi:10.1101/697821>.
 License: BSD 3-clause License + file LICENSE
-OS_type: unix
