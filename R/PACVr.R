@@ -88,24 +88,25 @@ PACVr.complete <- function(gbk.file, bam.file, windowSize = 250,
     dir.create(tmpDir)
   }
   
-  write.csv(coverage[,c("chromStart","chromEnd","coverage")],
-            paste(tmpDir, .Platform$file.sep, "coverage_regions.csv", sep=""), 
-            row.names = FALSE, quote = FALSE)
-  
-  if (relative == TRUE){
-    write.csv(coverage[coverage$coverage < mean(coverage$coverage) * threshold, c("chromStart","chromEnd","coverage")], 
-              paste(tmpDir, .Platform$file.sep, sample_name,"_low_coverage.csv", sep=""), 
-              row.names = FALSE, quote = FALSE)
-  } else {
-      write.csv(coverage[coverage$coverage < threshold,c("chromStart","chromEnd","coverage")], 
-                paste(tmpDir, .Platform$file.sep, sample_name, "_low_coverage.csv", sep=""), 
-                row.names = FALSE, quote = FALSE)
+  if (relative == TRUE) {
+    coverage$lowCoverage <- coverage$coverage < mean(coverage$coverage) * threshold
+  } else { 
+    coverage$lowCoverage <- coverage$coverage < mean(coverage$coverage) 
     }
+  coverage$lowCoverage[coverage$lowCoverage == TRUE] <- "*"
+  coverage$lowCoverage[coverage$lowCoverage == FALSE] <- ""
+  
+  write.csv(coverage[,c("chromStart","chromEnd","coverage","lowCoverage")],
+            paste(tmpDir, .Platform$file.sep, tools::file_path_sans_ext(basename(bam.file)),"_coverage.regions.bed", sep=""), 
+            row.names = FALSE, quote = FALSE)
+  write.csv(coverage[coverage$lowCoverage == "*",c("chromStart","chromEnd","coverage","lowCoverage")], 
+            paste(tmpDir, .Platform$file.sep, sample_name, "_low_coverage.csv", sep=""), 
+            row.names = FALSE, quote = FALSE)
 
   
   # 4. Save plot
   if (!is.na(output)) {
-    pdf(output,width=10,height = 10)
+    pdf(output, width=10, height = 10)
     PACVr.visualizeWithRCircos(gbkData, genes, regions, 
                                coverage, windowSize, threshold,
                                logScale, relative, linkData, 
