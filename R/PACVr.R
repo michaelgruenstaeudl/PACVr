@@ -97,7 +97,7 @@ PACVr.complete <- function(gbk.file, bam.file, windowSize = 250,
   coverage$lowCoverage[coverage$lowCoverage == FALSE] <- ""
   
   write.csv(coverage[,c("chromStart","chromEnd","coverage","lowCoverage")],
-            paste(tmpDir, .Platform$file.sep, tools::file_path_sans_ext(basename(gbk.file)),"_coverage.regions.bed", sep=""), 
+            paste(tmpDir, .Platform$file.sep, tools::file_path_sans_ext(basename(bam.file)),"_coverage.regions.bed", sep=""), 
             row.names = FALSE, quote = FALSE)
   write.csv(coverage[coverage$lowCoverage == "*",c("chromStart","chromEnd","coverage","lowCoverage")], 
             paste(tmpDir, .Platform$file.sep, sample_name, "_low_coverage.csv", sep=""), 

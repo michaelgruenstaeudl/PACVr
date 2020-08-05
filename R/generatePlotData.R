@@ -22,6 +22,7 @@ CovCalc <- function(bamFile, windowSize=250){
   cov <- GenomicRanges::binnedAverage(bins, cov, "coverage")
   cov <- as.data.frame(cov)[c("seqnames","start","end","coverage")]
   colnames(cov) <- c("Chromosome","chromStart","chromEnd","coverage")
+  cov$coverage = ceiling(as.numeric(cov$coverage))
   
   return(cov)
 }
