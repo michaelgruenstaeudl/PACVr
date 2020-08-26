@@ -28,7 +28,6 @@ PACVr.calcCoverage <- function (bamFile, regions, windowSize=250) {
     return(coverage)
 }
 
-
 PACVr.generateIRGeneData <- function(gbkData, genes, regions,
                                      syntenyLineType) {
   
@@ -68,7 +67,7 @@ PACVr.complete <- function(gbk.file, bam.file, windowSize = 250,
   # 1. Preparatory steps
   gbkData <- genbankr::readGenBank(gbk.file,verbose = FALSE)
   sample_name <- PACVr.parseName(gbkData)
-  
+
   # 2. Conduct operations
   regions <- PACVr.parseRegions(gbkData)
   genes <- PACVr.parseGenes(gbkData)
@@ -84,24 +83,12 @@ PACVr.complete <- function(gbk.file, bam.file, windowSize = 250,
     tmpDir <- file.path(".", paste(sample_name, ".tmp", sep=""))
     }
   
-  if (dir.exists(tmpDir) == FALSE) {
+  if (!delete){
+    if (dir.exists(tmpDir) == FALSE) {
     dir.create(tmpDir)
-  }
-  
-  if (relative == TRUE) {
-    coverage$lowCoverage <- coverage$coverage < mean(coverage$coverage) * threshold
-  } else { 
-    coverage$lowCoverage <- coverage$coverage < mean(coverage$coverage) 
     }
-  coverage$lowCoverage[coverage$lowCoverage == TRUE] <- "*"
-  coverage$lowCoverage[coverage$lowCoverage == FALSE] <- ""
-  
-  write.csv(coverage[,c("chromStart","chromEnd","coverage","lowCoverage")],
-            paste(tmpDir, .Platform$file.sep, tools::file_path_sans_ext(basename(bam.file)),"_coverage.regions.bed", sep=""), 
-            row.names = FALSE, quote = FALSE)
-  write.csv(coverage[coverage$lowCoverage == "*",c("chromStart","chromEnd","coverage","lowCoverage")], 
-            paste(tmpDir, .Platform$file.sep, sample_name, "_low_coverage.csv", sep=""), 
-            row.names = FALSE, quote = FALSE)
+    writeTables(regions, genes, coverage, relative, threshold, tmpDir, sample_name)
+  } else{unlink(tmpDir,recursive = TRUE)}
 
   
   # 4. Save plot
@@ -119,11 +106,5 @@ PACVr.complete <- function(gbk.file, bam.file, windowSize = 250,
                                logScale, relative, linkData,
                                syntenyLineType, textSize)
     dev.off()
-  }
-
-  
-  # 5. Delete temp files
-  if (isTRUE(delete)) {
-    unlink(tmpDir,recursive = TRUE)
   }
 }
