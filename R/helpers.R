@@ -133,6 +133,6 @@ checkIREquality <- function(gbkData, regions, dir, sample){
               row.names = FALSE, quote = FALSE)
   } else {
     write.csv(data.frame(Number_N = Biostrings::alphabetFrequency(gbkSeq)["N"], Mismatches = NA, paste(dir, .Platform$file.sep, sample,"_assembly.txt", sep=""), 
-              row.names = FALSE, quote = FALSE)
+              row.names = FALSE, quote = FALSE))
   }
 }
