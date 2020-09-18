@@ -1,5 +1,13 @@
 CHANGELOG
 ---------
+#### Version 0.9.4 (2020.09.18)
+* Updated README file
+* Updated PACVr_Rscript.R
+* Updated PACVr-complete.Rd file
+* Updated PACVr_Vignette.Rnw
+* Replaced flag delete with verbose
+* Added additional output regarding the quality of the assembly
+
 #### Version 0.9.3 (2020.07.27)
 * Updated README file
 * Updated DESCRIPTION file

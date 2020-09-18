@@ -18,7 +18,7 @@ PACVr.complete(gbk.file,
                syntenyLineType = 1,
                relative = TRUE,
                textSize = 0.5,
-               delete = TRUE,
+               verbose = FALSE,
                output = NA)
 }
 
@@ -31,7 +31,7 @@ PACVr.complete(gbk.file,
 \item{syntenyLineType}{a numeric value of 1, 2 or 3 that specifies the line type for visualizing IR gene synteny; 1 = ribbon lines, 2 = solid lines, 3 = no line}
 \item{relative}{a boolean that specifies whether the threshold is a relative value of the average coverage instead of an absolute value}
 \item{textSize}{a numeric value that specifies the relative font size of the text element in the visualization}
-\item{delete}{the decision to delete temporary files upon program execution}
+\item{verbose}{the decision to show additional information regarding the quality of the assembly}
 \item{output}{a character vector that specifies the name of, and path to, the output file}
 }
 
@@ -43,6 +43,6 @@ outFile <- paste(tempdir(), "/NC_045072__all_reads.pdf", sep="")
 \donttest{
 PACVr.complete(gbk.file=gbkFile, bam.file=bamFile, windowSize=250, 
                threshold=0.5, syntenyLineType=1, relative=TRUE, 
-               textSize=0.5, delete=TRUE, output=outFile)
+               textSize=0.5, verbose=FALSE, output=outFile)
 }
 }

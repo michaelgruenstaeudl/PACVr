@@ -28,7 +28,6 @@ ExtractAllGenes <- function(gbkData) {
   return(gene_L)
 }
 
-
 ExtractAllRegions <- function(gbkData) {
   
   # Function to extract specific regions from Genbank input data
@@ -122,6 +121,3 @@ fillDataFrame <- function(gbkData,regions){
     return(regions)
   }
 }
-
-
-

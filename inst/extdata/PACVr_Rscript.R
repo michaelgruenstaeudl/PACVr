@@ -62,11 +62,11 @@ CmdLineArgs <- function() {
                               dest    = "textSize",
                               help    = "a numeric value that specifies the relative font size of the text element in the visualization [default = %default]", 
                               metavar = "integer"),
-                  make_option(opt_str = c("-d","--delete"), 
+                  make_option(opt_str = c("-v","--verbose"), 
                               type    = "logical", 
                               default = TRUE, 
-                              dest    = "delete",
-                              help    = "the decision to delete temporary files upon program execution [default = %default]", 
+                              dest    = "verbose",
+                              help    = "the decision to show additional information regarding the quality of the assembly [default = %default]", 
                               metavar = "logical"),
                   make_option(opt_str = c("-o","--output"), 
                               type    = "character", 
@@ -103,7 +103,7 @@ PACVr.complete(gbk.file = opt$gbkFile,
                syntenyLineType = opt$syntenyLineType,
                relative = opt$relative,
                textSize = opt$textSize,
-               delete = opt$delete,
+               verbose = opt$verbose,
                output = opt$output)
 
 ########################################################################

@@ -33,18 +33,35 @@ PACVr.generateIRGeneData <- function(gbkData, genes, regions,
   
   # Parse GenBank file
   if("IRb" %in% regions[,4] && "IRa" %in% regions[,4] && syntenyLineType < 3){
-    checkIREquality(gbkData, regions)
     linkData <- GenerateIRSynteny(genes, syntenyLineType)
     return(linkData)
   }
   return(-1)
 }
 
+PACVr.verboseInformation <- function(gbkData, genes, regions, 
+                                     coverage, relative, threshold,
+                                     output, sample){
+  if (!is.na(output)) {
+    outDir <- dirname(output)
+    tmpDir <- file.path(outDir, paste(sample, ".tmp", sep=""))
+  } else {
+    tmpDir <- file.path(".", paste(sample, ".tmp", sep=""))
+  }
+  
 
-PACVr.visualizeWithRCircos <- function (gbkData, genes, regions,
-                                        coverage, windowSize, logScale, 
-                                        threshold, relative, linkData, 
-                                        syntenyLineType, textSize) {
+    if (dir.exists(tmpDir) == FALSE) {
+      dir.create(tmpDir)
+    }
+    writeTables(regions, genes, coverage, relative, threshold, tmpDir, sample)
+    checkIREquality(gbkData, regions, tmpDir, sample)
+  }
+
+
+PACVr.visualizeWithRCircos <- function(gbkData, genes, regions,
+                                       coverage, windowSize, logScale, 
+                                       threshold, relative, linkData, 
+                                       syntenyLineType, textSize) {
 
   # 1. Generate plot title
   plotTitle <- paste(genbankr::sources(gbkData)$organism,genbankr::accession(gbkData))
@@ -61,7 +78,7 @@ PACVr.visualizeWithRCircos <- function (gbkData, genes, regions,
 
 PACVr.complete <- function(gbk.file, bam.file, windowSize = 250,
                            logScale = FALSE, threshold = 0.5, syntenyLineType = 1, 
-                           relative = TRUE, textSize=0.5, delete = TRUE, 
+                           relative = TRUE, textSize=0.5, verbose = FALSE, 
                            output = NA) {
   
   # 1. Preparatory steps
@@ -76,20 +93,11 @@ PACVr.complete <- function(gbk.file, bam.file, windowSize = 250,
                                        syntenyLineType)
   
   # 3. Save files
-  if (!is.na(output)) {
-    outDir <- dirname(output)
-    tmpDir <- file.path(outDir, paste(sample_name, ".tmp", sep=""))
-  } else {
-    tmpDir <- file.path(".", paste(sample_name, ".tmp", sep=""))
-    }
-  
-  if (!delete){
-    if (dir.exists(tmpDir) == FALSE) {
-    dir.create(tmpDir)
-    }
-    writeTables(regions, genes, coverage, relative, threshold, tmpDir, sample_name)
-  } else{unlink(tmpDir,recursive = TRUE)}
-
+  if (verbose){
+    PACVr.verboseInformation(gbkData, genes, regions, 
+                             coverage, relative, threshold,
+                             output, sample)
+  }
   
   # 4. Save plot
   if (!is.na(output)) {
