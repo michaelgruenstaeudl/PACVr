@@ -132,7 +132,7 @@ checkIREquality <- function(gbkData, regions, dir, sample){
     write.csv(data.frame(Number_N = Biostrings::alphabetFrequency(gbkSeq)["N"], Mismatches = length(IR_diff_SNPS)+length(IR_diff_gaps)), paste(dir, .Platform$file.sep, sample,"_IR_quality.txt", sep=""), 
               row.names = FALSE, quote = FALSE)
   } else {
-    write.csv(data.frame(Number_N = Number_N = Biostrings::alphabetFrequency(gbkSeq)["N"], Mismatches = NA, paste(dir, .Platform$file.sep, sample,"_assembly.txt", sep=""), 
+    write.csv(data.frame(Number_N = Biostrings::alphabetFrequency(gbkSeq)["N"], Mismatches = NA, paste(dir, .Platform$file.sep, sample,"_assembly.txt", sep=""), 
               row.names = FALSE, quote = FALSE)
   }
 }
