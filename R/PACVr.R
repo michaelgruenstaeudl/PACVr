@@ -96,7 +96,7 @@ PACVr.complete <- function(gbk.file, bam.file, windowSize = 250,
   if (verbose){
     PACVr.verboseInformation(gbkData, genes, regions, 
                              coverage, relative, threshold,
-                             output, sample)
+                             output, sample_name)
   }
   
   # 4. Save plot
