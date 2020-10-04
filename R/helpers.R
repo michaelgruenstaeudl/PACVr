@@ -66,7 +66,7 @@ writeTables <- function(regions, genes, cov, relative, threshold, dir, sample) {
   noncoding$Chromosome <- gsub("^c\\(\"|\"|\"|\"\\)$", "",as.character(noncoding$Chromosome))
   
   noncoding <- noncoding[,c("Chromosome", "start", "end","coverage")]
-  colnames(noncoding) <- c("Chromosome", "chrStart", "chrEnd", "coverage")
+  colnames(noncoding) <- c("Chromosome", "chromStart", "chromEnd", "coverage")
   
   if (relative == TRUE) {
     genes$lowCoverage <- genes$coverage < mean(genes$coverage) * threshold
@@ -85,12 +85,12 @@ writeTables <- function(regions, genes, cov, relative, threshold, dir, sample) {
   noncoding$lowCoverage[noncoding$lowCoverage == TRUE] <- "*"
   noncoding$lowCoverage[noncoding$lowCoverage == FALSE] <- ""
   
-  write.csv(genes, paste(dir, .Platform$file.sep, sample,"_coverage.genes.bed", sep=""), 
-            row.names = FALSE, quote = FALSE)
-  write.csv(cov, paste(dir, .Platform$file.sep, sample,"_coverage.regions.bed", sep=""), 
-            row.names = FALSE, quote = FALSE)
-  write.csv(noncoding, paste(dir, .Platform$file.sep, sample,"_coverage.noncoding.bed", sep=""), 
-            row.names = FALSE, quote = FALSE)
+  write.table(genes[,c("Chromosome", "chromStart", "chromEnd", "coverage", "lowCoverage", "gene")], paste(dir, .Platform$file.sep, sample,"_coverage.genes.bed", sep=""), 
+            row.names = FALSE, quote = FALSE, sep = "\t")
+  write.table(cov, paste(dir, .Platform$file.sep, sample,"_coverage.regions.bed", sep=""), 
+            row.names = FALSE, quote = FALSE, sep = "\t")
+  write.table(noncoding, paste(dir, .Platform$file.sep, sample,"_coverage.noncoding.bed", sep=""), 
+            row.names = FALSE, quote = FALSE, sep = "\t")
 }
 
 checkIREquality <- function(gbkData, regions, dir, sample){
