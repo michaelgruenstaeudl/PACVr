@@ -103,14 +103,14 @@ checkIREquality <- function(gbkData, regions, dir, sample){
       message(paste("The IRb has a total lengths of: ", repeatB[2]-repeatB[1], " bp", sep=""))
       message(paste("The IRa has a total lengths of: ", repeatA[2]-repeatA[1], " bp", sep=""))
     }
+    IR_diff_SNPS <- c()
+    IR_diff_gaps <- c()
     if(gbkSeq[[1]][repeatB[1]:repeatB[2]] != Biostrings::reverseComplement(gbkSeq[[1]][repeatA[1]:repeatA[2]])){
       IRa_seq <- Biostrings::DNAString(gbkSeq[[1]][repeatB[1]:repeatB[2]])
       IRa_seq <- split(IRa_seq, ceiling(seq_along(IRa_seq)/10000))
       IRb_seq <- Biostrings::DNAString(Biostrings::reverseComplement(gbkSeq[[1]][repeatA[1]:repeatA[2]]))
       IRb_seq <- split(IRb_seq, ceiling(seq_along(IRb_seq)/10000))
       
-      IR_diff_SNPS <- c()
-      IR_diff_gaps <- c()
       for(i in  1:min(length(IRa_seq), length(IRb_seq))){
         subst_mat <- Biostrings::nucleotideSubstitutionMatrix(match=1, mismatch=-3, baseOnly=TRUE)
         globalAlign <- tryCatch(
