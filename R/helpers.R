@@ -129,10 +129,10 @@ checkIREquality <- function(gbkData, regions, dir, sample){
       }
     }
     message("Proceeding with coverage depth visualization, but without quadripartite genome structure ...")
-    write.csv(data.frame(Number_N = Biostrings::alphabetFrequency(gbkSeq)["n"], Mismatches = length(IR_diff_SNPS)+length(IR_diff_gaps)), paste(dir, .Platform$file.sep, sample,"_IR_quality.csv", sep=""), 
+    write.csv(data.frame(Number_N = unname(Biostrings::alphabetFrequency(gbkSeq)[,"N"]), Mismatches = length(IR_diff_SNPS)+length(IR_diff_gaps)), paste0(dir, .Platform$file.sep, sample,"_IR_quality.csv"), 
               row.names = FALSE, quote = FALSE)
   } else {
-    write.csv(data.frame(Number_N = Biostrings::alphabetFrequency(gbkSeq)["n"], Mismatches = NA), paste(dir, .Platform$file.sep, sample,"_IR_quality.csv", sep=""), 
+    write.csv(data.frame(Number_N = unname(Biostrings::alphabetFrequency(gbkSeq)[,"N"]), Mismatches = NA), paste0(dir, .Platform$file.sep, sample,"_IR_quality.csv"), 
               row.names = FALSE, quote = FALSE)
   }
 }
