@@ -1,5 +1,9 @@
 CHANGELOG
 ---------
+
+#### Version 0.9.4 (2020.11.18)
+* Minor updates to keep PACVr compatible with CRAN
+
 #### Version 0.9.3 (2020.07.27)
 * Updated README file
 * Updated DESCRIPTION file

@@ -188,5 +188,4 @@ samtools index <mapping_result.sorted.bam>
     \centering
     \end{figure}
 
-
 \end{document}

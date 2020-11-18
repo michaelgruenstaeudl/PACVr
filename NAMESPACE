@@ -8,8 +8,9 @@ import(optparse)
 import(RCircos)
 
 importFrom("genbankr", "readGenBank", "accession", "definition", "genes", "otherFeatures")
+importFrom("stats", "cov")
+importFrom("utils", "read.table", "write.csv", "write.table")
 
-importFrom("utils", "read.table", "write.table")
 importFrom("graphics", "polygon", "title", "legend", "lines", "text")
 
 #importFrom("grDevices", "svg", "dev.off")
