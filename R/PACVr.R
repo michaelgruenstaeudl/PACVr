@@ -59,7 +59,34 @@ PACVr.visualizeWithRCircos <- function (gbkData, genes, regions,
 }
 
 
-
+#' @title Execute the complete pipeline of \pkg{PACVr}
+#' @description This function executes the complete pipeline of \pkg{PACVr} via a single command.
+#'
+#' @param gbk.file a character vector that specifies the name of, and path to, the GenBank input file
+#' @param bam.file a character vector that specifies the name of, and path to, the BAM input file
+#' @param windowSize a numeric value that specifies window size in which the coverage is calculated
+#' @param logScale a boolean that specifies if the coverage depth is to be log-transformed before visualizing it
+#' @param threshold a numeric value that specifies the threshold for plotting coverage depth bars in red as opposed to the default black
+#' @param syntenyLineType a numeric value of 1, 2 or 3 that specifies the line type for visualizing IR gene synteny; 1 = ribbon lines, 2 = solid lines, 3 = no line
+#' @param relative a boolean that specifies whether the threshold is a relative value of the average coverage instead of an absolute value
+#' @param textSize a numeric value that specifies the relative font size of the text element in the visualization
+#' @param delete the decision to delete temporary files upon program execution
+#' @param output a character vector that specifies the name of, and path to, the output file
+#' @return A file in pdf format containing a circular visualization of the submitted plastid sample.
+#' @export
+#' @examples
+#'\dontrun{
+#' gbkFile <- system.file("extdata", 
+#'                        "NC_045072/NC_045072.gb", 
+#'                        package="PACVr")
+#' bamFile <- system.file("extdata", 
+#'                        "NC_045072/NC_045072_PlastomeReadsOnly.sorted.bam", 
+#'                        package="PACVr")
+#' outFile <- paste(tempdir(), "/NC_045072__all_reads.pdf", sep="")
+#' PACVr.complete(gbk.file=gbkFile, bam.file=bamFile, windowSize=250,
+#'                threshold=0.5, syntenyLineType=1, relative=TRUE, textSize=0.5, 
+#'                delete=TRUE, output=outFile
+#'                }
 PACVr.complete <- function(gbk.file, bam.file, windowSize = 250,
                            logScale = FALSE, threshold = 0.5, syntenyLineType = 1, 
                            relative = TRUE, textSize=0.5, delete = TRUE, 
@@ -96,29 +123,29 @@ PACVr.complete <- function(gbk.file, bam.file, windowSize = 250,
   coverage$lowCoverage[coverage$lowCoverage == TRUE] <- "*"
   coverage$lowCoverage[coverage$lowCoverage == FALSE] <- ""
   
-  write.csv(coverage[,c("chromStart","chromEnd","coverage","lowCoverage")],
+  utils::write.csv(coverage[,c("chromStart","chromEnd","coverage","lowCoverage")],
             paste(tmpDir, .Platform$file.sep, tools::file_path_sans_ext(basename(bam.file)),"_coverage.regions.bed", sep=""), 
             row.names = FALSE, quote = FALSE)
-  write.csv(coverage[coverage$lowCoverage == "*",c("chromStart","chromEnd","coverage","lowCoverage")], 
+  utils::write.csv(coverage[coverage$lowCoverage == "*",c("chromStart","chromEnd","coverage","lowCoverage")], 
             paste(tmpDir, .Platform$file.sep, sample_name, "_low_coverage.csv", sep=""), 
             row.names = FALSE, quote = FALSE)
 
   
   # 4. Save plot
   if (!is.na(output)) {
-    pdf(output, width=10, height = 10)
+    grDevices::pdf(output, width=10, height = 10)
     PACVr.visualizeWithRCircos(gbkData, genes, regions, 
                                coverage, windowSize, threshold,
                                logScale, relative, linkData, 
                                syntenyLineType, textSize)
-    dev.off()
+    grDevices::dev.off()
   } else {
   # 4. Generate visualization
     PACVr.visualizeWithRCircos(gbkData, genes, regions, 
                                coverage, windowSize, threshold,
                                logScale, relative, linkData,
                                syntenyLineType, textSize)
-    dev.off()
+    grDevices::dev.off()
   }
 
   
