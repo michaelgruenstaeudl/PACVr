@@ -98,13 +98,13 @@ checkIREquality <- function(gbkData, regions, dir, sample){
   if("IRb" %in% regions[,4] && "IRa" %in% regions[,4]){
     repeatB <- as.numeric(regions[which(regions[,4] == "IRb"),2:3])
     repeatA <- as.numeric(regions[which(regions[,4] == "IRa"),2:3])
+    IR_diff_SNPS <- c()
+    IR_diff_gaps <- c()
     if(repeatB[2] - repeatB[1] != repeatA[2] - repeatA[1]){
       message("WARNING: Inverted repeats differ in sequence length")
       message(paste("The IRb has a total lengths of: ", repeatB[2]-repeatB[1], " bp", sep=""))
       message(paste("The IRa has a total lengths of: ", repeatA[2]-repeatA[1], " bp", sep=""))
     }
-    IR_diff_SNPS <- c()
-    IR_diff_gaps <- c()
     if(gbkSeq[[1]][repeatB[1]:repeatB[2]] != Biostrings::reverseComplement(gbkSeq[[1]][repeatA[1]:repeatA[2]])){
       IRa_seq <- Biostrings::DNAString(gbkSeq[[1]][repeatB[1]:repeatB[2]])
       IRa_seq <- split(IRa_seq, ceiling(seq_along(IRa_seq)/10000))
@@ -128,10 +128,10 @@ checkIREquality <- function(gbkData, regions, dir, sample){
         message(paste("When aligned, the IRs differ through a total of ", length(IR_diff_gaps)," gaps. These gaps are located at the following nucleotide positions: ", paste(unlist(IR_diff_gaps), collapse=" "), sep=""))
       }
     }
-    message("Proceeding with coverage depth visualization, but without quadripartite genome structure ...")
     write.csv(data.frame(Number_N = unname(Biostrings::alphabetFrequency(gbkSeq)[,"N"]), Mismatches = length(IR_diff_SNPS)+length(IR_diff_gaps)), paste0(dir, .Platform$file.sep, sample,"_IR_quality.csv"), 
               row.names = FALSE, quote = FALSE)
   } else {
+    message("Proceeding with coverage depth visualization, but without quadripartite genome structure ...")
     write.csv(data.frame(Number_N = unname(Biostrings::alphabetFrequency(gbkSeq)[,"N"]), Mismatches = NA), paste0(dir, .Platform$file.sep, sample,"_IR_quality.csv"), 
               row.names = FALSE, quote = FALSE)
   }
