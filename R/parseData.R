@@ -5,7 +5,7 @@
 
 filter <- function(allRegions, where) {
   
-  out = subset(allRegions, grepl("IR|repeat|invert|LSC|SSC|[large,long]\\ssingle\\scopy|[short,small]\\ssingle\\scopy", allRegions[,where], ignore.case = TRUE))
+  out = subset(allRegions, grepl("^IR|repeat|invert|^LSC|^SSC|[large,long]\\ssingle\\scopy|[short,small]\\ssingle\\scopy", allRegions[,where], ignore.case = TRUE))
   if (nrow(out) < 1) {
       warning(paste("Inverted repeat info not found for qualifier ", where, ".", sep=""))
       }
