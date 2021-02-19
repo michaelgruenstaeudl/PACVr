@@ -5,7 +5,7 @@
 
 PACVr.parseName <- function (gbkData) {
   # Parse sample name
-  sample_name = genbankr::accession(gbkData)
+  sample_name = c(sample_name=genbankr::accession(gbkData), genome_name=genbankr::seqinfo(gbkData)@genome)
   return(sample_name)
 }
 
@@ -38,26 +38,24 @@ PACVr.generateIRGeneData <- function(gbkData, genes, regions,
 }
 
 PACVr.verboseInformation <- function(gbkData,
+                                     bam.file,
                                      genes,
                                      regions,
-                                     coverage,
-                                     relative,
-                                     threshold,
                                      output,
-                                     sample) {
+                                     sample_name) {
   if (!is.na(output)) {
     outDir <- dirname(output)
-    tmpDir <- file.path(outDir, paste(sample, ".tmp", sep = ""))
+    tmpDir <- file.path(outDir, paste(sample_name["sample_name"], ".tmp", sep = ""))
   } else {
-    tmpDir <- file.path(".", paste(sample, ".tmp", sep = ""))
+    tmpDir <- file.path(".", paste(sample_name["sample_name"], ".tmp", sep = ""))
   }
   
   
   if (dir.exists(tmpDir) == FALSE) {
     dir.create(tmpDir)
   }
-  writeTables(regions, genes, coverage, relative, threshold, tmpDir, sample)
-  checkIREquality(gbkData, regions, tmpDir, sample)
+  writeTables(regions, bam.file, genes, tmpDir, sample_name)
+  checkIREquality(gbkData, regions, tmpDir, sample_name)
 }
 
 
@@ -120,11 +118,9 @@ PACVr.complete <- function(gbk.file,
   # 3. Save files
   if (verbose) {
     PACVr.verboseInformation(gbkData,
+                             bam.file,
                              genes,
                              regions,
-                             coverage,
-                             relative,
-                             threshold,
                              output,
                              sample_name)
   }
