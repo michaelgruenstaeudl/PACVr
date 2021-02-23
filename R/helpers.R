@@ -159,8 +159,6 @@ writeTables <-
       ir_genes$coverage < mean(ir_genes$coverage) - sd(ir_genes$coverage)
     ir_noncoding$lowCoverage <-
       ir_noncoding$coverage < mean(ir_noncoding$coverage) - sd(ir_noncoding$coverage)
-    ir_genes$lowCoverage <-
-      ir_genes$coverage < mean(ir_genes$coverage) - sd(ir_genes$coverage)
     
     
     ir_genes$lowCoverage[ir_genes$lowCoverage == TRUE] <- "*"
