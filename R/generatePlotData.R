@@ -1,7 +1,7 @@
 #!/usr/bin/R
 #contributors = c("Michael Gruenstaeudl","Nils Jenke")
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2020.07.29.1700"
+#version = "2021.04.16.2200"
 
 CovCalc <- function(bamFile, windowSize = 250) {
   # Calculates coverage of a given bam file and stores data in data.frame format
@@ -24,7 +24,8 @@ CovCalc <- function(bamFile, windowSize = 250) {
       cut.last.tile.in.chrom = TRUE
     )
   cov <- GenomicRanges::binnedAverage(bins, cov, "coverage")
-  cov <- as.data.frame(cov)[c("seqnames", "start", "end", "coverage")]
+  cov <-
+    as.data.frame(cov)[c("seqnames", "start", "end", "coverage")]
   colnames(cov) <-
     c("Chromosome", "chromStart", "chromEnd", "coverage")
   cov$coverage <- ceiling(as.numeric(cov$coverage))
@@ -34,7 +35,7 @@ CovCalc <- function(bamFile, windowSize = 250) {
 
 GenerateIRSynteny <- function(genes, syntenyLineType) {
   n_occur <- data.frame(table(genes[, 4]), stringsAsFactors = FALSE)
-  n_occur <- n_occur[n_occur$Freq == 2, ]
+  n_occur <- n_occur[n_occur$Freq == 2,]
   ir_synteny <- c()
   
   if (syntenyLineType == "1") {
@@ -43,7 +44,7 @@ GenerateIRSynteny <- function(genes, syntenyLineType) {
       ir_synteny <-
         rbind(
           ir_synteny,
-          cbind(duplicateGene[1, ], duplicateGene[2, ], stringsAsFactors = FALSE),
+          cbind(duplicateGene[1,], duplicateGene[2,], stringsAsFactors = FALSE),
           stringsAsFactors = FALSE
         )
     }
@@ -59,7 +60,7 @@ GenerateIRSynteny <- function(genes, syntenyLineType) {
       ir_synteny <-
         rbind(
           ir_synteny,
-          cbind(duplicateGene[1, ], duplicateGene[2, ], stringsAsFactors = FALSE),
+          cbind(duplicateGene[1,], duplicateGene[2,], stringsAsFactors = FALSE),
           stringsAsFactors = FALSE
         )
     }
@@ -78,11 +79,11 @@ GenerateHistogramData <-
     # Error handling
     if (lastOne) {
       coverage <-
-        coverage[(floor(region[1, 2] / windowSize) + 1):ceiling(region[1, 3] / windowSize), ]
+        coverage[(floor(region[1, 2] / windowSize) + 1):ceiling(region[1, 3] / windowSize),]
     } else {
       coverage <-
         coverage[(floor(region[1, 2] / windowSize) + 1):floor(region[1, 3] / windowSize) +
-                   1, ]
+                   1,]
     }
     coverage[, 4] <- mean(coverage[, 4])
     return(coverage)

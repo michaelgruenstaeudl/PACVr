@@ -1,7 +1,7 @@
 #!/usr/bin/R
 #contributors = c("Michael Gruenstaeudl","Nils Jenke")
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2020.07.29.1700"
+#version = "2021.04.16.2200"
 
 #' Title
 #'
@@ -136,7 +136,7 @@ visualizeWithRCircos <- function(plotTitle,
   averageLines <- c()
   for (i in 1:nrow(regions)) {
     lineData <-
-      GenerateHistogramData(regions[i, ], coverage, windowSize, (i == nrow(regions)))
+      GenerateHistogramData(regions[i,], coverage, windowSize, (i == nrow(regions)))
     averageLines <-
       c(averageLines, paste(regions[i, 4], ": ", trunc(lineData[1, 4]), "X", sep = ""))
     suppressMessages(

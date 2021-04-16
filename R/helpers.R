@@ -1,7 +1,7 @@
 #!/usr/bin/R
 #contributors = c("Michael Gruenstaeudl","Nils Jenke")
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2020.07.29.1700"
+#version = "2021.04.16.2200"
 
 HistCol <- function(cov, threshold, relative, logScale) {
   # Function to generate color vector for histogram data
@@ -165,8 +165,10 @@ writeTables <-
     ir_genes$lowCoverage[ir_genes$lowCoverage == FALSE] <- ""
     ir_regions$lowCoverage[ir_regions$lowCoverage == TRUE] <- "*"
     ir_regions$lowCoverage[ir_regions$lowCoverage == FALSE] <- ""
-    ir_noncoding$lowCoverage[ir_noncoding$lowCoverage == TRUE] <- "*"
-    ir_noncoding$lowCoverage[ir_noncoding$lowCoverage == FALSE] <- ""
+    ir_noncoding$lowCoverage[ir_noncoding$lowCoverage == TRUE] <-
+      "*"
+    ir_noncoding$lowCoverage[ir_noncoding$lowCoverage == FALSE] <-
+      ""
     
     write.table(
       ir_genes,

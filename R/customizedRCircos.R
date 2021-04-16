@@ -1,7 +1,7 @@
 #!/usr/bin/R
 #contributors = c("Michael Gruenstaeudl","Nils Jenke")
 #email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2020.07.29.1700"
+#version = "2021.04.16.2200"
 
 # The following R functions were taken from the R package RCircos and then modified.
 # The modifications were necessary to fix several issues in the original package code.
@@ -231,7 +231,7 @@ PACVr.Ideogram.Tick.Plot <-
     
     for (aChr in seq_len(length(chroms)))
     {
-      the.chr  <- RCircos.Cyto[RCircos.Cyto[, 1] == chroms[aChr], ]
+      the.chr  <- RCircos.Cyto[RCircos.Cyto[, 1] == chroms[aChr],]
       
       chr.start <- the.chr$StartPoint[1]
       
@@ -251,7 +251,8 @@ PACVr.Ideogram.Tick.Plot <-
                 col = the.chr$ChrColor[1])
           
           
-          lab.text <- paste0(round((a.tick - 1) * tick.interval, 1), "kb")
+          lab.text <-
+            paste0(round((a.tick - 1) * tick.interval, 1), "kb")
           
           text(
             lab.pos[tick.pos, 1] ,
