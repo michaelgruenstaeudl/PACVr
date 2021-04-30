@@ -36,9 +36,6 @@ PACVr.complete(gbk.file,
 
 \item{output}{a character vector that specifies the name of, and path to, the output file}
 }
-\value{
-
-}
 \description{
 This function executes the complete pipeline of \pkg{PACVr} via a single command.
 }
@@ -54,4 +51,5 @@ outFile <- paste(tempdir(), "/NC_045072__all_reads.pdf", sep="")
 PACVr.complete(gbk.file=gbkFile, bam.file=bamFile, windowSize=250, 
                threshold=0.5, syntenyLineType=1, relative=TRUE, 
                textSize=0.5, verbose=FALSE, output=outFile)
+}
 }

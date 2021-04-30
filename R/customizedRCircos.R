@@ -281,10 +281,10 @@ PACVr.Gene.Name.Plot <- function(gene.data = NULL,
     stop("Missing number of columns for genomic position.\n")
   if (is.null(name.col) || name.col <= genomic.columns)
     stop("Data column must be ", genomic.columns + 1, " or bigger.\n")
-  RCircos.Pos <- RCircos.Get.Plot.Positions()
-  RCircos.Par <- RCircos.Get.Plot.Parameters()
+  RCircos.Pos <- RCircos::RCircos.Get.Plot.Positions()
+  RCircos.Par <- RCircos::RCircos.Get.Plot.Parameters()
   textColors <-
-    RCircos.Get.Plot.Colors(gene.data, RCircos.Par$text.color)
+    RCircos::RCircos.Get.Plot.Colors(gene.data, RCircos.Par$text.color)
   RCircos.Pos[1:(nrow(RCircos.Pos) / 2), 3] <-
     (RCircos.Pos[1:(nrow(RCircos.Pos) / 2), 3] + (360 - rotate)) %% 360
   RCircos.Pos[(nrow(RCircos.Pos) / 2 + 1):nrow(RCircos.Pos), 3] <-
@@ -654,7 +654,7 @@ PACVr.Reset.Plot.Parameters <- function (new.params = NULL)
   {
     RCircos.Cyto <- RCircos::RCircos.Get.Plot.Ideogram()
 
-    RCircos.Cyto <- RCircos::RCircos.Cyto[, 1:5]
+    RCircos.Cyto <- RCircos.Cyto[, 1:5]
     
     RCircosEnvironment[["RCircos.Cytoband"]] <- NULL
     RCircos::RCircos.Set.Cytoband.Data(RCircos.Cyto)

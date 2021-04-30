@@ -188,10 +188,10 @@ visualizeWithRCircos <- function(plotTitle,
   if (relative == TRUE) {
     absolute <- trunc(mean(coverage[, 4]) * threshold)
     perc <- threshold * 100
-    legend(
+    graphics::legend(
       x = -1.6,
       y = -1.2,
-      graphics::legend = c(
+      legend = c(
         paste(
           "Coverage > ",
           trunc(mean(coverage[, 4]) * threshold),
