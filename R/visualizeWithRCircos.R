@@ -26,6 +26,7 @@ visualizeWithRCircos <- function(plotTitle,
                                  linkData,
                                  syntenyLineType = 3,
                                  textSize) {
+
   # Generates the visualization of genome data and their tracks
   # ARGS:
   #   plotTitle: character string
@@ -42,6 +43,7 @@ visualizeWithRCircos <- function(plotTitle,
   
   if (logScale == TRUE) {
     coverage$coverage <- log(cov$coverage)
+    #coverage$coverage <- log(coverage$coverage)
   }
   coverage$Chromosome <- ""
   
@@ -52,7 +54,7 @@ visualizeWithRCircos <- function(plotTitle,
   RCircos::RCircos.Env
   
   suppressMessages(
-    RCircos.Set.Core.Components(
+    RCircos::RCircos.Set.Core.Components(
       cyto.info      = regions,
       chr.exclude    =  NULL,
       tracks.inside  =  0,
@@ -61,7 +63,7 @@ visualizeWithRCircos <- function(plotTitle,
   )
   
   # 2. SET PARAMETER FOR IDEOGRAM
-  rcircos.params <- RCircos.Get.Plot.Parameters()
+  rcircos.params <- RCircos::RCircos.Get.Plot.Parameters()
   rcircos.params$base.per.unit <- 1
   rcircos.params$chrom.paddings <- 1
   rcircos.params$track.height <- 0.07
@@ -79,13 +81,13 @@ visualizeWithRCircos <- function(plotTitle,
   rcircos.params$radius.len <- 3
   PACVr.Reset.Plot.Parameters(rcircos.params)
   
-  rcircos.cyto <- RCircos.Get.Plot.Ideogram()
+  rcircos.cyto <- RCircos::RCircos.Get.Plot.Ideogram()
   rcircos.cyto$ChrColor <- "black"
-  RCircos.Reset.Plot.Ideogram(rcircos.cyto)
+  RCircos::RCircos.Reset.Plot.Ideogram(rcircos.cyto)
   # 3. GRAPHIC DEVICE INITIALIZATION
-  suppressMessages(RCircos.Set.Plot.Area())
+  suppressMessages(RCircos::RCircos.Set.Plot.Area())
+  suppressMessages(RCircos::RCircos.Chromosome.Ideogram.Plot())
   
-  suppressMessages(RCircos.Chromosome.Ideogram.Plot())
   # 4. GENERATE PLOT
   PACVr.Ideogram.Tick.Plot(
     tick.num = 10,
@@ -119,8 +121,8 @@ visualizeWithRCircos <- function(plotTitle,
     add.text.size = 0.2
   )
   
-  outside.pos <- RCircos.Get.Plot.Boundary(track.num = 5, "in")[1]
-  inside.pos <- RCircos.Get.Plot.Boundary(track.num = 6, "in")[2]
+  outside.pos <- RCircos::RCircos.Get.Plot.Boundary(track.num = 5, "in")[1]
+  inside.pos <- RCircos::RCircos.Get.Plot.Boundary(track.num = 6, "in")[2]
   
   suppressMessages(
     PACVr.Histogram.Plot(
@@ -158,7 +160,7 @@ visualizeWithRCircos <- function(plotTitle,
   if (is.data.frame(linkData) == TRUE) {
     if (syntenyLineType == 1) {
       suppressMessages(
-        RCircos.Ribbon.Plot(
+        RCircos::RCircos.Ribbon.Plot(
           ribbon.data = linkData,
           track.num = 7,
           by.chromosome = FALSE,
@@ -170,7 +172,7 @@ visualizeWithRCircos <- function(plotTitle,
     
     else if (syntenyLineType == 2) {
       suppressMessages(
-        RCircos.Link.Plot(
+        RCircos::RCircos.Link.Plot(
           link.data = linkData,
           track.num = 7,
           by.chromosome = FALSE,
@@ -182,14 +184,14 @@ visualizeWithRCircos <- function(plotTitle,
   }
   
   # 5. GENERATE TITLE AND LEGEND
-  title(paste(plotTitle), line = -4.5, cex.main = 0.8)
+  graphics::title(paste(plotTitle), line = -4.5, cex.main = 0.8)
   if (relative == TRUE) {
     absolute <- trunc(mean(coverage[, 4]) * threshold)
     perc <- threshold * 100
     legend(
       x = -1.6,
       y = -1.2,
-      legend = c(
+      graphics::legend = c(
         paste(
           "Coverage > ",
           trunc(mean(coverage[, 4]) * threshold),
@@ -214,7 +216,7 @@ visualizeWithRCircos <- function(plotTitle,
     )
   } else {
     absolute <- round(threshold / trunc(mean(coverage[, 4])) * 100)
-    legend(
+    graphics::legend(
       "bottomleft",
       legend = c(
         paste(

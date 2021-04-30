@@ -1,5 +1,15 @@
 CHANGELOG
 ---------
+
+#### Version 1.0.1 (2021.04.30)
+* Merging changes by Nils Jenke into master
+
+#### Version 1.0.0 (2021.04.16)
+* Updates to allow new analyses
+
+#### Version 0.9.5 (2020.11.18)
+* Minor updates to keep PACVr compatible with CRAN
+
 #### Version 0.9.4 (2020.09.18)
 * Updated README file
 * Updated PACVr_Rscript.R
