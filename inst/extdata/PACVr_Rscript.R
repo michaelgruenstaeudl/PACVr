@@ -1,7 +1,7 @@
 #!/usr/bin/R
-#contributors = c("Michael Gruenstaeudl","Nils Jenke")
-#email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2020.02.10.1300"
+#contributors=c("Michael Gruenstaeudl", "Nils Jenke")
+#email="m_gruenstaeudl@fhsu.edu"
+#version="2023.11.04.2200"
 
 library("optparse")
 

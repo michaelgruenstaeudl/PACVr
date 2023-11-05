@@ -1,5 +1,7 @@
 CHANGELOG
 ---------
+#### Version 1.0.2 (2023.10.04)
+* Cleaning up of code
 
 #### Version 1.0.1 (2021.04.30)
 * Merging changes by Nils Jenke into master
