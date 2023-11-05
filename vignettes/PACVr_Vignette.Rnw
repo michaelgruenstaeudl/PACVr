@@ -30,36 +30,30 @@
 \author{Michael Gruenstaeudl, Nils Jenke}
 \title{Using PACVr}
 
-
 \begin{document}
 \SweaveOpts{concordance=TRUE}
 \maketitle
 \tableofcontents
 
 \section{Introduction}
-
     PACVr visualizes the coverage depth of a complete plastid genome as well as the equality of its inverted repeat regions in relation to the circular, quadripartite genome structure and the location of individual genes. This vignette provides instructions for generating the necessary input files and for executing the software from within the R interpreter via function \texttt{PACVr.complete()}, and invocation from the Unix command-line shell via script \texttt{PACVr\_Rscript.R}. This vignette also illustrates the operation of PACVr on an empirical dataset co-supplied with the R package.
-
 
 \pagebreak
 
-
 \section{Installation}
-
-    Prior to running PACVr, several dependencies need to be installed. Below are some strategies that have been successful in installing PACVr and all its dependencies on Linux (Arch Linux 4.18, Debian 9.9, and Ubuntu 18.10) and MacOS (HighSierra 10.13.6 and Mojave 10.14.6), respectively.
-    
+    Prior to running PACVr, several dependencies need to be installed. Below are some strategies that have been successful in installing PACVr and all its dependencies on Linux (Arch Linux 4.18, Debian 9.9, and Ubuntu 18.10) and MacOS (HighSierra 10.13.6 and Mojave 10.14.6), respectively.\\
     To install all R dependencies, open R and type:
 \begin{BGVerbatim}[fontsize=\normalsize]
 # CRAN packages
 if (!require("pacman"))
 install.packages("pacman")
-pacman::p_load("RCircos", "optparse", install=TRUE)
+pacman::p_load("dplyr", "optparse", "read.gb", "RCircos", install=TRUE)
 
 # Bioconductor packages
 if (!requireNamespace("BiocManager", quietly=TRUE))
 install.packages("BiocManager")
-if (!requireNamespace("genbankr", quietly=TRUE))
-BiocManager::install("genbankr")
+#if (!requireNamespace("genbankr", quietly=TRUE))
+#BiocManager::install("genbankr")
 \end{BGVerbatim}
 
     \subsection{On MacOS}

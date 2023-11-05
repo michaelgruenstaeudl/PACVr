@@ -1,5 +1,10 @@
 CHANGELOG
 ---------
+
+#### Version 1.0.3 (2023.10.05)
+* Replacing dependency 'genbankr' with 'read.gb' and custom functions
+* Addition of new contributor: Gregory Smith
+
 #### Version 1.0.2 (2023.10.04)
 * Cleaning up of code
 

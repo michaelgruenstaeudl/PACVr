@@ -1,7 +1,130 @@
 #!/usr/bin/R
-#contributors=c("Michael Gruenstaeudl", "Nils Jenke")
+#contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2023.11.04.2200"
+#version="2023.11.05.0100"
+
+# import needed dplyr functions
+`%>%` <- dplyr::`%>%`
+bind_rows <- dplyr::bind_rows
+rename_with <- dplyr::rename_with
+mutate <- dplyr::mutate
+select <- dplyr::select
+filter <- dplyr::filter
+
+
+read.gb2DF <- function(gbkData) {
+  fileDF <- data.frame()
+  for (sample in gbkData) {
+    sampleDF <- parseFeatures(sample$FEATURES)
+    fileDF <- bind_rows(fileDF, sampleDF)
+  }
+  return(fileDF)
+}
+
+parseFeatures <- function(features) {
+  # first feature is sample information
+  source <- parseFeature(features[[1]])
+  features <- features[-1]
+
+  sampleDF <- data.frame()
+  for (feature in features) {
+    feature <- parseFeature(feature)
+    sampleDF <- bind_rows(sampleDF, feature)
+  }
+  sampleDF <- sampleDF %>% 
+                mutate(seqnames = as.factor(source[, "organism"]))
+  return(sampleDF)
+}
+
+parseFeature <- function(feature) {
+  # transform source data frame
+  feature <- as.data.frame(t(feature))
+  colnames(feature) <- feature[1,]
+  feature <- feature[-1,]
+  rownames(feature) <- NULL
+  
+  # fix sequence location(s) and feature type
+  locAndTypeIndex <- 1
+  locationsStr <- feature[1,locAndTypeIndex]
+  type <- names(feature)[locAndTypeIndex]
+  feature <- feature %>% 
+              rename_with(~ "locations", .cols = locAndTypeIndex) %>%
+              mutate(type = type)
+  
+  # create derivative "start" and "end" variables from "locations"
+  # and create feature copies for multiple sequences
+  locationsList <- 
+    regmatches(locationsStr, gregexpr("\\d+", locationsStr))[[1]] %>%
+    as.integer()
+  feature <- feature %>%
+              mutate(start = NA, end = NA)
+  for (pairIndex in 1:(length(locationsList) / 2)) {
+    if (pairIndex > 1) {
+      feature <- bind_rows(feature, feature[pairIndex-1,])
+    }
+    startIndex = pairIndex * 2 - 1
+    feature[pairIndex, "start"] = locationsList[startIndex]
+    feature[pairIndex, "end"]   = locationsList[startIndex+1]
+  }
+  return(feature)
+}
+
+read.gbSeq <- function(gbkData) {
+  sampleSequences <- c()
+  for (sample in gbkData) {
+    sampleSequences <- c(sampleSequences, sample$ORIGIN)
+  }
+  return(Biostrings::DNAStringSet(sampleSequences))
+}
+
+read.gbGenes <- function(gbkData) {
+  bgkDataDF <- read.gb2DF(gbkData)
+  gene_L <- bgkDataDF %>% 
+              filter(type == "gene") %>% 
+              select(all_of(c("seqnames", "start", "end", "gene")))
+  rownames(gene_L) <- NULL
+  return(gene_L)
+}
+
+read.gbOther <- function(gbkData) {
+  bgkDataDF <- read.gb2DF(gbkData)
+  regions <- bgkDataDF %>% 
+              filter(!type %in% c("gene", "exon", "transcript", 
+                                  "CDS", "variant")) %>% 
+              select(all_of(c("seqnames", "start", "end", 
+                              "gene", "note", "standard_name")))
+  rownames(regions) <- NULL
+  return(regions)
+}
+
+read.gbLengths <- function(gbkData) {
+  sampleLengths <- c()
+  for (sample in gbkData) {
+    sampleLengths <- c(sampleLengths, 
+                       nchar(sample$ORIGIN))
+  }
+  return(sampleLengths)
+}
+
+read.gbSampleName <- function(gbkData) {
+  sampleNames <- c()
+  for (sample in gbkData) {
+    sampleNames <- c(sampleNames, 
+                     c(sample_name = sample$ACCESSION, 
+                       genome_name = sample$VERSION))
+  }
+  return(sampleNames)
+}
+
+read.gbPlotTitle <- function(gbkData) {
+  plotTitles <- c()
+  for (sample in gbkData) {
+    plotTitles <- c(plotTitles, 
+                    paste(sample$DEFINITION, 
+                          sample$ACCESSION))
+  }
+  return(plotTitles)
+}
 
 HistCol <- function(cov, threshold, relative, logScale) {
   # Function to generate color vector for histogram data
@@ -204,7 +327,8 @@ writeTables <-
   }
 
 checkIREquality <- function(gbkData, regions, dir, sample_name) {
-  gbkSeq <- genbankr::getSeq(gbkData)                                    # Use of genbankr
+  #gbkSeq <- genbankr::getSeq(gbkData)                                    # Use of genbankr
+  gbkSeq <- read.gbSeq(gbkData)
   if ("IRb" %in% regions[, 4] && "IRa" %in% regions[, 4]) {
     repeatB <- as.numeric(regions[which(regions[, 4] == "IRb"), 2:3])
     repeatA <-

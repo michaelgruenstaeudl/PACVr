@@ -1,14 +1,17 @@
 Package: PACVr
-Version: 1.0.2
-Date: 2023-11-04
+Version: 1.0.3
+Date: 2023-11-05
 Title: Plastome Assembly Coverage Visualization
-Authors@R: c(person("Michael", "Gruenstaeudl", role = c("aut", "cre"), email = "m_gruenstaeudl@fhsu.edu"), 
-             person("Nils", "Jenke", role = c("ctb")))
-Author: Michael Gruenstaeudl [aut, cre],
-        Nils Jenke [ctb]
+Authors@R: c(person("Gregory", "Smith", role = c("ctb")),
+             person("Nils", "Jenke", role = c("ctb")),
+             person("Michael", "Gruenstaeudl", role = c("aut", "cre"), email = "m_gruenstaeudl@fhsu.edu")
+             )
+Author: Gregory Smith [ctb],
+        Nils Jenke [ctb],
+        Michael Gruenstaeudl [aut, cre]
 Maintainer: Michael Gruenstaeudl <m_gruenstaeudl@fhsu.edu>
 Depends: R (>= 3.3.0)
-Imports: RCircos (>= 1.2.0), optparse (>= 1.6.0), genbankr (>= 1.2.1), BiocGenerics (>= 0.20.0), Biostrings (>= 2.48.0), GenomicAlignments (>= 1.18.1), GenomicRanges, IRanges
+Imports: BiocGenerics (>= 0.20.0), Biostrings (>= 2.48.0), dplyr, GenomicAlignments (>= 1.18.1), GenomicRanges, IRanges, optparse (>= 1.6.0), read.gb, RCircos (>= 1.2.0)
 Description: Visualizes the coverage depth of a complete plastid genome as well as the equality of its inverted repeat regions in relation to the circular, quadripartite genome structure and the location of individual genes. For more information, please see Gruenstaeudl and Jenke (2020) <doi:10.1186/s12859-020-3475-0>.
 License: BSD 3-clause License + file LICENSE
 RoxygenNote: 7.1.1

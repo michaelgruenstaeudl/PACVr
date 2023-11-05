@@ -1,7 +1,7 @@
 #!/usr/bin/R
-#contributors=c("Michael Gruenstaeudl", "Nils Jenke")
+#contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2023.11.04.2200"
+#version="2023.11.05.0100"
 
 filter <- function(allRegions, where) {
   out = subset(
@@ -24,10 +24,10 @@ ExtractAllGenes <- function(gbkData) {
   #   gbkData (i.e., GenBank flatfile parsed by genbankr)
   # RETURNS:
   #   genes in data frame format
-  gene_L <- BiocGenerics::as.data.frame(genbankr::genes(gbkData))        # Use of genbankr
+  #gene_L <- BiocGenerics::as.data.frame(genbankr::genes(gbkData))        # Use of genbankr
+  gene_L <- read.gbGenes(gbkData)
   gene_L <- gene_L[, c(1:3, which(colnames(gene_L) == "gene"))]
-  colnames(gene_L) <-
-    c("Chromosome", "chromStart", "chromEnd", "gene")
+  colnames(gene_L) <- c("Chromosome", "chromStart", "chromEnd", "gene")
   gene_L$Chromosome <- ""
   gene_L <- gene_L[order(gene_L$chromStart),]
   row.names(gene_L) <- 1:nrow(gene_L)
@@ -40,9 +40,9 @@ ExtractAllRegions <- function(gbkData) {
   #   gbkData (i.e., GenBank flatfile parsed by genbankr)
   # RETURNS:
   #   regions in data frame format
-  allRegions <- BiocGenerics::as.data.frame(genbankr::otherFeatures(gbkData))        # Use of genbankr
-  regions <-
-    tryCatch(
+  #allRegions <- BiocGenerics::as.data.frame(genbankr::otherFeatures(gbkData))        # Use of genbankr
+  allRegions <- read.gbOther(gbkData)
+  regions <- tryCatch(
       tryCatch(
         filter(allRegions, "note"),
         warning = function(w)
@@ -78,10 +78,11 @@ ExtractAllRegions <- function(gbkData) {
 
 
 fillDataFrame <- function(gbkData, regions) {
-  seqlength <- genbankr::seqinfo(gbkData)@seqlengths                    # Use of genbankr
+  #seqLength <- genbankr::seqinfo(gbkData)@seqlengths                    # Use of genbankr
+  seqLength <- read.gbLengths(gbkData)
   if ((nrow(regions) == 0) || (regions[1, 2] == -1)) {
     regions[1,] <-
-      c("", as.numeric(1), as.numeric(seqlength), "NA", "gpos100")
+      c("", as.numeric(1), as.numeric(seqLength), "NA", "gpos100")
     regions[, 2] <- as.numeric(regions[, 2])
     regions[, 3] <- as.numeric(regions[, 3])
     return(regions)
@@ -93,8 +94,8 @@ fillDataFrame <- function(gbkData, regions) {
       }
       start <- as.numeric(regions[i, 3]) + 1
     }
-    if (start - 1 < seqlength) {
-      regions[nrow(regions) + 1,] <- c("", start, seqlength, "NA", "gpos100")
+    if (start - 1 < seqLength) {
+      regions[nrow(regions) + 1,] <- c("", start, seqLength, "NA", "gpos100")
     }
     regions <-
       regions[order(as.numeric(regions[, 2]), decreasing=FALSE),]

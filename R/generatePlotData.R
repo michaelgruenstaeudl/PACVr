@@ -1,7 +1,7 @@
 #!/usr/bin/R
-#contributors=c("Michael Gruenstaeudl", "Nils Jenke")
+#contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2023.11.04.2200"
+#version="2023.11.05.0100"
 
 CovCalc <- function(bamFile, windowSize = 250) {
   # Calculates coverage of a given bam file and stores data in data.frame format

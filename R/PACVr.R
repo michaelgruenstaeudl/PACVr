@@ -1,7 +1,7 @@
 #!/usr/bin/R
-#contributors=c("Michael Gruenstaeudl", "Nils Jenke")
+#contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2023.11.04.2200"
+#version="2023.11.05.0100"
 
 PACVr.parseName <- function (gbkData) {
   # This function parses the accession number and the sequence information from the GenBank file
@@ -81,9 +81,8 @@ PACVr.visualizeWithRCircos <- function(gbkData,
                                        syntenyLineType,
                                        textSize) {
   # Step 1. Generate plot title
-  plotTitle <-
-    paste(genbankr::sources(gbkData)$organism,                            # Use of genbankr
-          genbankr::accession(gbkData))                                    # Use of genbankr
+  #plotTitle <- paste(genbankr::sources(gbkData)$organism, genbankr::accession(gbkData))  # Use of genbankr
+  plotTitle <- read.gbPlotTitle(gbkData)
   # Step 2. Visualize
   visualizeWithRCircos(
     plotTitle,
@@ -140,8 +139,10 @@ PACVr.complete <- function(gbk.file,
                            output=NA) {
   ######################################################################
   # Step 1. Preparatory steps
-  gbkData <- genbankr::readGenBank(gbk.file, verbose=FALSE)             # Use of genbankr
-  sample_name <- PACVr.parseName(gbkData)                               # Use of genbankr
+  #gbkData <- genbankr::readGenBank(gbk.file, verbose=FALSE)             # Use of genbankr
+  gbkData <- read.gb::read.gb(gbkFile, DNA=TRUE, Type="full", Source="File")
+  #sample_name <- PACVr.parseName(gbkData)                               # Use of genbankr
+  sampleName <- read.gbSampleName(gbkData)
   
   ###################################
   # Step 2. Conduct operations
