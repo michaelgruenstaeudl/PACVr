@@ -89,10 +89,19 @@ read.gbGenes <- function(gbkData) {
 read.gbOther <- function(gbkData) {
   bgkDataDF <- read.gb2DF(gbkData)
   regions <- bgkDataDF %>% 
-              filter(!type %in% c("gene", "exon", "transcript", 
+              filter(!type %in% c("gene", "exon", "transcript",
                                   "CDS", "variant")) %>% 
               select(all_of(c("seqnames", "start", "end", 
                               "gene", "note", "standard_name")))
+
+# BUG ?
+# The previous line causes:
+
+# Error in type %in% c("gene", "exon", "transcript", "CDS", "variant") : 
+#   object 'type' not found
+
+# It seems that 'type' is empty. Did you mean to use 'bgkDataDF$type'?
+
   rownames(regions) <- NULL
   return(regions)
 }
