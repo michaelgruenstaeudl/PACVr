@@ -1,51 +1,34 @@
 #!/usr/bin/R
-#contributors = c("Michael Gruenstaeudl","Nils Jenke")
-#email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2021.04.16.2200"
+#contributors=c("Michael Gruenstaeudl", "Nils Jenke")
+#email="m_gruenstaeudl@fhsu.edu"
+#version="2023.11.04.2200"
 
 # The following R functions were taken from the R package RCircos and then modified.
 # The modifications were necessary to fix several issues in the original package code.
 
-
 PACVr.Get.Start.End.Locations <- function(plot.data, plot.width) {
   RCircos.Cyto <- RCircos::RCircos.Get.Plot.Ideogram()
-  
-  
   dataChroms <- as.character(plot.data[, 1])
-  
   chromosomes <- unique(dataChroms)
-  
   cyto.chroms <- as.character(RCircos.Cyto$Chromosome)
-  
-  
   point.loc <- as.numeric(plot.data$Location)
   locations <- cbind(point.loc - plot.width, point.loc + plot.width)
   
   for (aChr in seq_len(length(chromosomes))) {
     cyto.rows <- which(cyto.chroms == chromosomes[aChr])
-    
     chr.start <- min(RCircos.Cyto$StartPoint[cyto.rows])
-    
     chr.end   <- max(RCircos.Cyto$EndPoint[cyto.rows])
-    
-    
     data.rows <- which(dataChroms == chromosomes[aChr])
-    
-    
     start.outliers <- which(locations[data.rows, 1] < chr.start)
     which(locations[data.rows, 1] < chr.start)
     if (length(start.outliers) > 0)
       locations[data.rows[start.outliers], 1] <- chr.start
-    
-    
     end.outliers <- which(locations[data.rows, 2] > chr.end)
     if (length(end.outliers) > 0)
       locations[data.rows[end.outliers], 2] <- chr.end
-    
   }
   return(locations)
 }
-
 
 PACVr.Histogram.Plot <- function(hist.data = NULL,
                                  data.col = 4,
@@ -56,8 +39,7 @@ PACVr.Histogram.Plot <- function(hist.data = NULL,
                                  inside.pos = NULL,
                                  outside.pos = NULL,
                                  genomic.columns = 3,
-                                 is.sorted = TRUE)
-{
+                                 is.sorted = TRUE) {
   if (is.null(hist.data)) {
     warning("Genomic data missing in input.")
     stop()
@@ -65,11 +47,8 @@ PACVr.Histogram.Plot <- function(hist.data = NULL,
   boundary <-
     RCircos::RCircos.Get.Plot.Boundary(track.num, side, inside.pos,
                                        outside.pos, FALSE)
-  
   outerPos <- boundary[1]
-  
   innerPos  <- boundary[2]
-  
   if (is.null(genomic.columns) ||
       genomic.columns < 2 || genomic.columns > 3) {
     warning("Number of columns for genomic position incorrect.")
@@ -81,51 +60,38 @@ PACVr.Histogram.Plot <- function(hist.data = NULL,
     stop()
   }
   RCircos.Pos <- RCircos::RCircos.Get.Plot.Positions()
-  
   RCircos.Par <- RCircos::RCircos.Get.Plot.Parameters()
-  
   RCircos.Cyto <- RCircos::RCircos.Get.Plot.Ideogram()
   
   # Convert raw data to plot data. The raw data will be validated first during the convertion
-  hist.data <-
-    RCircos::RCircos.Get.Single.Point.Positions(hist.data,
-                                                genomic.columns)
-  
-  locations <- PACVr.Get.Start.End.Locations(hist.data,
-                                             RCircos.Par$hist.width)
+  hist.data <- RCircos::RCircos.Get.Single.Point.Positions(hist.data, genomic.columns)
+  locations <- PACVr.Get.Start.End.Locations(hist.data, RCircos.Par$hist.width)
+
   # Histgram colors and height
-  histColors <-
-    RCircos::RCircos.Get.Plot.Colors(hist.data, RCircos.Par$hist.color)
-  
+  histColors <- RCircos::RCircos.Get.Plot.Colors(hist.data, RCircos.Par$hist.color)
   histValues <- as.numeric(hist.data[, data.col])
-  
   if (is.null(max.value) || is.null(min.value)) {
     max.value <- max(histValues)
-    
     min.value <- min(histValues)
-    
   } else {
     if (min.value > max.value) {
       warning("min.value must be greater than max.value.")
       stop()
     }
   }
-  histHeight <-
-    RCircos::RCircos.Get.Data.Point.Height(histValues,
-                                           min.value,
-                                           max.value,
-                                           plot.type = "points",
-                                           outerPos - innerPos)
+  histHeight <- RCircos::RCircos.Get.Data.Point.Height(histValues,
+                                                       min.value,
+                                                       max.value,
+                                                       plot.type="points",
+                                                       outerPos - innerPos)
   
   # Draw histogram
   RCircos::RCircos.Track.Outline(outerPos, innerPos, RCircos.Par$sub.tracks)
-  
   for (aPoint in seq_len(nrow(hist.data)))
   {
     height <- innerPos + histHeight[aPoint]
     theStart <- locations[aPoint, 1]
     theEnd <- locations[aPoint, 2]
-    
     # Plot rectangle with specific height for each data point
     polygonX <- c(RCircos.Pos[theStart:theEnd, 1] * height,
                   RCircos.Pos[theEnd:theStart, 1] * innerPos)
@@ -135,18 +101,14 @@ PACVr.Histogram.Plot <- function(hist.data = NULL,
   }
 }
 
-
 ##### remove Chr names [UNUSED] #####
-PACVr.Chromosome.Ideogram.Plot <- function(tick.interval = 0)
-{
+PACVr.Chromosome.Ideogram.Plot <- function(tick.interval = 0) {
   RCircos::RCircos.Draw.Chromosome.Ideogram()
   RCircos::RCircos.Highligh.Chromosome.Ideogram()
-  
   if (tick.interval > 0) {
     PACVr.Ideogram.Tick.Plot(tick.interval)
   }
 }
-
 
 ##### tick length, text size, text orientation #####
 PACVr.Ideogram.Tick.Plot <-
@@ -161,7 +123,7 @@ PACVr.Ideogram.Tick.Plot <-
       (RCircos.Pos[1:(nrow(RCircos.Pos) / 2), 3] + 270) %% 360
     RCircos.Pos[(nrow(RCircos.Pos) / 2 + 1):nrow(RCircos.Pos), 3] <-
       (RCircos.Pos[(nrow(RCircos.Pos) / 2 + 1):nrow(RCircos.Pos), 3] + 90) %% 360
-    
+
     endchr <- RCircos.Cyto$ChromEnd[length(RCircos.Cyto$ChromEnd)]
     tick.interval <- endchr / tick.num / 1000
 
@@ -174,7 +136,6 @@ PACVr.Ideogram.Tick.Plot <-
     track.height <- RCircos.Par$track.height
     tick.height  <- track.height * track.for.ticks
     ticks.span   <- RCircos.Par$chr.ideo.pos + tick.height * 2
-
 
     if (RCircos.Par$plot.radius < ticks.span)
     {
@@ -262,7 +223,6 @@ PACVr.Ideogram.Tick.Plot <-
     RCircosEnvironment[["RCircos.PlotPar"]] <- RCircos.Par
   }
 
-
 ##### correction and rotate #####
 PACVr.Gene.Name.Plot <- function(gene.data = NULL,
                                  name.col = NULL,
@@ -290,7 +250,6 @@ PACVr.Gene.Name.Plot <- function(gene.data = NULL,
     (RCircos.Pos[1:(nrow(RCircos.Pos) / 2), 3] + (360 - rotate)) %% 360
   RCircos.Pos[(nrow(RCircos.Pos) / 2 + 1):nrow(RCircos.Pos), 3] <-
     (RCircos.Pos[(nrow(RCircos.Pos) / 2 + 1):nrow(RCircos.Pos), 3] + rotate) %% 360
-
   
   #    Convert raw data to plot data. The raw data will be validated
   #    first during the conversion
@@ -340,7 +299,6 @@ PACVr.Gene.Name.Plot <- function(gene.data = NULL,
   }
 }
 
-
 PACVr.Gene.Connector.Plot <- function(genomic.data = NULL,
                                       track.num = NULL,
                                       side = "in",
@@ -357,10 +315,8 @@ PACVr.Gene.Connector.Plot <- function(genomic.data = NULL,
                               outside.pos, erase.area = FALSE)
   outerPos <- boundary[1]
   innerPos <- boundary[2]
-  
   RCircos.Pos <- RCircos::RCircos.Get.Plot.Positions()
   RCircos.Par <- RCircos::RCircos.Get.Plot.Parameters()
-
   
   #    Construct Connector data from gene name data
   #    =======================================================
@@ -371,8 +327,6 @@ PACVr.Gene.Connector.Plot <- function(genomic.data = NULL,
                                                   genomic.columns, is.sorted)
   connectData <-
     data.frame(labelData$Location, labelData$LabelPosition)
-
-  
   
   #    Switch the columns of genomic location and label
   #    location for inside or outside
@@ -384,7 +338,6 @@ PACVr.Gene.Connector.Plot <- function(genomic.data = NULL,
   } else {
     genomicCol <- ncol(connectData)
     labelCol <- ncol(connectData) - 1
-    
   }
   
   #    Heights for the two vertical lines of connectors and
@@ -393,10 +346,8 @@ PACVr.Gene.Connector.Plot <- function(genomic.data = NULL,
   #
   vHeight <- round((outerPos - innerPos) / 10, digits = 4)
   hRange <- outerPos - innerPos - 2 * vHeight
-  
   topLoc <- outerPos - vHeight
   botLoc <- innerPos + vHeight
-  
   
   #    Connector colors
   #    ===============================================
@@ -404,25 +355,18 @@ PACVr.Gene.Connector.Plot <- function(genomic.data = NULL,
   lineColors <-
     RCircos::RCircos.Get.Plot.Colors(labelData, RCircos.Par$text.color)
   
-  
   #    Plot Connectors
   #    ===============================================
   #
   chroms <- unique(connectData[, 1])
   
-  for (aChr in seq_along(chroms))
-  {
+  for (aChr in seq_along(chroms)) {
     chrRows <- which(connectData[, 1] == chroms[aChr])
-    
     total <- length(chrRows)
     
-    
-    for (aPoint in seq_len(total))
-    {
+    for (aPoint in seq_len(total)) {
       p1 <- connectData[chrRows[aPoint], genomicCol]
-      
       p2 <- connectData[chrRows[aPoint], labelCol]
-      
       
       #    draw top vertical line
       #    ======================================
@@ -433,7 +377,6 @@ PACVr.Gene.Connector.Plot <- function(genomic.data = NULL,
         col = lineColors[chrRows[aPoint]],
         lwd = 0.1
       )
-
       
       #    draw bottom vertical line
       #    ======================================
@@ -444,7 +387,6 @@ PACVr.Gene.Connector.Plot <- function(genomic.data = NULL,
         col = lineColors[chrRows[aPoint]],
         lwd = 0.1
       )
-
       
       #    draw horizontal line
       #    ======================================
@@ -531,15 +473,13 @@ PACVr.Chromosome.Ideogram.Plot <- function(tick.interval = 0)
   
   if (tick.interval > 0) {
     RCircos::RCircos.Ideogram.Tick.Plot(tick.interval)
-  }
-  
+  }  
   RCircos::RCircos.Label.Chromosome.Names()
 }
 
 
 PACVr.Reset.Plot.Parameters <- function (new.params = NULL)
 {
-
   if (is.null(new.params))
     stop("Missing function argument.\n")
   old.params <- RCircos::RCircos.Get.Plot.Parameters()
@@ -568,8 +508,6 @@ PACVr.Reset.Plot.Parameters <- function (new.params = NULL)
   #   ==========================================================
 
   RCircos::RCircos.Validate.Plot.Parameters(new.params)
-
-  
   
   #   4.  Parameters related to ideogram width change.
   #       Note: chr.ideo.pos is a read-only parameter
@@ -577,12 +515,8 @@ PACVr.Reset.Plot.Parameters <- function (new.params = NULL)
   if (new.params$chrom.width != old.params$chrom.width)
   {
     differ <- new.params$chrom.width - old.params$chrom.width
-    
     new.params$highlight.pos <- old.params$highlight.pos + differ
-    
-    
     new.name.pos <- old.params$chr.name.pos + differ
-    
     if (new.params$chr.name.pos < new.name.pos)
       new.params$chr.name.pos  <- new.name.pos
     
@@ -643,7 +577,6 @@ PACVr.Reset.Plot.Parameters <- function (new.params = NULL)
   RCircosEnvironment[["RCircos.PlotPar"]] <- NULL
   RCircosEnvironment[["RCircos.PlotPar"]] <- new.params
   
-  
   #   Ideogram/band positions are binded to base.per.unit and
   #   chromosome padding so have to be reset if base.per.unit
   #   and/or chrom.paddings are reset.
@@ -652,12 +585,9 @@ PACVr.Reset.Plot.Parameters <- function (new.params = NULL)
       old.params$chrom.paddings != new.params$chrom.paddings)
   {
     RCircos.Cyto <- RCircos::RCircos.Get.Plot.Ideogram()
-
     RCircos.Cyto <- RCircos.Cyto[, 1:5]
-    
     RCircosEnvironment[["RCircos.Cytoband"]] <- NULL
     RCircos::RCircos.Set.Cytoband.Data(RCircos.Cyto)
-    
     RCircosEnvironment[["RCircos.Base.Position"]] <- NULL
     RCircos::RCircos.Set.Base.Plot.Positions()
   }

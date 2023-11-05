@@ -1,7 +1,7 @@
 #!/usr/bin/R
-#contributors = c("Michael Gruenstaeudl","Nils Jenke")
-#email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2021.04.16.2200"
+#contributors=c("Michael Gruenstaeudl", "Nils Jenke")
+#email="m_gruenstaeudl@fhsu.edu"
+#version="2023.11.04.2200"
 
 #' Title
 #'
@@ -47,7 +47,7 @@ visualizeWithRCircos <- function(plotTitle,
   }
   coverage$Chromosome <- ""
   
-  # 1. RCIRCOS INITIALIZATION
+  # STEP 1. RCIRCOS INITIALIZATION
   
   # See for explanation: https://stackoverflow.com/questions/56875962/r-package-transferring-environment-from-imported-package/56894153#56894153
   RCircos.Env <- RCircos::RCircos.Env
@@ -62,7 +62,7 @@ visualizeWithRCircos <- function(plotTitle,
     )
   )
   
-  # 2. SET PARAMETER FOR IDEOGRAM
+  # STEP 2. SET PARAMETER FOR IDEOGRAM
   rcircos.params <- RCircos::RCircos.Get.Plot.Parameters()
   rcircos.params$base.per.unit <- 1
   rcircos.params$chrom.paddings <- 1
@@ -84,11 +84,12 @@ visualizeWithRCircos <- function(plotTitle,
   rcircos.cyto <- RCircos::RCircos.Get.Plot.Ideogram()
   rcircos.cyto$ChrColor <- "black"
   RCircos::RCircos.Reset.Plot.Ideogram(rcircos.cyto)
-  # 3. GRAPHIC DEVICE INITIALIZATION
+  
+  # STEP 3. GRAPHIC DEVICE INITIALIZATION
   suppressMessages(RCircos::RCircos.Set.Plot.Area())
   suppressMessages(RCircos::RCircos.Chromosome.Ideogram.Plot())
   
-  # 4. GENERATE PLOT
+  # STEP 4. GENERATE PLOT
   PACVr.Ideogram.Tick.Plot(
     tick.num = 10,
     track.for.ticks = 2,
@@ -183,7 +184,7 @@ visualizeWithRCircos <- function(plotTitle,
     }
   }
   
-  # 5. GENERATE TITLE AND LEGEND
+  # STEP 5. GENERATE TITLE AND LEGEND
   graphics::title(paste(plotTitle), line = -4.5, cex.main = 0.8)
   if (relative == TRUE) {
     absolute <- trunc(mean(coverage[, 4]) * threshold)

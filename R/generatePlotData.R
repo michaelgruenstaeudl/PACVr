@@ -1,7 +1,7 @@
 #!/usr/bin/R
-#contributors = c("Michael Gruenstaeudl","Nils Jenke")
-#email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2021.04.16.2200"
+#contributors=c("Michael Gruenstaeudl", "Nils Jenke")
+#email="m_gruenstaeudl@fhsu.edu"
+#version="2023.11.04.2200"
 
 CovCalc <- function(bamFile, windowSize = 250) {
   # Calculates coverage of a given bam file and stores data in data.frame format
@@ -15,7 +15,6 @@ CovCalc <- function(bamFile, windowSize = 250) {
     warning("User-selected window size must be >= 1.")
     stop()
   }
-  
   cov <- GenomicAlignments::coverage(bamFile)
   bins <-
     GenomicRanges::tileGenome(
@@ -29,7 +28,6 @@ CovCalc <- function(bamFile, windowSize = 250) {
   colnames(cov) <-
     c("Chromosome", "chromStart", "chromEnd", "coverage")
   cov$coverage <- ceiling(as.numeric(cov$coverage))
-  
   return(cov)
 }
 
@@ -37,7 +35,6 @@ GenerateIRSynteny <- function(genes, syntenyLineType) {
   n_occur <- data.frame(table(genes[, 4]), stringsAsFactors = FALSE)
   n_occur <- n_occur[n_occur$Freq == 2,]
   ir_synteny <- c()
-  
   if (syntenyLineType == "1") {
     for (gene in n_occur$Var1) {
       duplicateGene <- genes[which(gene == genes$gene), 1:3]

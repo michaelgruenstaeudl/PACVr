@@ -1,7 +1,7 @@
 #!/usr/bin/R
-#contributors = c("Michael Gruenstaeudl","Nils Jenke")
-#email = "m.gruenstaeudl@fu-berlin.de", "nilsj24@zedat.fu-berlin.de"
-#version = "2021.04.16.2200"
+#contributors=c("Michael Gruenstaeudl", "Nils Jenke")
+#email="m_gruenstaeudl@fhsu.edu"
+#version="2023.11.04.2200"
 
 HistCol <- function(cov, threshold, relative, logScale) {
   # Function to generate color vector for histogram data
@@ -15,20 +15,17 @@ HistCol <- function(cov, threshold, relative, logScale) {
     warning("User-defined coverage depth threshold must be >=1.")
     stop()
   }
-  
   if (relative == TRUE & logScale) {
     threshold <- mean(cov[, 4]) + log(threshold)
-    
   } else if (relative == TRUE) {
     threshold <- mean(cov[, 4]) * threshold
-    
   }
   color <- rep("black", nrow(cov))
   ind   <- as.numeric(cov[, 4]) <= threshold
   color <- replace(color, ind, "red")
   return(color)
 }
-
+    
 boolToDeci <- function(boolList) {
   out = 0
   boolList <- rev(boolList)
@@ -72,7 +69,6 @@ writeTables <-
         width = 250L,
         step = 250L
       ))
-    
     overlaps_genes <-
       IRanges::findOverlaps(
         query = ir_genes,
@@ -80,7 +76,7 @@ writeTables <-
         type = "any",
         select = "all"
       )
-    
+
     ir_genes <-
       GenomicRanges::GRanges(seqnames = sample_name["genome_name"], ir_genes)
     ir_genes <-
@@ -154,21 +150,17 @@ writeTables <-
     ir_regions$lowCoverage <-
       with(ir_regions, ir_regions$coverage < cov_regions$coverage[match(Chromosome, cov_regions$Chromosome)])
     
-    
     ir_genes$lowCoverage <-
       ir_genes$coverage < mean(ir_genes$coverage) - sd(ir_genes$coverage)
     ir_noncoding$lowCoverage <-
       ir_noncoding$coverage < mean(ir_noncoding$coverage) - sd(ir_noncoding$coverage)
     
-    
     ir_genes$lowCoverage[ir_genes$lowCoverage == TRUE] <- "*"
     ir_genes$lowCoverage[ir_genes$lowCoverage == FALSE] <- ""
     ir_regions$lowCoverage[ir_regions$lowCoverage == TRUE] <- "*"
     ir_regions$lowCoverage[ir_regions$lowCoverage == FALSE] <- ""
-    ir_noncoding$lowCoverage[ir_noncoding$lowCoverage == TRUE] <-
-      "*"
-    ir_noncoding$lowCoverage[ir_noncoding$lowCoverage == FALSE] <-
-      ""
+    ir_noncoding$lowCoverage[ir_noncoding$lowCoverage == TRUE] <- "*"
+    ir_noncoding$lowCoverage[ir_noncoding$lowCoverage == FALSE] <- ""
     
     write.table(
       ir_genes,
@@ -212,7 +204,7 @@ writeTables <-
   }
 
 checkIREquality <- function(gbkData, regions, dir, sample_name) {
-  gbkSeq <- genbankr::getSeq(gbkData)
+  gbkSeq <- genbankr::getSeq(gbkData)                                    # Use of genbankr
   if ("IRb" %in% regions[, 4] && "IRa" %in% regions[, 4]) {
     repeatB <- as.numeric(regions[which(regions[, 4] == "IRb"), 2:3])
     repeatA <-
@@ -237,8 +229,7 @@ checkIREquality <- function(gbkData, regions, dir, sample_name) {
     if (gbkSeq[[1]][repeatB[1]:repeatB[2]] != Biostrings::reverseComplement(gbkSeq[[1]][repeatA[1]:repeatA[2]])) {
       IRa_seq <- Biostrings::DNAString(gbkSeq[[1]][repeatB[1]:repeatB[2]])
       IRa_seq <- split(IRa_seq, ceiling(seq_along(IRa_seq) / 10000))
-      IRb_seq <-
-        Biostrings::DNAString(Biostrings::reverseComplement(gbkSeq[[1]][repeatA[1]:repeatA[2]]))
+      IRb_seq <- Biostrings::DNAString(Biostrings::reverseComplement(gbkSeq[[1]][repeatA[1]:repeatA[2]]))
       IRb_seq <- split(IRb_seq, ceiling(seq_along(IRb_seq) / 10000))
       
       for (i in  1:min(length(IRa_seq), length(IRb_seq))) {

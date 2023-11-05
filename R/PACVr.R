@@ -1,13 +1,13 @@
 #!/usr/bin/R
-#contributors=c("Michael Gruenstaeudl",)
-#email="m_gruenstaeudl@fhsu.edu",
-#version="2023.11.04.2100"
+#contributors=c("Michael Gruenstaeudl", "Nils Jenke")
+#email="m_gruenstaeudl@fhsu.edu"
+#version="2023.11.04.2200"
 
 PACVr.parseName <- function (gbkData) {
   # This function parses the accession number and the sequence information from the GenBank file
   sample_name <- c(
-    sample_name=genbankr::accession(gbkData),
-    genome_name=genbankr::seqinfo(gbkData)@genome
+    sample_name=genbankr::accession(gbkData),                            # Use of genbankr
+    genome_name=genbankr::seqinfo(gbkData)@genome                        # Use of genbankr
   )
   return(sample_name)
 }
@@ -51,14 +51,14 @@ PACVr.verboseInformation <- function(gbkData,
   if (!is.na(output)) {
     outDir <- dirname(output)
     tmpDir <- file.path(outDir, 
-			paste(sample_name["sample_name"],
-			".tmp",
-			sep=""))
+            paste(sample_name["sample_name"],
+            ".tmp",
+            sep=""))
   } else {
     tmpDir <-
       file.path(".", paste(sample_name["sample_name"],
-		           ".tmp",
-		           sep=""))
+                   ".tmp",
+                   sep=""))
   }
   # Step 2. Check ...
   if (dir.exists(tmpDir) == FALSE) {
@@ -82,8 +82,8 @@ PACVr.visualizeWithRCircos <- function(gbkData,
                                        textSize) {
   # Step 1. Generate plot title
   plotTitle <-
-    paste(genbankr::sources(gbkData)$organism,
-          genbankr::accession(gbkData))
+    paste(genbankr::sources(gbkData)$organism,                            # Use of genbankr
+          genbankr::accession(gbkData))                                    # Use of genbankr
   # Step 2. Visualize
   visualizeWithRCircos(
     plotTitle,
@@ -140,8 +140,8 @@ PACVr.complete <- function(gbk.file,
                            output=NA) {
   ######################################################################
   # Step 1. Preparatory steps
-  gbkData <- genbankr::readGenBank(gbk.file, verbose=FALSE)  # Uses genbankr
-  sample_name <- PACVr.parseName(gbkData)                    # Uses genbankr
+  gbkData <- genbankr::readGenBank(gbk.file, verbose=FALSE)             # Use of genbankr
+  sample_name <- PACVr.parseName(gbkData)                               # Use of genbankr
   
   ###################################
   # Step 2. Conduct operations
@@ -150,9 +150,13 @@ PACVr.complete <- function(gbk.file,
   # Step 2b. Parse genes
   genes <- PACVr.parseGenes(gbkData)
   # Step 2c. Calculate coverage
-  coverage <- PACVr.calcCoverage(bam.file, regions, windowSize)
+  coverage <- PACVr.calcCoverage(bam.file,
+                                 regions,
+                                 windowSize)
   # Step 2d. Generate IR-Gene data
-  linkData <- PACVr.generateIRGeneData(gbkData, genes, regions,
+  linkData <- PACVr.generateIRGeneData(gbkData,
+                                       genes,
+                                       regions,
                                        syntenyLineType)
   ###################################
   # Optional. Run PACVr in mode that produces verbose output
@@ -199,4 +203,5 @@ PACVr.complete <- function(gbk.file,
     )
     dev.off()
   }
+  ######################################################################
 }
