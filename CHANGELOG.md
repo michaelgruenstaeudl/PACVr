@@ -1,6 +1,10 @@
 CHANGELOG
 ---------
 
+#### Version 1.0.4 (2023.11.21)
+* Fix error caused by function masking
+* Resolve warning caused by depreciated 'dplyr' use
+
 #### Version 1.0.3 (2023.10.05)
 * Replacing dependency 'genbankr' with 'read.gb' and custom functions
 * Addition of new contributor: Gregory Smith

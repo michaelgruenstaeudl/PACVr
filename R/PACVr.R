@@ -1,7 +1,7 @@
 #!/usr/bin/R
 #contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2023.11.05.0100"
+#version="2023.11.21.2100"
 
 PACVr.parseName <- function (gbkData) {
   # This function parses the accession number and the sequence information from the GenBank file
