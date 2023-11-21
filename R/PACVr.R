@@ -140,7 +140,7 @@ PACVr.complete <- function(gbk.file,
   ######################################################################
   # Step 1. Preparatory steps
   #gbkData <- genbankr::readGenBank(gbk.file, verbose=FALSE)             # Use of genbankr
-  gbkData <- read.gb::read.gb(gbkFile, DNA=TRUE, Type="full", Source="File")
+  gbkData <- read.gb::read.gb(gbk.file, DNA=TRUE, Type="full", Source="File")
   #sample_name <- PACVr.parseName(gbkData)                               # Use of genbankr
   sampleName <- read.gbSampleName(gbkData)
   
