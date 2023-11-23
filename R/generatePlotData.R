@@ -1,7 +1,7 @@
 #!/usr/bin/R
 #contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2023.11.21.2100"
+#version="2023.11.23.1530"
 
 CovCalc <- function(bamFile, windowSize = 250) {
   # Calculates coverage of a given bam file and stores data in data.frame format
@@ -11,6 +11,7 @@ CovCalc <- function(bamFile, windowSize = 250) {
   #     output: name and directory of output file
   # RETURNS:
   #     data.frame with region names, chromosome start, chromosome end and coverage calcucation
+  log_info('  Coverage calculation for `{bamFile}`')
   if (!is.numeric(windowSize) | windowSize < 0) {
     warning("User-selected window size must be >= 1.")
     stop()
@@ -32,6 +33,7 @@ CovCalc <- function(bamFile, windowSize = 250) {
 }
 
 GenerateIRSynteny <- function(genes, syntenyLineType) {
+  log_info('  Testing gene synteny in IRs')
   n_occur <- data.frame(table(genes[, 4]), stringsAsFactors = FALSE)
   n_occur <- n_occur[n_occur$Freq == 2,]
   ir_synteny <- c()
@@ -74,6 +76,7 @@ GenerateHistogramData <-
     # RETURNS:
     #   data.frame with region means to plot over histogram data
     # Error handling
+    log_info('  Generating histogram data for region `{region[4]}`')
     if (lastOne) {
       coverage <-
         coverage[(floor(region[1, 2] / windowSize) + 1):ceiling(region[1, 3] / windowSize),]

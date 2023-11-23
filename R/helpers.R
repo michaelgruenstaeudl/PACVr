@@ -319,7 +319,6 @@ writeTables <-
   }
 
 checkIREquality <- function(gbkData, regions, dir, sample_name) {
-  #gbkSeq <- genbankr::getSeq(gbkData)                                    # Use of genbankr
   gbkSeq <- read.gbSeq(gbkData)
   if ("IRb" %in% regions[, 4] && "IRa" %in% regions[, 4]) {
     repeatB <- as.numeric(regions[which(regions[, 4] == "IRb"), 2:3])

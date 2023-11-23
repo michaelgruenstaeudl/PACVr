@@ -1,9 +1,14 @@
 #!/usr/bin/R
 #contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2023.11.21.2100"
+#version="2023.11.23.1530"
 
-filter <- function(allRegions, where) {
+FilterByKeywords <- function(allRegions, where) {
+  # Function to filter list based on genomic keywords
+  # ARGS:
+  #   ...
+  # RETURNS:
+  #   ...
   out = subset(
     allRegions,
     grepl(
@@ -19,12 +24,12 @@ filter <- function(allRegions, where) {
 }
 
 ExtractAllGenes <- function(gbkData) {
-  # Function to extract genes from genbank file
+  # Function to extract gene information from Genbank flatfile data
   # ARGS:
-  #   gbkData (i.e., GenBank flatfile parsed by genbankr)
+  #   gbkData (i.e., GenBank flatfile data as parsed by read.gb())
   # RETURNS:
   #   genes in data frame format
-  #gene_L <- BiocGenerics::as.data.frame(genbankr::genes(gbkData))        # Use of genbankr
+  log_info('  Extracting information on genes')
   gene_L <- read.gbGenes(gbkData)
   gene_L <- gene_L[, c(1:3, which(colnames(gene_L) == "gene"))]
   colnames(gene_L) <- c("Chromosome", "chromStart", "chromEnd", "gene")
@@ -35,18 +40,18 @@ ExtractAllGenes <- function(gbkData) {
 }
 
 ExtractAllRegions <- function(gbkData) {
-  # Function to extract specific regions from Genbank input data
+  # Function to extract specific region information from Genbank flatfile data
   # ARGS:
-  #   gbkData (i.e., GenBank flatfile parsed by genbankr)
+  #   gbkData (i.e., GenBank flatfile data as parsed by read.gb())
   # RETURNS:
   #   regions in data frame format
-  #allRegions <- BiocGenerics::as.data.frame(genbankr::otherFeatures(gbkData))        # Use of genbankr
+  log_info('  Extracting information on genomic regions')
   allRegions <- read.gbOther(gbkData)
   regions <- tryCatch(
       tryCatch(
-        filter(allRegions, "note"),
+        FilterByKeywords(allRegions, "note"),
         warning = function(w)
-          filter(allRegions, "standard_name")
+          FilterByKeywords(allRegions, "standard_name")
       ),
       error = function(e)
         return(
@@ -78,7 +83,12 @@ ExtractAllRegions <- function(gbkData) {
 
 
 fillDataFrame <- function(gbkData, regions) {
-  #seqLength <- genbankr::seqinfo(gbkData)@seqlengths                    # Use of genbankr
+  # Function to annotate plastid genome with quadripartite regions based on their position within the genome
+  # ARGS:
+  #   gbkData (i.e., GenBank flatfile data as parsed by read.gb())
+  # RETURNS:
+  #   ...
+  log_info('  Annotating plastid genome with quadripartite regions')
   seqLength <- read.gbLengths(gbkData)
   if ((nrow(regions) == 0) || (regions[1, 2] == -1)) {
     regions[1,] <-

@@ -1,7 +1,7 @@
 #!/usr/bin/R
 #contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2023.11.21.2100"
+#version="2023.11.23.1530"
 
 #' Title
 #'
@@ -40,7 +40,7 @@ visualizeWithRCircos <- function(plotTitle,
   #   linkData: data frame that contains genomic region, coverage start, coverage end and coverage value
   # RETURNS:
   #   ---
-  
+
   if (logScale == TRUE) {
     coverage$coverage <- log(cov$coverage)
     #coverage$coverage <- log(coverage$coverage)
@@ -72,16 +72,25 @@ visualizeWithRCircos <- function(plotTitle,
   rcircos.params$sub.tracks <- 4
   rcircos.params$char.width <-
     6000000 * (max(regions$chromEnd) / (52669 + 310 * (nrow(genes)))) / textSize
-  rcircos.params$hist.color <-
-    HistCol(coverage, threshold, relative, logScale)
+
+  # TO DO - Please check why the below lines produce the warning message:
+  suppressMessages({
+    suppressWarnings({
+  rcircos.params$hist.color <- HistCol(coverage, threshold, relative, logScale)
   rcircos.params$line.color <- "yellow3"
   rcircos.params$chrom.width <- 0.05
   rcircos.params$track.in.start <- 1.08
   rcircos.params$track.out.start <- 1.5
   rcircos.params$radius.len <- 3
   PACVr.Reset.Plot.Parameters(rcircos.params)
+  rcircos.cyto <- RCircos::RCircos.Get.Plot.Ideogram()  
+  # The above lines causes message:
+  #Warning message:
+  #  In !parameters$text.color %in% colorNames || !parameters$hist.color %in%  :
+  #  'length(x) = 644 > 1' in coercion to 'logical(1)'
+    })
+  })
   
-  rcircos.cyto <- RCircos::RCircos.Get.Plot.Ideogram()
   rcircos.cyto$ChrColor <- "black"
   RCircos::RCircos.Reset.Plot.Ideogram(rcircos.cyto)
   
@@ -90,6 +99,7 @@ visualizeWithRCircos <- function(plotTitle,
   suppressMessages(RCircos::RCircos.Chromosome.Ideogram.Plot())
   
   # STEP 4. GENERATE PLOT
+  log_info('  Generating RCircos plot')
   PACVr.Ideogram.Tick.Plot(
     tick.num = 10,
     track.for.ticks = 2,
@@ -185,6 +195,7 @@ visualizeWithRCircos <- function(plotTitle,
   }
   
   # STEP 5. GENERATE TITLE AND LEGEND
+  log_info('  Generating title and legend for visualization')
   graphics::title(paste(plotTitle), line = -4.5, cex.main = 0.8)
   if (relative == TRUE) {
     absolute <- trunc(mean(coverage[, 4]) * threshold)

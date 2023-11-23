@@ -1,15 +1,10 @@
 #!/usr/bin/R
 #contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2023.11.21.2100"
+#version="2023.11.23.1530"
 
 PACVr.parseName <- function (gbkData) {
-  # This function parses the accession number and the sequence information from the GenBank file
-  sample_name <- c(
-    sample_name=genbankr::accession(gbkData),                            # Use of genbankr
-    genome_name=genbankr::seqinfo(gbkData)@genome                        # Use of genbankr
-  )
-  return(sample_name)
+  return(read.gbSampleName(gbkData))
 }
 
 PACVr.parseRegions <- function (gbkData) {
@@ -81,7 +76,6 @@ PACVr.visualizeWithRCircos <- function(gbkData,
                                        syntenyLineType,
                                        textSize) {
   # Step 1. Generate plot title
-  #plotTitle <- paste(genbankr::sources(gbkData)$organism, genbankr::accession(gbkData))  # Use of genbankr
   plotTitle <- read.gbPlotTitle(gbkData)
   # Step 2. Visualize
   visualizeWithRCircos(
@@ -138,41 +132,41 @@ PACVr.complete <- function(gbk.file,
                            verbose=FALSE,
                            output=NA) {
   ######################################################################
-  # Step 1. Preparatory steps
-  #gbkData <- genbankr::readGenBank(gbk.file, verbose=FALSE)             # Use of genbankr
+  log_info('Reading GenBank flatfile `{gbk.file}`')
   gbkData <- read.gb::read.gb(gbk.file, DNA=TRUE, Type="full", Source="File")
-  #sample_name <- PACVr.parseName(gbkData)                               # Use of genbankr
   sampleName <- read.gbSampleName(gbkData)
   
   ###################################
-  # Step 2. Conduct operations
-  # Step 2a. Parse regions
+  log_info('Parsing different genome regions and genes')
   regions <- PACVr.parseRegions(gbkData)
-  # Step 2b. Parse genes
   genes <- PACVr.parseGenes(gbkData)
-  # Step 2c. Calculate coverage
+
+  ###################################
+  log_info('Calculating sequencing coverage')
   coverage <- PACVr.calcCoverage(bam.file,
                                  regions,
                                  windowSize)
-  # Step 2d. Generate IR-Gene data
+
+  ###################################
+  log_info('Inferring IR regions and genes within IRs')
   linkData <- PACVr.generateIRGeneData(gbkData,
                                        genes,
                                        regions,
                                        syntenyLineType)
   ###################################
-  # Optional. Run PACVr in mode that produces verbose output
   if (verbose) {
-    PACVr.verboseInformation(gbkData,
-                             bam.file,
-                             genes,
-                             regions,
-                             output,
-                             sample_name)
+      log_info('Generating statistical information on sequencing coverage')
+      PACVr.verboseInformation(gbkData,
+                           bam.file,
+                           genes,
+                           regions,
+                           output,
+                           sample_name)
   }
   
   ###################################
-  # Step 3. Generate visualization
   if (!is.na(output)) {
+    log_info('Generating visualization of sequencing coverage')
     pdf(output, width=10, height=10)
     PACVr.visualizeWithRCircos(
       gbkData,
@@ -189,6 +183,7 @@ PACVr.complete <- function(gbk.file,
     )
     dev.off()
   } else {
+    log_info('No coverage data inferred; generating empty visualization')
     PACVr.visualizeWithRCircos(
       gbkData,
       genes,
@@ -204,5 +199,7 @@ PACVr.complete <- function(gbk.file,
     )
     dev.off()
   }
+  ######################################################################
+  log_success('Done.')
   ######################################################################
 }
