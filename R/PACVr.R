@@ -1,7 +1,7 @@
 #!/usr/bin/R
 #contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2023.11.05.0100"
+#version="2023.11.21.2100"
 
 PACVr.parseName <- function (gbkData) {
   # This function parses the accession number and the sequence information from the GenBank file
@@ -140,7 +140,7 @@ PACVr.complete <- function(gbk.file,
   ######################################################################
   # Step 1. Preparatory steps
   #gbkData <- genbankr::readGenBank(gbk.file, verbose=FALSE)             # Use of genbankr
-  gbkData <- read.gb::read.gb(gbkFile, DNA=TRUE, Type="full", Source="File")
+  gbkData <- read.gb::read.gb(gbk.file, DNA=TRUE, Type="full", Source="File")
   #sample_name <- PACVr.parseName(gbkData)                               # Use of genbankr
   sampleName <- read.gbSampleName(gbkData)
   

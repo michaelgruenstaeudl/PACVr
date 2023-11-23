@@ -1,22 +1,13 @@
 #!/usr/bin/R
 #contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2023.11.05.0100"
-
-# import needed dplyr functions
-`%>%` <- dplyr::`%>%`
-bind_rows <- dplyr::bind_rows
-rename_with <- dplyr::rename_with
-mutate <- dplyr::mutate
-select <- dplyr::select
-filter <- dplyr::filter
-
+#version="2023.11.21.2100"
 
 read.gb2DF <- function(gbkData) {
   fileDF <- data.frame()
   for (sample in gbkData) {
     sampleDF <- parseFeatures(sample$FEATURES)
-    fileDF <- bind_rows(fileDF, sampleDF)
+    fileDF <- dplyr::bind_rows(fileDF, sampleDF)
   }
   return(fileDF)
 }
@@ -29,10 +20,10 @@ parseFeatures <- function(features) {
   sampleDF <- data.frame()
   for (feature in features) {
     feature <- parseFeature(feature)
-    sampleDF <- bind_rows(sampleDF, feature)
+    sampleDF <- dplyr::bind_rows(sampleDF, feature)
   }
   sampleDF <- sampleDF %>% 
-                mutate(seqnames = as.factor(source[, "organism"]))
+                dplyr::mutate(seqnames = as.factor(source[, "organism"]))
   return(sampleDF)
 }
 
@@ -48,8 +39,9 @@ parseFeature <- function(feature) {
   locationsStr <- feature[1,locAndTypeIndex]
   type <- names(feature)[locAndTypeIndex]
   feature <- feature %>% 
-              rename_with(~ "locations", .cols = locAndTypeIndex) %>%
-              mutate(type = type)
+              dplyr::rename_with(~ "locations", 
+                                 .cols = dplyr::all_of(locAndTypeIndex)) %>%
+              dplyr::mutate(type = type)
   
   # create derivative "start" and "end" variables from "locations"
   # and create feature copies for multiple sequences
@@ -57,10 +49,10 @@ parseFeature <- function(feature) {
     regmatches(locationsStr, gregexpr("\\d+", locationsStr))[[1]] %>%
     as.integer()
   feature <- feature %>%
-              mutate(start = NA, end = NA)
+              dplyr::mutate(start = NA, end = NA)
   for (pairIndex in 1:(length(locationsList) / 2)) {
     if (pairIndex > 1) {
-      feature <- bind_rows(feature, feature[pairIndex-1,])
+      feature <- dplyr::bind_rows(feature, feature[pairIndex-1,])
     }
     startIndex = pairIndex * 2 - 1
     feature[pairIndex, "start"] = locationsList[startIndex]
@@ -80,8 +72,8 @@ read.gbSeq <- function(gbkData) {
 read.gbGenes <- function(gbkData) {
   bgkDataDF <- read.gb2DF(gbkData)
   gene_L <- bgkDataDF %>% 
-              filter(type == "gene") %>% 
-              select(all_of(c("seqnames", "start", "end", "gene")))
+              dplyr::filter(type == "gene") %>% 
+              dplyr::select(all_of(c("seqnames", "start", "end", "gene")))
   rownames(gene_L) <- NULL
   return(gene_L)
 }
@@ -89,19 +81,10 @@ read.gbGenes <- function(gbkData) {
 read.gbOther <- function(gbkData) {
   bgkDataDF <- read.gb2DF(gbkData)
   regions <- bgkDataDF %>% 
-              filter(!type %in% c("gene", "exon", "transcript",
+              dplyr::filter(!type %in% c("gene", "exon", "transcript",
                                   "CDS", "variant")) %>% 
-              select(all_of(c("seqnames", "start", "end", 
+              dplyr::select(all_of(c("seqnames", "start", "end", 
                               "gene", "note", "standard_name")))
-
-# BUG ?
-# The previous line causes:
-
-# Error in type %in% c("gene", "exon", "transcript", "CDS", "variant") : 
-#   object 'type' not found
-
-# It seems that 'type' is empty. Did you mean to use 'bgkDataDF$type'?
-
   rownames(regions) <- NULL
   return(regions)
 }
