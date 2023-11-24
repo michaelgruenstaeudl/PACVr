@@ -212,12 +212,9 @@ PACVr.Ideogram.Tick.Plot <-
     RCircos.Par$track.out.start <- RCircos.Par$chr.name.pos + old.distance
     
     RCircosEnvironment <- NULL
-    #loadNamespace("RCircos")
-    #
-    #library(RCircos)
-    #RCircosEnvironment <- get("RCircos.Env", envir = globalenv())
-    # See for explanation: https://stackoverflow.com/questions/56875962/r-package-transferring-environment-from-imported-package/56894153#56894153
-    RCircosEnvironment <- RCircos::RCircos.Env
+    library(RCircos)
+    RCircosEnvironment <- get("RCircos.Env", envir = globalenv())
+    #RCircosEnvironment <- RCircos::RCircos.Env
     RCircosEnvironment[["RCircos.PlotPar"]] <- NULL
     RCircosEnvironment[["RCircos.PlotPar"]] <- RCircos.Par
   }
@@ -545,12 +542,8 @@ PACVr.Reset.Plot.Parameters <- function (new.params = NULL)
   #   Save new parameters to RCircos Environment
   #   =====================================================
   RCircosEnvironment <- NULL
-  #loadNamespace("RCircos")
-  #
-  #library(RCircos)
-  #RCircosEnvironment <- get("RCircos.Env", envir = globalenv())
-  # See for explanation: https://stackoverflow.com/questions/56875962/r-package-transferring-environment-from-imported-package/56894153#56894153
-  RCircosEnvironment <- RCircos::RCircos.Env
+  library(RCircos)
+  RCircosEnvironment <- get("RCircos.Env", envir = globalenv())
   RCircosEnvironment[["RCircos.PlotPar"]] <- NULL
   RCircosEnvironment[["RCircos.PlotPar"]] <- new.params
   

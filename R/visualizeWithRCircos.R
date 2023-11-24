@@ -51,9 +51,11 @@ visualizeWithRCircos <- function(plotTitle,
   
   # STEP 1. RCIRCOS INITIALIZATION
   
-  # See for explanation: https://stackoverflow.com/questions/56875962/r-package-transferring-environment-from-imported-package/56894153#56894153
-  RCircos.Env <- RCircos::RCircos.Env
-  RCircos::RCircos.Env
+  library(RCircos)
+  rcircos <- get("RCircos.Env", envir = globalenv())
+  RCircos.Env <- get("RCircos.Env", envir = globalenv())
+  #RCircos.Env <- RCircos::RCircos.Env
+  #RCircos::RCircos.Env
   
   suppressMessages(
     RCircos::RCircos.Set.Core.Components(
