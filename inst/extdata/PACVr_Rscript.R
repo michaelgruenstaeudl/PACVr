@@ -1,7 +1,7 @@
 #!/usr/bin/R
-#contributors=c("Michael Gruenstaeudl", "Nils Jenke")
+#contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2023.11.21.2100"
+#version="2023.11.23.1530"
 
 library("optparse")
 
@@ -95,8 +95,8 @@ opt <- CmdLineArgs()
 ########################################################################
 
 require("PACVr")
-PACVr.complete(gbk.file = opt$gbkFile,
-               bam.file = opt$bamFile,
+PACVr.complete(gbkFile = opt$gbkFile,
+               bamFile = opt$bamFile,
                windowSize = opt$windowSize,
                logScale = opt$logScale,
                threshold = opt$threshold,

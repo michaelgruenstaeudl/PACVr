@@ -29,7 +29,7 @@ ExtractAllGenes <- function(gbkData) {
   #   gbkData (i.e., GenBank flatfile data as parsed by read.gb())
   # RETURNS:
   #   genes in data frame format
-  log_info('  Extracting information on genes')
+  logger::log_info('  Extracting information on genes')
   gene_L <- read.gbGenes(gbkData)
   gene_L <- gene_L[, c(1:3, which(colnames(gene_L) == "gene"))]
   colnames(gene_L) <- c("Chromosome", "chromStart", "chromEnd", "gene")
@@ -45,7 +45,7 @@ ExtractAllRegions <- function(gbkData) {
   #   gbkData (i.e., GenBank flatfile data as parsed by read.gb())
   # RETURNS:
   #   regions in data frame format
-  log_info('  Extracting information on genomic regions')
+  logger::log_info('  Extracting information on genomic regions')
   allRegions <- read.gbOther(gbkData)
   regions <- tryCatch(
       tryCatch(
@@ -88,7 +88,7 @@ fillDataFrame <- function(gbkData, regions) {
   #   gbkData (i.e., GenBank flatfile data as parsed by read.gb())
   # RETURNS:
   #   ...
-  log_info('  Annotating plastid genome with quadripartite regions')
+  logger::log_info('  Annotating plastid genome with quadripartite regions')
   seqLength <- read.gbLengths(gbkData)
   if ((nrow(regions) == 0) || (regions[1, 2] == -1)) {
     regions[1,] <-

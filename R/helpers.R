@@ -72,7 +72,7 @@ read.gbSeq <- function(gbkData) {
 read.gbGenes <- function(gbkData) {
   bgkDataDF <- read.gb2DF(gbkData)
   gene_L <- bgkDataDF %>% 
-              dplyr::filter(type == "gene") %>% 
+              dplyr::filter(type=="gene") %>% 
               dplyr::select(all_of(c("seqnames", "start", "end", "gene")))
   rownames(gene_L) <- NULL
   return(gene_L)
@@ -152,7 +152,7 @@ boolToDeci <- function(boolList) {
 
 writeTables <-
   function(regions,
-           bam.file,
+           bamFile,
            genes,
            dir,
            sample_name) {
@@ -196,7 +196,7 @@ writeTables <-
       GenomicRanges::GRanges(seqnames = sample_name["genome_name"], ir_genes)
     ir_genes <-
       GenomicRanges::binnedAverage(ir_genes,
-                                   GenomicAlignments::coverage(bam.file),
+                                   GenomicAlignments::coverage(bamFile),
                                    "coverage")
     ir_genes <-
       as.data.frame(ir_genes)[c("seqnames", "start", "end", "coverage")]
@@ -223,7 +223,7 @@ writeTables <-
       GenomicRanges::GRanges(seqnames = sample_name["genome_name"], ir_noncoding)
     ir_noncoding <-
       GenomicRanges::binnedAverage(ir_noncoding,
-                                   GenomicAlignments::coverage(bam.file),
+                                   GenomicAlignments::coverage(bamFile),
                                    "coverage")
     ir_noncoding <-
       as.data.frame(ir_noncoding)[c("seqnames", "start", "end", "coverage")]
@@ -245,7 +245,7 @@ writeTables <-
       GenomicRanges::GRanges(seqnames = sample_name["genome_name"], ir_regions)
     ir_regions <-
       GenomicRanges::binnedAverage(ir_regions,
-                                   GenomicAlignments::coverage(bam.file),
+                                   GenomicAlignments::coverage(bamFile),
                                    "coverage")
     chr <- ir_regions@ranges@NAMES
     ir_regions <-

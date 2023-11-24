@@ -4,8 +4,8 @@
 \alias{PACVr.complete}
 \title{Execute the complete pipeline of \pkg{PACVr}}
 \usage{
-PACVr.complete(gbk.file,
-               bam.file,
+PACVr.complete(gbkFile,
+               bamFile,
                windowSize = 250,
                logScale = FALSE,
                threshold = 0.5,
@@ -16,9 +16,9 @@ PACVr.complete(gbk.file,
                output = NA)
 }
 \arguments{
-\item{gbk.file}{a character vector that specifies the name of, and path to, the GenBank input file}
+\item{gbkFile}{a character vector that specifies the name of, and path to, the GenBank input file}
 
-\item{bam.file}{a character vector that specifies the name of, and path to, the BAM input file}
+\item{bamFile}{a character vector that specifies the name of, and path to, the BAM input file}
 
 \item{windowSize}{a numeric value that specifies window size in which the coverage is calculated}
 
@@ -48,7 +48,7 @@ bamFile <- system.file("extdata",
                        "NC_045072/NC_045072_PlastomeReadsOnly.sorted.bam", 
                        package="PACVr")
 outFile <- paste(tempdir(), "/NC_045072__all_reads.pdf", sep="")
-PACVr.complete(gbk.file=gbkFile, bam.file=bamFile, windowSize=250, 
+PACVr.complete(gbkFile, bamFile, windowSize=250, 
                threshold=0.5, syntenyLineType=1, relative=TRUE, 
                textSize=0.5, verbose=FALSE, output=outFile)
 }

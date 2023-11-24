@@ -20,7 +20,7 @@
 }
 
 \author{
-  Michael Gruenstaeudl, Nils Jenke
+  Gregory Smith, Nils Jenke, Michael Gruenstaeudl
   Maintainer: Michael Gruenstaeudl \email{m_gruenstaeudl@fhsu.edu}
 }
 

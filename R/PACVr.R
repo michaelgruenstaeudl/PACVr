@@ -37,21 +37,21 @@ PACVr.generateIRGeneData <- function(gbkData, genes, regions,
 }
 
 PACVr.verboseInformation <- function(gbkData,
-                                     bam.file,
+                                     bamFile,
                                      genes,
                                      regions,
                                      output,
-                                     sample_name) {
+                                     sampleName) {
   # Step 1. Check ...
   if (!is.na(output)) {
     outDir <- dirname(output)
     tmpDir <- file.path(outDir, 
-            paste(sample_name["sample_name"],
+            paste(sampleName["sample_name"],
             ".tmp",
             sep=""))
   } else {
     tmpDir <-
-      file.path(".", paste(sample_name["sample_name"],
+      file.path(".", paste(sampleName["sample_name"],
                    ".tmp",
                    sep=""))
   }
@@ -60,8 +60,8 @@ PACVr.verboseInformation <- function(gbkData,
     dir.create(tmpDir)
   }
   # Step 3. Write output
-  writeTables(regions, bam.file, genes, tmpDir, sample_name)
-  checkIREquality(gbkData, regions, tmpDir, sample_name)
+  writeTables(regions, bamFile, genes, tmpDir, sampleName)
+  checkIREquality(gbkData, regions, tmpDir, sampleName)
 }
 
 PACVr.visualizeWithRCircos <- function(gbkData,
@@ -96,8 +96,8 @@ PACVr.visualizeWithRCircos <- function(gbkData,
 #' @title Execute the complete pipeline of \pkg{PACVr}
 #' @description This function executes the complete pipeline of \pkg{PACVr} via a single command.
 #'
-#' @param gbk.file a character vector that specifies the name of, and path to, the GenBank input file
-#' @param bam.file a character vector that specifies the name of, and path to, the BAM input file
+#' @param gbkFile a character vector that specifies the name of, and path to, the GenBank input file
+#' @param bamFile a character vector that specifies the name of, and path to, the BAM input file
 #' @param windowSize a numeric value that specifies window size in which the coverage is calculated
 #' @param logScale a boolean that specifies if the coverage depth is to be log-transformed before visualizing it
 #' @param threshold a numeric value that specifies the threshold for plotting coverage depth bars in red as opposed to the default black
@@ -117,12 +117,12 @@ PACVr.visualizeWithRCircos <- function(gbkData,
 #'                        "NC_045072/NC_045072_PlastomeReadsOnly.sorted.bam",
 #'                        package="PACVr")
 #' outFile <- paste(tempdir(), "/NC_045072__all_reads.pdf", sep="")
-#' PACVr.complete(gbk.file=gbkFile, bam.file=bamFile, windowSize=250, logScale=FALSE,
+#' PACVr.complete(gbkFile=gbkFile, bamFile=bamFile, windowSize=250, logScale=FALSE,
 #'                threshold=0.5, syntenyLineType=1, relative=TRUE, textSize=0.5,
 #'                verbose=FALSE, output=outFile
 #'                }
-PACVr.complete <- function(gbk.file,
-                           bam.file,
+PACVr.complete <- function(gbkFile,
+                           bamFile,
                            windowSize=250,
                            logScale=FALSE,
                            threshold=0.5,
@@ -132,41 +132,41 @@ PACVr.complete <- function(gbk.file,
                            verbose=FALSE,
                            output=NA) {
   ######################################################################
-  log_info('Reading GenBank flatfile `{gbk.file}`')
-  gbkData <- read.gb::read.gb(gbk.file, DNA=TRUE, Type="full", Source="File")
+  logger::log_info('Reading GenBank flatfile `{gbkFile}`')
+  gbkData <- read.gb::read.gb(gbkFile, DNA=TRUE, Type="full", Source="File")
   sampleName <- read.gbSampleName(gbkData)
   
   ###################################
-  log_info('Parsing different genome regions and genes')
+  logger::log_info('Parsing different genome regions and genes')
   regions <- PACVr.parseRegions(gbkData)
   genes <- PACVr.parseGenes(gbkData)
 
   ###################################
-  log_info('Calculating sequencing coverage')
-  coverage <- PACVr.calcCoverage(bam.file,
+  logger::log_info('Calculating sequencing coverage')
+  coverage <- PACVr.calcCoverage(bamFile,
                                  regions,
                                  windowSize)
 
   ###################################
-  log_info('Inferring IR regions and genes within IRs')
+  logger::log_info('Inferring IR regions and genes within IRs')
   linkData <- PACVr.generateIRGeneData(gbkData,
                                        genes,
                                        regions,
                                        syntenyLineType)
   ###################################
   if (verbose) {
-      log_info('Generating statistical information on sequencing coverage')
+      logger::log_info('Generating statistical information on sequencing coverage')
       PACVr.verboseInformation(gbkData,
-                           bam.file,
+                           bamFile,
                            genes,
                            regions,
                            output,
-                           sample_name)
+                           sampleName)
   }
   
   ###################################
   if (!is.na(output)) {
-    log_info('Generating visualization of sequencing coverage')
+    logger::log_info('Generating visualization of sequencing coverage')
     pdf(output, width=10, height=10)
     PACVr.visualizeWithRCircos(
       gbkData,
@@ -183,7 +183,7 @@ PACVr.complete <- function(gbk.file,
     )
     dev.off()
   } else {
-    log_info('No coverage data inferred; generating empty visualization')
+    logger::log_info('No coverage data inferred; generating empty visualization')
     PACVr.visualizeWithRCircos(
       gbkData,
       genes,
@@ -200,6 +200,6 @@ PACVr.complete <- function(gbk.file,
     dev.off()
   }
   ######################################################################
-  log_success('Done.')
+  logger::log_success('Done.')
   ######################################################################
 }

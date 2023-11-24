@@ -99,7 +99,7 @@ visualizeWithRCircos <- function(plotTitle,
   suppressMessages(RCircos::RCircos.Chromosome.Ideogram.Plot())
   
   # STEP 4. GENERATE PLOT
-  log_info('  Generating RCircos plot')
+  logger::log_info('  Generating RCircos plot')
   PACVr.Ideogram.Tick.Plot(
     tick.num = 10,
     track.for.ticks = 2,
@@ -195,7 +195,7 @@ visualizeWithRCircos <- function(plotTitle,
   }
   
   # STEP 5. GENERATE TITLE AND LEGEND
-  log_info('  Generating title and legend for visualization')
+  logger::log_info('  Generating title and legend for visualization')
   graphics::title(paste(plotTitle), line = -4.5, cex.main = 0.8)
   if (relative == TRUE) {
     absolute <- trunc(mean(coverage[, 4]) * threshold)
