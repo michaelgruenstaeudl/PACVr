@@ -4,5 +4,5 @@
 
 .onLoad = function(libname = find.package("PACVr"), pkgname = "PACVr") {
     # nothing
-    #require("RCircos")
+    require(RCircos)
 }
