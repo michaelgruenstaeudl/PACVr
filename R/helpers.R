@@ -3,7 +3,7 @@
 #email="m_gruenstaeudl@fhsu.edu"
 #version="2023.11.21.2100"
 
-`%>%` <- dplyr::`%>%
+`%>%` <- dplyr::`%>%`
 
 read.gb2DF <- function(gbkData) {
   fileDF <- data.frame()
