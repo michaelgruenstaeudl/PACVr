@@ -3,5 +3,6 @@
 }
 
 .onLoad = function(libname = find.package("PACVr"), pkgname = "PACVr") {
-    require(RCircos)
+    # nothing
+    library(RCircos)
 }
