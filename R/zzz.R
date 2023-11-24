@@ -4,6 +4,5 @@
 
 .onLoad = function(libname = find.package("PACVr"), pkgname = "PACVr") {
     # nothing
-    requireNamespace("dplyr")
     requireNamespace("RCircos")
 }
