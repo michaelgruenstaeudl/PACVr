@@ -3,6 +3,5 @@
 importFrom("grDevices", "dev.off", "pdf")
 importFrom("stats", "aggregate", "cov", "sd")
 importFrom("utils", "write.csv", "write.table")
-importFrom("RCircos", "RCircos.Env")
 
 export(PACVr.complete)
