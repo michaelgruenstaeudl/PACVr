@@ -213,7 +213,7 @@ PACVr.Ideogram.Tick.Plot <-
     
     RCircosEnvironment <- NULL
     #library(RCircos)  # NOT ALLOWED BY CRAN
-    #RCircosEnvironment <- get("RCircos.Env", envir = globalenv())  # NOT ALLOWED BY CRAN
+    #RCircosEnvironment <- get("RCircos.Env", envir = globalenv())
     RCircosEnvironment <- RCircos::RCircos.Env
     RCircosEnvironment[["RCircos.PlotPar"]] <- NULL
     RCircosEnvironment[["RCircos.PlotPar"]] <- RCircos.Par
@@ -544,7 +544,7 @@ PACVr.Reset.Plot.Parameters <- function (new.params = NULL)
   RCircosEnvironment <- NULL
 
   #library(RCircos)  # NOT ALLOWED BY CRAN
-  #RCircosEnvironment <- get("RCircos.Env", envir = globalenv())  # NOT ALLOWED BY CRAN
+  #RCircosEnvironment <- get("RCircos.Env", envir = globalenv())
   RCircosEnvironment <- RCircos::RCircos.Env
 
   RCircosEnvironment[["RCircos.PlotPar"]] <- NULL
