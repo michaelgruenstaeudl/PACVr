@@ -3,7 +3,7 @@
 #email="m_gruenstaeudl@fhsu.edu"
 #version="2023.11.23.1530"
 
-requireNamespace(RCircos)
+#loadNamespace("RCircos")
     
 #' Title
 #'

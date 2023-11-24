@@ -3,7 +3,7 @@
 #email="m_gruenstaeudl@fhsu.edu"
 #version="2023.11.23.1530"
 
-requireNamespace(RCircos)
+#loadNamespace("RCircos")
 
 # The following R functions were taken from the R package RCircos and then modified.
 # The modifications were necessary to fix several issues in the original package code.
