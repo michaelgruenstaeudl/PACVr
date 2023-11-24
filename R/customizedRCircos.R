@@ -3,7 +3,6 @@
 #email="m_gruenstaeudl@fhsu.edu"
 #version="2023.11.23.1530"
 
-#loadNamespace("RCircos")
 
 # The following R functions were taken from the R package RCircos and then modified.
 # The modifications were necessary to fix several issues in the original package code.
@@ -213,8 +212,12 @@ PACVr.Ideogram.Tick.Plot <-
     RCircos.Par$track.out.start <- RCircos.Par$chr.name.pos + old.distance
     
     RCircosEnvironment <- NULL
-    library(RCircos)
-    RCircosEnvironment <- get("RCircos.Env", envir = globalenv())
+    #loadNamespace("RCircos")
+    #
+    #library(RCircos)
+    #RCircosEnvironment <- get("RCircos.Env", envir = globalenv())
+    # See for explanation: https://stackoverflow.com/questions/56875962/r-package-transferring-environment-from-imported-package/56894153#56894153
+    RCircosEnvironment <- RCircos::RCircos.Env
     RCircosEnvironment[["RCircos.PlotPar"]] <- NULL
     RCircosEnvironment[["RCircos.PlotPar"]] <- RCircos.Par
   }
@@ -542,8 +545,12 @@ PACVr.Reset.Plot.Parameters <- function (new.params = NULL)
   #   Save new parameters to RCircos Environment
   #   =====================================================
   RCircosEnvironment <- NULL
-  library(RCircos)
-  RCircosEnvironment <- get("RCircos.Env", envir = globalenv())
+  #loadNamespace("RCircos")
+  #
+  #library(RCircos)
+  #RCircosEnvironment <- get("RCircos.Env", envir = globalenv())
+  # See for explanation: https://stackoverflow.com/questions/56875962/r-package-transferring-environment-from-imported-package/56894153#56894153
+  RCircosEnvironment <- RCircos::RCircos.Env
   RCircosEnvironment[["RCircos.PlotPar"]] <- NULL
   RCircosEnvironment[["RCircos.PlotPar"]] <- new.params
   
