@@ -3,8 +3,7 @@
 #email="m_gruenstaeudl@fhsu.edu"
 #version="2023.11.23.1530"
 
-#loadNamespace("RCircos")
-    
+ 
 #' Title
 #'
 #' @param plotTitle
@@ -51,12 +50,9 @@ visualizeWithRCircos <- function(plotTitle,
   
   # STEP 1. RCIRCOS INITIALIZATION
   
-  library(RCircos)
-  rcircos <- get("RCircos.Env", envir = globalenv())
-  RCircos.Env <- get("RCircos.Env", envir = globalenv())
-  #RCircos.Env <- RCircos::RCircos.Env
-  #RCircos::RCircos.Env
-  
+  #library(RCircos)
+  RCircosEnvironment <- get("RCircos.Env", envir = globalenv())
+ 
   suppressMessages(
     RCircos::RCircos.Set.Core.Components(
       cyto.info      = regions,
@@ -67,27 +63,27 @@ visualizeWithRCircos <- function(plotTitle,
   )
   
   # STEP 2. SET PARAMETER FOR IDEOGRAM
-  rcircos.params <- RCircos::RCircos.Get.Plot.Parameters()
-  rcircos.params$base.per.unit <- 1
-  rcircos.params$chrom.paddings <- 1
-  rcircos.params$track.height <- 0.07
-  rcircos.params$text.size <- textSize
-  rcircos.params$track.background <- "gray71"
-  rcircos.params$sub.tracks <- 4
-  rcircos.params$char.width <-
+  RCircosEnvironment.params <- RCircos::RCircos.Get.Plot.Parameters()
+  RCircosEnvironment.params$base.per.unit <- 1
+  RCircosEnvironment.params$chrom.paddings <- 1
+  RCircosEnvironment.params$track.height <- 0.07
+  RCircosEnvironment.params$text.size <- textSize
+  RCircosEnvironment.params$track.background <- "gray71"
+  RCircosEnvironment.params$sub.tracks <- 4
+  RCircosEnvironment.params$char.width <-
     6000000 * (max(regions$chromEnd) / (52669 + 310 * (nrow(genes)))) / textSize
 
   # TO DO - Please check why the below lines produce the warning message:
   suppressMessages({
     suppressWarnings({
-  rcircos.params$hist.color <- HistCol(coverage, threshold, relative, logScale)
-  rcircos.params$line.color <- "yellow3"
-  rcircos.params$chrom.width <- 0.05
-  rcircos.params$track.in.start <- 1.08
-  rcircos.params$track.out.start <- 1.5
-  rcircos.params$radius.len <- 3
-  PACVr.Reset.Plot.Parameters(rcircos.params)
-  rcircos.cyto <- RCircos::RCircos.Get.Plot.Ideogram()  
+  RCircosEnvironment.params$hist.color <- HistCol(coverage, threshold, relative, logScale)
+  RCircosEnvironment.params$line.color <- "yellow3"
+  RCircosEnvironment.params$chrom.width <- 0.05
+  RCircosEnvironment.params$track.in.start <- 1.08
+  RCircosEnvironment.params$track.out.start <- 1.5
+  RCircosEnvironment.params$radius.len <- 3
+  PACVr.Reset.Plot.Parameters(RCircosEnvironment.params)
+  RCircosEnvironment.cyto <- RCircos::RCircos.Get.Plot.Ideogram()  
   # The above lines causes message:
   #Warning message:
   #  In !parameters$text.color %in% colorNames || !parameters$hist.color %in%  :
@@ -95,8 +91,8 @@ visualizeWithRCircos <- function(plotTitle,
     })
   })
   
-  rcircos.cyto$ChrColor <- "black"
-  RCircos::RCircos.Reset.Plot.Ideogram(rcircos.cyto)
+  RCircosEnvironment.cyto$ChrColor <- "black"
+  RCircos::RCircos.Reset.Plot.Ideogram(RCircosEnvironment.cyto)
   
   # STEP 3. GRAPHIC DEVICE INITIALIZATION
   suppressMessages(RCircos::RCircos.Set.Plot.Area())

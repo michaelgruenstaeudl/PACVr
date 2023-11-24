@@ -212,9 +212,8 @@ PACVr.Ideogram.Tick.Plot <-
     RCircos.Par$track.out.start <- RCircos.Par$chr.name.pos + old.distance
     
     RCircosEnvironment <- NULL
-    library(RCircos)
+    #library(RCircos)
     RCircosEnvironment <- get("RCircos.Env", envir = globalenv())
-    #RCircosEnvironment <- RCircos::RCircos.Env
     RCircosEnvironment[["RCircos.PlotPar"]] <- NULL
     RCircosEnvironment[["RCircos.PlotPar"]] <- RCircos.Par
   }
@@ -542,7 +541,7 @@ PACVr.Reset.Plot.Parameters <- function (new.params = NULL)
   #   Save new parameters to RCircos Environment
   #   =====================================================
   RCircosEnvironment <- NULL
-  library(RCircos)
+  #library(RCircos)
   RCircosEnvironment <- get("RCircos.Env", envir = globalenv())
   RCircosEnvironment[["RCircos.PlotPar"]] <- NULL
   RCircosEnvironment[["RCircos.PlotPar"]] <- new.params
