@@ -50,8 +50,9 @@ visualizeWithRCircos <- function(plotTitle,
   
   # STEP 1. RCIRCOS INITIALIZATION
   
-  #library(RCircos)
-  RCircosEnvironment <- get("RCircos.Env", envir = globalenv())
+  #library(RCircos)  # NOT ALLOWED BY CRAN
+  #RCircosEnvironment <- get("RCircos.Env", envir = globalenv())  # NOT ALLOWED BY CRAN
+  RCircosEnvironment <- RCircos::RCircos.Env
  
   suppressMessages(
     RCircos::RCircos.Set.Core.Components(
