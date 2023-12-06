@@ -49,10 +49,8 @@ visualizeWithRCircos <- function(plotTitle,
   coverage$Chromosome <- ""
   
   # STEP 1. RCIRCOS INITIALIZATION
-  
-  #library(RCircos)  # NOT ALLOWED BY CRAN
-  #RCircosEnvironment <- get("RCircos.Env", envir = globalenv())
-  RCircosEnvironment <- RCircos::RCircos.Env
+  assign("RCircos.Env", RCircos::RCircos.Env, globalenv())
+  RCircosEnvironment <- RCircos.Env
  
   suppressMessages(
     RCircos::RCircos.Set.Core.Components(
