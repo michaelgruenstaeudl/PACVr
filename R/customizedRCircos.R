@@ -69,7 +69,7 @@ PACVr.Histogram.Plot <- function(hist.data = NULL,
   locations <- PACVr.Get.Start.End.Locations(hist.data, RCircos.Par$hist.width)
 
   # Histgram colors and height
-  histColors <- RCircos::RCircos.Get.Plot.Colors(hist.data, RCircos.Par$hist.color)
+  histColors <- RCircos::RCircos.Get.Plot.Colors(hist.data, RCircos.Par$hist.colors)
   histValues <- as.numeric(hist.data[, data.col])
   if (is.null(max.value) || is.null(min.value)) {
     max.value <- max(histValues)

@@ -72,7 +72,7 @@ visualizeWithRCircos <- function(plotTitle,
   # TO DO - Please check why the below lines produce the warning message:
   suppressMessages({
     suppressWarnings({
-  RCircosEnvironment.params$hist.color <- HistCol(coverage, threshold, relative, logScale)
+  RCircosEnvironment.params$hist.colors <- HistCol(coverage, threshold, relative, logScale)
   RCircosEnvironment.params$line.color <- "yellow3"
   RCircosEnvironment.params$chrom.width <- 0.05
   RCircosEnvironment.params$track.in.start <- 1.08
