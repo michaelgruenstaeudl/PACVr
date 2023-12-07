@@ -4,7 +4,7 @@ Date: 2023-12-06
 Title: Plastome Assembly Coverage Visualization
 Authors@R: c(person("Gregory", "Smith", role = c("ctb")),
              person("Nils", "Jenke", role = c("ctb")),
-             person("Michael", "Gruenstaeudl", role = c("aut", "cre"), email = "m_gruenstaeudl@fhsu.edu")
+             person("Michael", "Gruenstaeudl", role = c("aut", "cre"), email = "m_gruenstaeudl@fhsu.edu", orcid = "0000-0002-1666-1773")
              )
 Author: Gregory Smith [ctb],
         Nils Jenke [ctb],
