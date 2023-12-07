@@ -476,6 +476,10 @@ PACVr.Reset.Plot.Parameters <- function (new.params = NULL)
   #   ==========================================================
 
   RCircos::RCircos.Validate.Plot.Parameters(new.params)
+  if (!is.null(new.params$hist.colors)) 
+  {
+    validateColors(new.params$hist.colors)
+  }
   
   #   4.  Parameters related to ideogram width change.
   #       Note: chr.ideo.pos is a read-only parameter
