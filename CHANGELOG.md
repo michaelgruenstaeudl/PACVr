@@ -1,10 +1,11 @@
 CHANGELOG
 ---------
 
-#### Version 1.0.4 (2023.11.23)
+#### Version 1.0.4 (2023.12.06)
 * Implemented a logger
 * Several bug fixes (e.g., error caused by function masking)
 * Resolve warning caused by depreciated 'dplyr' use
+* Resolve need for library calls to RCircos within the code
 
 #### Version 1.0.3 (2023.10.05)
 * Replacing dependency 'genbankr' with 'read.gb' and custom functions

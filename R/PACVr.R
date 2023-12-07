@@ -182,6 +182,7 @@ PACVr.complete <- function(gbkFile,
       textSize
     )
     dev.off()
+    logger::log_info('Saved visualization including coverage as `{output}`')
   } else {
     logger::log_info('No coverage data inferred; generating empty visualization')
     PACVr.visualizeWithRCircos(
@@ -198,6 +199,7 @@ PACVr.complete <- function(gbkFile,
       textSize
     )
     dev.off()
+    logger::log_info('Saved visualization excluding coverage as `{output}`')
   }
   ######################################################################
   logger::log_success('Done.')
