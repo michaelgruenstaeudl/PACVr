@@ -73,19 +73,21 @@ read.gbSeq <- function(gbkData) {
 
 read.gbGenes <- function(gbkData) {
   bgkDataDF <- read.gb2DF(gbkData)
+  type <- NULL
   gene_L <- bgkDataDF %>% 
               dplyr::filter(type=="gene") %>% 
-              dplyr::select(all_of(c("seqnames", "start", "end", "gene")))
+              dplyr::select(dplyr::all_of(c("seqnames", "start", "end", "gene")))
   rownames(gene_L) <- NULL
   return(gene_L)
 }
 
 read.gbOther <- function(gbkData) {
   bgkDataDF <- read.gb2DF(gbkData)
+  type <- NULL
   regions <- bgkDataDF %>% 
               dplyr::filter(!type %in% c("gene", "exon", "transcript",
                                   "CDS", "variant")) %>% 
-              dplyr::select(all_of(c("seqnames", "start", "end", 
+              dplyr::select(dplyr::all_of(c("seqnames", "start", "end", 
                               "gene", "note", "standard_name")))
   rownames(regions) <- NULL
   return(regions)
