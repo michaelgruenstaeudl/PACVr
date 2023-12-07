@@ -49,9 +49,6 @@ visualizeWithRCircos <- function(plotTitle,
   coverage$Chromosome <- ""
   
   # STEP 1. RCIRCOS INITIALIZATION
-  assign("RCircos.Env", RCircos::RCircos.Env, globalenv())
-  RCircosEnvironment <- RCircos.Env
-
   suppressMessages(
     RCircos::RCircos.Set.Core.Components(
       cyto.info      = regions,

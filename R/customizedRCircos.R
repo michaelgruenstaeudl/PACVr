@@ -85,7 +85,7 @@ PACVr.Histogram.Plot <- function(hist.data = NULL,
                                                        max.value,
                                                        plot.type="points",
                                                        outerPos - innerPos)
-  
+
   # Draw histogram
   RCircos::RCircos.Track.Outline(outerPos, innerPos, RCircos.Par$sub.tracks)
   for (aPoint in seq_len(nrow(hist.data)))
@@ -212,7 +212,6 @@ PACVr.Ideogram.Tick.Plot <-
     RCircos.Par$track.out.start <- RCircos.Par$chr.name.pos + old.distance
     
     RCircosEnvironment <- NULL
-    assign("RCircos.Env", RCircos::RCircos.Env, globalenv())
     RCircosEnvironment <- RCircos.Env
     RCircosEnvironment[["RCircos.PlotPar"]] <- NULL
     RCircosEnvironment[["RCircos.PlotPar"]] <- RCircos.Par
@@ -540,8 +539,6 @@ PACVr.Reset.Plot.Parameters <- function (new.params = NULL)
   
   #   Save new parameters to RCircos Environment
   #   =====================================================
-  RCircosEnvironment <- NULL
-  assign("RCircos.Env", RCircos::RCircos.Env, globalenv())
   RCircosEnvironment <- RCircos.Env
   RCircosEnvironment[["RCircos.PlotPar"]] <- NULL
   RCircosEnvironment[["RCircos.PlotPar"]] <- new.params
