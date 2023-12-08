@@ -1,14 +1,11 @@
 Package: PACVr
-Version: 1.0.4
+Version: 1.0.5
 Date: 2023-12-07
 Title: Plastome Assembly Coverage Visualization
 Authors@R: c(person("Gregory", "Smith", role=c("ctb")),
              person("Nils", "Jenke", role=c("ctb")),
              person("Michael", "Gruenstaeudl", role=c("aut", "cre"), email="m_gruenstaeudl@fhsu.edu", comment=c(ORDIC="0000-0002-1666-1773"))
              )
-Author: Gregory Smith [ctb],
-        Nils Jenke [ctb],
-        Michael Gruenstaeudl [aut, cre] (<https://orcid.org/0000-0002-1666-1773>)
 Maintainer: Michael Gruenstaeudl <m_gruenstaeudl@fhsu.edu>
 Depends: R (>= 3.3.0)
 Imports: Biostrings (>= 2.48.0), dplyr, GenomicAlignments (>= 1.18.1), GenomicRanges, IRanges, logger, read.gb, RCircos (>= 1.2.0)
