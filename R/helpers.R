@@ -427,3 +427,11 @@ checkIREquality <- function(gbkData, regions, dir, sample_name) {
     )
   }
 }
+
+validateColors <- function(colorsToValidate) {
+  colorNames <- colors()
+  unsupportedColors <- colorsToValidate[!(colorsToValidate %in% colorNames)]
+  if (length(unsupportedColors) > 0) {
+    stop("Unsupported R plot color defined.")
+  }
+}

@@ -72,18 +72,14 @@ visualizeWithRCircos <- function(plotTitle,
   # TO DO - Please check why the below lines produce the warning message:
   suppressMessages({
     suppressWarnings({
-  RCircosEnvironment.params$hist.color <- HistCol(coverage, threshold, relative, logScale)
+  RCircosEnvironment.params$hist.colors <- HistCol(coverage, threshold, relative, logScale)
   RCircosEnvironment.params$line.color <- "yellow3"
   RCircosEnvironment.params$chrom.width <- 0.05
   RCircosEnvironment.params$track.in.start <- 1.08
   RCircosEnvironment.params$track.out.start <- 1.5
   RCircosEnvironment.params$radius.len <- 3
   PACVr.Reset.Plot.Parameters(RCircosEnvironment.params)
-  RCircosEnvironment.cyto <- RCircos::RCircos.Get.Plot.Ideogram()  
-  # The above lines causes message:
-  #Warning message:
-  #  In !parameters$text.color %in% colorNames || !parameters$hist.color %in%  :
-  #  'length(x) = 644 > 1' in coercion to 'logical(1)'
+  RCircosEnvironment.cyto <- RCircos::RCircos.Get.Plot.Ideogram()
     })
   })
   

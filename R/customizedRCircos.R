@@ -69,7 +69,7 @@ PACVr.Histogram.Plot <- function(hist.data = NULL,
   locations <- PACVr.Get.Start.End.Locations(hist.data, RCircos.Par$hist.width)
 
   # Histgram colors and height
-  histColors <- RCircos::RCircos.Get.Plot.Colors(hist.data, RCircos.Par$hist.color)
+  histColors <- RCircos::RCircos.Get.Plot.Colors(hist.data, RCircos.Par$hist.colors)
   histValues <- as.numeric(hist.data[, data.col])
   if (is.null(max.value) || is.null(min.value)) {
     max.value <- max(histValues)
@@ -476,6 +476,10 @@ PACVr.Reset.Plot.Parameters <- function (new.params = NULL)
   #   ==========================================================
 
   RCircos::RCircos.Validate.Plot.Parameters(new.params)
+  if (!is.null(new.params$hist.colors)) 
+  {
+    validateColors(new.params$hist.colors)
+  }
   
   #   4.  Parameters related to ideogram width change.
   #       Note: chr.ideo.pos is a read-only parameter
