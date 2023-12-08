@@ -1,7 +1,7 @@
 #!/usr/bin/R
 #contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2023.11.23.1530"
+#version="2023.12.07.1830"
 
  
 #' Title
@@ -70,8 +70,8 @@ visualizeWithRCircos <- function(plotTitle,
     6000000 * (max(regions$chromEnd) / (52669 + 310 * (nrow(genes)))) / textSize
 
   # TO DO - Please check why the below lines produce the warning message:
-  suppressMessages({
-    suppressWarnings({
+  #suppressMessages({
+  #  suppressWarnings({
   RCircosEnvironment.params$hist.colors <- HistCol(coverage, threshold, relative, logScale)
   RCircosEnvironment.params$line.color <- "yellow3"
   RCircosEnvironment.params$chrom.width <- 0.05
@@ -80,8 +80,8 @@ visualizeWithRCircos <- function(plotTitle,
   RCircosEnvironment.params$radius.len <- 3
   PACVr.Reset.Plot.Parameters(RCircosEnvironment.params)
   RCircosEnvironment.cyto <- RCircos::RCircos.Get.Plot.Ideogram()
-    })
-  })
+  #  })
+  #})
   
   RCircosEnvironment.cyto$ChrColor <- "black"
   RCircos::RCircos.Reset.Plot.Ideogram(RCircosEnvironment.cyto)
