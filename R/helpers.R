@@ -3,8 +3,6 @@
 #email="m_gruenstaeudl@fhsu.edu"
 #version="2023.12.07.1830"
 
-`%>%` <- dplyr::`%>%`
-
 read.gb2DF <- function(gbkData) {
   fileDF <- data.frame()
   for (sample in gbkData) {
