@@ -32,42 +32,6 @@ CovCalc <- function(bamFile, windowSize = 250) {
   return(cov)
 }
 
-GenerateIRSynteny <- function(genes, syntenyLineType) {
-  logger::log_info('  Testing gene synteny in IRs')
-  n_occur <- data.frame(table(genes[, 4]), stringsAsFactors = FALSE)
-  n_occur <- n_occur[n_occur$Freq == 2,]
-  ir_synteny <- c()
-  if (syntenyLineType == "1") {
-    for (gene in n_occur$Var1) {
-      duplicateGene <- genes[which(gene == genes$gene), 1:3]
-      ir_synteny <-
-        rbind(
-          ir_synteny,
-          cbind(duplicateGene[1,], duplicateGene[2,], stringsAsFactors = FALSE),
-          stringsAsFactors = FALSE
-        )
-    }
-  } else if (syntenyLineType == "2") {
-    for (gene in n_occur$Var1) {
-      duplicateGene <- genes[which(gene == genes$gene), 1:3]
-      duplicateGene[1, 2] <-
-        mean(as.numeric(duplicateGene[1, 2:3]))
-      duplicateGene[1, 3] <- duplicateGene[1, 2]
-      duplicateGene[2, 2] <-
-        mean(as.numeric(duplicateGene[2, 2:3]))
-      duplicateGene[2, 3] <- duplicateGene[2, 2]
-      ir_synteny <-
-        rbind(
-          ir_synteny,
-          cbind(duplicateGene[1,], duplicateGene[2,], stringsAsFactors = FALSE),
-          stringsAsFactors = FALSE
-        )
-    }
-  }
-  ir_synteny$PlotColor <- "dodgerblue4"
-  return(ir_synteny)
-}
-
 GenerateHistogramData <-
   function(region, coverage, windowSize, lastOne) {
     # Function to generate line data for RCircos.Line.Plot
