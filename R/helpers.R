@@ -22,7 +22,10 @@ parseFeatures <- function(features) {
   source <- sampleDF %>%
               dplyr::filter(type=="source")
   sampleDF <- sampleDF %>% 
-                dplyr::mutate(seqnames = as.factor(source[, "organism"]))
+                dplyr::mutate(seqnames = as.factor(source[, "organism"])) %>%
+                dplyr::select(dplyr::all_of(c("seqnames", "start", "end", 
+                                              "gene", "note", "standard_name", 
+                                              "type")))
   return(sampleDF)
 }
 
