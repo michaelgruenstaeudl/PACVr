@@ -20,12 +20,12 @@ PACVr.parseGenes <- function (gbkData) {
 }
 
 PACVr.calcCoverage <-
-  function (bamFile, regions, windowSize=250) {
+  function (bamFile, windowSize=250) {
     coverage <- CovCalc(bamFile, windowSize)
     return(coverage)
   }
 
-PACVr.generateIRGeneData <- function(gbkData, genes, regions,
+PACVr.generateIRGeneData <- function(genes, regions,
                                      syntenyLineType) {
   # Parse GenBank file
   if ("IRb" %in% regions[, 4] &&
