@@ -49,14 +49,7 @@ visualizeWithRCircos <- function(plotTitle,
   coverage$Chromosome <- ""
   
   # STEP 1. RCIRCOS INITIALIZATION
-  suppressMessages(
-    RCircos::RCircos.Set.Core.Components(
-      cyto.info      = regions,
-      chr.exclude    =  NULL,
-      tracks.inside  =  0,
-      tracks.outside =  0
-    )
-  )
+  RCircosInit(regions, genes)
   
   # STEP 2. SET PARAMETER FOR IDEOGRAM
   setPlotParams(genes, coverage, logScale, threshold, relative, textSize)
@@ -85,6 +78,34 @@ visualizeWithRCircos <- function(plotTitle,
   graphics::title(paste(plotTitle), line = -4.5, cex.main = 0.8)
   addLegend(relative, coverage, threshold, averageLines)
   
+}
+
+RCircosInit <- function(regions, genes) {
+  if (is.data.frame(regions)) {
+    cyto.info <- regions
+  } else {
+    Chromosone <-
+      chromStart <-
+      chromEnd <-
+      Band <-
+      Stain <-
+      NULL
+    cyto.info <- genes %>%
+      dplyr::summarise(Chromosone = "",
+                       chromStart = min(chromStart),
+                       chromEnd = max(chromEnd),
+                       Band = "",
+                       Stain = "gpos75")
+  }
+  
+  suppressMessages(
+    RCircos::RCircos.Set.Core.Components(
+      cyto.info      = cyto.info,
+      chr.exclude    =  NULL,
+      tracks.inside  =  0,
+      tracks.outside =  0
+    )
+  )
 }
 
 setPlotParams <- function(genes,
@@ -209,7 +230,7 @@ getLegendParams <- function(relative, coverage, threshold, averageLines) {
     as.expression(bquote(
       "Coverage" <= .(
       paste(
-        legendParams$vals[[3]], 
+        legendParams$vals[[3]],
         "X (=", 
         legendParams$vals[[4]], 
         "% of avg. cov.)", 
