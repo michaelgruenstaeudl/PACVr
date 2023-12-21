@@ -18,3 +18,25 @@ ExtractAllGenes <- function(gbkDataDF) {
   row.names(gene_L) <- 1:nrow(gene_L)
   return(gene_L)
 }
+
+parseSource <- function(gbkDataDF) {
+  type <-
+    Band <-
+    Stain <-
+    Chromosone <-
+    start <-
+    end <-
+    note <-
+    NULL
+  source <- gbkDataDF %>%
+    dplyr::filter(type=="source") %>%
+    dplyr::rename(chromStart = start,
+                  chromEnd = end,
+                  Band = note) %>%
+    dplyr::mutate(Chromosone = "",
+                  Stain = "gpos75",
+                  Band = ifelse(type=="source", "source", Band)) %>%
+    dplyr::select(dplyr::all_of(c("Chromosone", "chromStart",
+                                  "chromEnd", "Band", "Stain")))
+  return(source)
+}

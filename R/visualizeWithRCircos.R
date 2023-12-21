@@ -49,7 +49,7 @@ visualizeWithRCircos <- function(plotTitle,
   coverage$Chromosome <- ""
   
   # STEP 1. RCIRCOS INITIALIZATION
-  RCircosInit(regions, genes)
+  RCircosInit(regions)
   
   # STEP 2. SET PARAMETER FOR IDEOGRAM
   setPlotParams(genes, coverage, logScale, threshold, relative, textSize)
@@ -80,27 +80,10 @@ visualizeWithRCircos <- function(plotTitle,
   
 }
 
-RCircosInit <- function(regions, genes) {
-  if (is.data.frame(regions)) {
-    cyto.info <- regions
-  } else {
-    Chromosone <-
-      chromStart <-
-      chromEnd <-
-      Band <-
-      Stain <-
-      NULL
-    cyto.info <- genes %>%
-      dplyr::summarise(Chromosone = "",
-                       chromStart = min(chromStart),
-                       chromEnd = max(chromEnd),
-                       Band = "",
-                       Stain = "gpos75")
-  }
-  
+RCircosInit <- function(regions) {
   suppressMessages(
     RCircos::RCircos.Set.Core.Components(
-      cyto.info      = cyto.info,
+      cyto.info      =  regions,
       chr.exclude    =  NULL,
       tracks.inside  =  0,
       tracks.outside =  0

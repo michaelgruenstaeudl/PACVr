@@ -13,6 +13,10 @@ PACVr.parseRegions <- function (gbkData, gbkDataDF) {
   return(regions)
 }
 
+PACVr.parseSource <- function(gbkDataDF) {
+  return(parseSource(gbkDataDF))
+}
+
 PACVr.parseGenes <- function (gbkDataDF) {
   # This function parses the genes of a GenBank file
   genes <- ExtractAllGenes(gbkDataDF)
@@ -139,11 +143,12 @@ PACVr.complete <- function(gbkFile,
   gbkDataDF <- read.gb2DF(gbkData)
   
   ###################################
-  regions <- NULL
   if (regionsCheck) {
     logger::log_info('Parsing different genome regions')
     regions <- PACVr.parseRegions(gbkData,
                                   gbkDataDF)
+  } else {
+    regions <- PACVr.parseSource(gbkDataDF)
   }
 
   ###################################
