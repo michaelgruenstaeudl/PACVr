@@ -7,15 +7,15 @@ PACVr.parseName <- function (gbkData) {
   return(read.gbSampleName(gbkData))
 }
 
-PACVr.parseRegions <- function (gbkData) {
-  raw_regions <- ExtractAllRegions(gbkData)
+PACVr.parseRegions <- function (gbkData, gbkDataDF) {
+  raw_regions <- ExtractAllRegions(gbkDataDF)
   regions <- fillDataFrame(gbkData, raw_regions)
   return(regions)
 }
 
-PACVr.parseGenes <- function (gbkData) {
+PACVr.parseGenes <- function (gbkDataDF) {
   # This function parses the genes of a GenBank file
-  genes <- ExtractAllGenes(gbkData)
+  genes <- ExtractAllGenes(gbkDataDF)
   return(genes)
 }
 
@@ -136,17 +136,19 @@ PACVr.complete <- function(gbkFile,
   ######################################################################
   logger::log_info('Reading GenBank flatfile `{gbkFile}`')
   gbkData <- read.gb::read.gb(gbkFile, DNA=TRUE, Type="full", Source="File")
+  gbkDataDF <- read.gb2DF(gbkData)
   
   ###################################
   regions <- NULL
   if (regionsCheck) {
     logger::log_info('Parsing different genome regions')
-    regions <- PACVr.parseRegions(gbkData)
+    regions <- PACVr.parseRegions(gbkData,
+                                  gbkDataDF)
   }
 
   ###################################
   logger::log_info('Parsing different genes')
-  genes <- PACVr.parseGenes(gbkData)
+  genes <- PACVr.parseGenes(gbkDataDF)
 
   ###################################
   logger::log_info('Calculating sequencing coverage')

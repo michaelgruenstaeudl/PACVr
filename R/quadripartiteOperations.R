@@ -23,14 +23,14 @@ FilterByKeywords <- function(allRegions, where) {
   return(out)
 }
 
-ExtractAllRegions <- function(gbkData) {
+ExtractAllRegions <- function(gbkDataDF) {
   # Function to extract specific region information from Genbank flatfile data
   # ARGS:
-  #   gbkData (i.e., GenBank flatfile data as parsed by read.gb())
+  #   gbkDataDF (resulting data frame from parsing read.gb object)
   # RETURNS:
   #   regions in data frame format
   logger::log_info('  Extracting information on genomic regions')
-  allRegions <- read.gbOther(gbkData)
+  allRegions <- read.gbOther(gbkDataDF)
   regions <- tryCatch(
     tryCatch(
       FilterByKeywords(allRegions, "note"),

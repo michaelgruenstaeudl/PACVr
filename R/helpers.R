@@ -69,20 +69,18 @@ read.gbSeq <- function(gbkData) {
   return(Biostrings::DNAStringSet(sampleSequences))
 }
 
-read.gbGenes <- function(gbkData) {
-  bgkDataDF <- read.gb2DF(gbkData)
+read.gbGenes <- function(gbkDataDF) {
   type <- NULL
-  gene_L <- bgkDataDF %>% 
+  gene_L <- gbkDataDF %>%
               dplyr::filter(type=="gene") %>% 
               dplyr::select(dplyr::all_of(c("seqnames", "start", "end", "gene")))
   rownames(gene_L) <- NULL
   return(gene_L)
 }
 
-read.gbOther <- function(gbkData) {
-  bgkDataDF <- read.gb2DF(gbkData)
+read.gbOther <- function(gbkDataDF) {
   type <- NULL
-  regions <- bgkDataDF %>% 
+  regions <- gbkDataDF %>%
               dplyr::filter(!type %in% c("gene", "exon", "transcript",
                                   "CDS", "variant")) %>% 
               dplyr::select(dplyr::all_of(c("seqnames", "start", "end", 
