@@ -136,7 +136,6 @@ PACVr.complete <- function(gbkFile,
   ######################################################################
   logger::log_info('Reading GenBank flatfile `{gbkFile}`')
   gbkData <- read.gb::read.gb(gbkFile, DNA=TRUE, Type="full", Source="File")
-  sampleName <- read.gbSampleName(gbkData)
   
   ###################################
   regions <- NULL
