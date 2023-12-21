@@ -59,8 +59,7 @@ visualizeWithRCircos <- function(plotTitle,
   )
   
   # STEP 2. SET PARAMETER FOR IDEOGRAM
-  setPlotParams(genes, regions, coverage, logScale, 
-                threshold, relative, textSize)
+  setPlotParams(genes, coverage, logScale, threshold, relative, textSize)
 
   # STEP 3. GRAPHIC DEVICE INITIALIZATION
   RCircos::RCircos.Set.Plot.Area()
@@ -89,7 +88,6 @@ visualizeWithRCircos <- function(plotTitle,
 }
 
 setPlotParams <- function(genes,
-                          regions,
                           coverage,
                           logScale,
                           threshold,
@@ -103,7 +101,7 @@ setPlotParams <- function(genes,
   RCircosEnvironment.params$track.background <- "gray71"
   RCircosEnvironment.params$sub.tracks <- 4
   RCircosEnvironment.params$char.width <-
-    6000000 * (max(regions$chromEnd) / (52669 + 310 * (nrow(genes)))) / textSize
+    6000000 * (max(genes$chromEnd) / (52669 + 310 * (nrow(genes)))) / textSize
 
   RCircosEnvironment.params$hist.colors <- HistCol(coverage, threshold, relative, logScale)
   RCircosEnvironment.params$line.color <- "yellow3"
