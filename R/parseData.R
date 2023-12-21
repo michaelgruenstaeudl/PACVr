@@ -34,8 +34,7 @@ parseSource <- function(gbkDataDF) {
                   chromEnd = end,
                   Band = note) %>%
     dplyr::mutate(Chromosone = "",
-                  Stain = "gpos75",
-                  Band = ifelse(type=="source", "source", Band)) %>%
+                  Stain = "gpos75") %>%
     dplyr::select(dplyr::all_of(c("Chromosone", "chromStart",
                                   "chromEnd", "Band", "Stain")))
   return(source)
