@@ -65,7 +65,7 @@ visualizeWithRCircos <- function(plotTitle,
   
   # STEP 5. OPTIONAL PLOTS
   averageLines <- NULL
-  if (is.data.frame(regions)) {
+  if (isRealRegions(regions)) {
     plotRegionNames(regions)
     averageLines <- plotAverageLines(regions, coverage, windowSize, positions)
   }

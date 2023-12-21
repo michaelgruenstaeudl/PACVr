@@ -181,3 +181,7 @@ plotRegionNames <- function(regions) {
     add.text.size = 0.2
   )
 }
+
+isRealRegions <- function(regions) {
+  return(nrow(regions) > 1)
+}
