@@ -40,8 +40,8 @@ PACVr.verboseInformation <- function(gbkData,
                                      bamFile,
                                      genes,
                                      regions,
-                                     output,
-                                     sampleName) {
+                                     output) {
+  sampleName <- read.gbSampleName(gbkData)
   # Step 1. Check ...
   if (!is.na(output)) {
     outDir <- dirname(output)
@@ -171,8 +171,7 @@ PACVr.complete <- function(gbkFile,
                            bamFile,
                            genes,
                            regions,
-                           output,
-                           sampleName)
+                           output)
   }
   
   ###################################
