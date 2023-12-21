@@ -9,9 +9,10 @@ PACVr.complete(gbkFile,
                windowSize = 250,
                logScale = FALSE,
                threshold = 0.5,
-               syntenyLineType = 1,
+               syntenyLineType = 3,
                relative = TRUE,
                textSize = 0.5,
+               regionsCheck = FALSE,
                verbose = FALSE,
                output = NA)
 }
@@ -26,11 +27,13 @@ PACVr.complete(gbkFile,
 
 \item{threshold}{a numeric value that specifies the threshold for plotting coverage depth bars in red as opposed to the default black}
 
-\item{syntenyLineType}{a numeric value of 1, 2 or 3 that specifies the line type for visualizing IR gene synteny; 1 = ribbon lines, 2 = solid lines, 3 = no line}
+\item{syntenyLineType}{a numeric value of 1 or 2 that specifies the line type for visualizing IR gene synteny; 1 = ribbon lines, 2 = solid lines, otherwise = no line}
 
 \item{relative}{a boolean that specifies whether the threshold is a relative value of the average coverage instead of an absolute value}
 
 \item{textSize}{a numeric value that specifies the relative font size of the text element in the visualization}
+
+\item{regionsCheck}{a boolean that specifies if region analysis of genome should be performed; FALSE disables syntenyLineType and verbose}
 
 \item{verbose}{the decision to show additional information regarding the quality of the assembly}
 

@@ -29,7 +29,7 @@ PACVr.generateIRGeneData <- function(genes, regions,
                                      syntenyLineType) {
   # Parse GenBank file
   if ("IRb" %in% regions[, 4] &&
-      "IRa" %in% regions[, 4] && syntenyLineType < 3) {
+      "IRa" %in% regions[, 4]) {
     linkData <- GenerateIRSynteny(genes, syntenyLineType)
     return(linkData)
   }
@@ -101,10 +101,11 @@ PACVr.visualizeWithRCircos <- function(gbkData,
 #' @param windowSize a numeric value that specifies window size in which the coverage is calculated
 #' @param logScale a boolean that specifies if the coverage depth is to be log-transformed before visualizing it
 #' @param threshold a numeric value that specifies the threshold for plotting coverage depth bars in red as opposed to the default black
-#' @param syntenyLineType a numeric value of 1, 2 or 3 that specifies the line type for visualizing IR gene synteny; 1 = ribbon lines, 2 = solid lines, 3 = no line
+#' @param syntenyLineType a numeric value of 1 or 2 that specifies the line type for visualizing IR gene synteny; 1 = ribbon lines, 2 = solid lines, otherwise = no line
 #' @param relative a boolean that specifies whether the threshold is a relative value of the average coverage instead of an absolute value
 #' @param textSize a numeric value that specifies the relative font size of the text element in the visualization
 #' @param verbose the decision to generate additional files with detailed genomic region information
+#' @param regionsCheck a boolean that specifies if region analysis of genome should be performed; FALSE disables syntenyLineType and verbose
 #' @param output a character vector that specifies the name of, and path to, the output file
 #' @return A file in pdf format containing a circular visualization of the submitted plastid sample.
 #' @export
@@ -118,17 +119,18 @@ PACVr.visualizeWithRCircos <- function(gbkData,
 #'                        package="PACVr")
 #' outFile <- paste(tempdir(), "/NC_045072__all_reads.pdf", sep="")
 #' PACVr.complete(gbkFile=gbkFile, bamFile=bamFile, windowSize=250, logScale=FALSE,
-#'                threshold=0.5, syntenyLineType=1, relative=TRUE, textSize=0.5,
-#'                verbose=FALSE, output=outFile
+#'                threshold=0.5, syntenyLineType=3, relative=TRUE, textSize=0.5,
+#'                regionsCheck=FALSE, verbose=FALSE, output=outFile
 #'                }
 PACVr.complete <- function(gbkFile,
                            bamFile,
                            windowSize=250,
                            logScale=FALSE,
                            threshold=0.5,
-                           syntenyLineType=1,
+                           syntenyLineType=3,
                            relative=TRUE,
                            textSize=0.5,
+                           regionsCheck=FALSE,
                            verbose=FALSE,
                            output=NA) {
   ######################################################################
@@ -137,24 +139,33 @@ PACVr.complete <- function(gbkFile,
   sampleName <- read.gbSampleName(gbkData)
   
   ###################################
-  logger::log_info('Parsing different genome regions and genes')
-  regions <- PACVr.parseRegions(gbkData)
+  regions <- NULL
+  if (regionsCheck) {
+    logger::log_info('Parsing different genome regions')
+    regions <- PACVr.parseRegions(gbkData)
+  }
+
+  ###################################
+  logger::log_info('Parsing different genes')
   genes <- PACVr.parseGenes(gbkData)
 
   ###################################
   logger::log_info('Calculating sequencing coverage')
   coverage <- PACVr.calcCoverage(bamFile,
-                                 regions,
                                  windowSize)
 
   ###################################
-  logger::log_info('Inferring IR regions and genes within IRs')
-  linkData <- PACVr.generateIRGeneData(gbkData,
-                                       genes,
-                                       regions,
-                                       syntenyLineType)
+  linkData <- NULL
+  IRCheck <- regionsCheck && isSyntenyLineType(syntenyLineType)
+  if (IRCheck) {
+    logger::log_info('Inferring IR regions and genes within IRs')
+    linkData <- PACVr.generateIRGeneData(genes,
+                                         regions,
+                                         syntenyLineType)
+  }
+
   ###################################
-  if (verbose) {
+  if (regionsCheck && verbose) {
       logger::log_info('Generating statistical information on sequencing coverage')
       PACVr.verboseInformation(gbkData,
                            bamFile,
