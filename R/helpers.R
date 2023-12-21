@@ -13,15 +13,14 @@ read.gb2DF <- function(gbkData) {
 }
 
 parseFeatures <- function(features) {
-  # first feature is sample information
-  source <- parseFeature(features[[1]])
-  features <- features[-1]
-
   sampleDF <- data.frame()
   for (feature in features) {
     feature <- parseFeature(feature)
     sampleDF <- dplyr::bind_rows(sampleDF, feature)
   }
+  type <- NULL
+  source <- sampleDF %>%
+              dplyr::filter(type=="source")
   sampleDF <- sampleDF %>% 
                 dplyr::mutate(seqnames = as.factor(source[, "organism"]))
   return(sampleDF)
