@@ -68,11 +68,12 @@ visualizeWithRCircos <- function(plotTitle,
 
   # STEP 4. GENERATE PLOT
   logger::log_info('  Generating RCircos plot')
-  positions <- plotMain(genes, regions, coverage)
+  positions <- plotMain(genes, coverage)
   
   # STEP 5. OPTIONAL PLOTS
   averageLines <- NULL
   if (is.data.frame(regions)) {
+    plotRegionNames(regions)
     averageLines <- plotAverageLines(regions, coverage, windowSize, positions)
   }
 
@@ -117,7 +118,7 @@ setPlotParams <- function(genes,
   RCircos::RCircos.Reset.Plot.Ideogram(RCircosEnvironment.cyto)
 }
 
-plotMain <- function(genes, regions, coverage) {
+plotMain <- function(genes, coverage) {
   PACVr.Ideogram.Tick.Plot(
     tick.num = 10,
     track.for.ticks = 2,
@@ -136,16 +137,6 @@ plotMain <- function(genes, regions, coverage) {
     name.col = 4,
     track.num = 2,
     side = "in"
-  )
-
-  PACVr.Gene.Name.Plot(
-    gene.data = regions,
-    name.col = 4,
-    track.num = 1,
-    side = "out",
-    rotate = 90,
-    correction = 0.2,
-    add.text.size = 0.2
   )
   
   positions <- list(

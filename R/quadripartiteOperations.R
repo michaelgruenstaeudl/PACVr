@@ -169,3 +169,15 @@ plotAverageLines <- function(regions, coverage, windowSize, positions) {
   }
   return(averageLines)
 }
+
+plotRegionNames <- function(regions) {
+  PACVr.Gene.Name.Plot(
+    gene.data = regions,
+    name.col = 4,
+    track.num = 1,
+    side = "out",
+    rotate = 90,
+    correction = 0.2,
+    add.text.size = 0.2
+  )
+}
