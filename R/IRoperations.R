@@ -1,7 +1,7 @@
-#!/usr/bin/R
+#!/usr/bin/env RScript
 #contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2023.12.18.2100"
+#version="2024.01.07.2200"
 
 checkIREquality <- function(gbkData, regions, dir, sample_name) {
   gbkSeq <- read.gbSeq(gbkData)
@@ -13,18 +13,8 @@ checkIREquality <- function(gbkData, regions, dir, sample_name) {
     IR_diff_gaps <- c()
     if (repeatB[2] - repeatB[1] != repeatA[2] - repeatA[1]) {
       message("WARNING: Inverted repeats differ in sequence length")
-      message(paste(
-        "The IRb has a total lengths of: ",
-        repeatB[2] - repeatB[1],
-        " bp",
-        sep = ""
-      ))
-      message(paste(
-        "The IRa has a total lengths of: ",
-        repeatA[2] - repeatA[1],
-        " bp",
-        sep = ""
-      ))
+      message(paste("The IRb has a total lengths of: ", repeatB[2] - repeatB[1], " bp", sep = ""))
+      message(paste("The IRa has a total lengths of: ", repeatA[2] - repeatA[1], " bp", sep = ""))
     }
     if (gbkSeq[[1]][repeatB[1]:repeatB[2]] != Biostrings::reverseComplement(gbkSeq[[1]][repeatA[1]:repeatA[2]])) {
       IRa_seq <- Biostrings::DNAString(gbkSeq[[1]][repeatB[1]:repeatB[2]])
@@ -33,10 +23,7 @@ checkIREquality <- function(gbkData, regions, dir, sample_name) {
       IRb_seq <- split(IRb_seq, ceiling(seq_along(IRb_seq) / 10000))
       
       for (i in  1:min(length(IRa_seq), length(IRb_seq))) {
-        subst_mat <-
-          Biostrings::nucleotideSubstitutionMatrix(match = 1,
-                                                   mismatch = -3,
-                                                   baseOnly = TRUE)
+        subst_mat <- Biostrings::nucleotideSubstitutionMatrix(match = 1, mismatch = -3, baseOnly = TRUE)
         globalAlign <- tryCatch({
           Biostrings::pairwiseAlignment(
             IRa_seq[[i]],

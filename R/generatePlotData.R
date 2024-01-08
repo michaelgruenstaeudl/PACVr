@@ -1,7 +1,7 @@
-#!/usr/bin/R
+#!/usr/bin/env RScript
 #contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2023.11.23.1530"
+#version="2024.01.07.2200"
 
 CovCalc <- function(bamFile, windowSize = 250) {
   # Calculates coverage of a given bam file and stores data in data.frame format
@@ -17,23 +17,19 @@ CovCalc <- function(bamFile, windowSize = 250) {
     stop()
   }
   cov <- GenomicAlignments::coverage(bamFile)
-  bins <-
-    GenomicRanges::tileGenome(
-      sum(IRanges::runLength(cov)),
+  bins <- GenomicRanges::tileGenome(
+      sum(IRanges::runLength(cov)), 
       tilewidth = windowSize,
       cut.last.tile.in.chrom = TRUE
     )
   cov <- GenomicRanges::binnedAverage(bins, cov, "coverage")
-  cov <-
-    as.data.frame(cov)[c("seqnames", "start", "end", "coverage")]
-  colnames(cov) <-
-    c("Chromosome", "chromStart", "chromEnd", "coverage")
+  cov <- as.data.frame(cov)[c("seqnames", "start", "end", "coverage")]
+  colnames(cov) <- c("Chromosome", "chromStart", "chromEnd", "coverage")
   cov$coverage <- ceiling(as.numeric(cov$coverage))
   return(cov)
 }
 
-GenerateHistogramData <-
-  function(region, coverage, windowSize, lastOne) {
+GenerateHistogramData <- function(region, coverage, windowSize, lastOne) {
     # Function to generate line data for RCircos.Line.Plot
     # ARGS:
     #   coverage: data.frame of coverage
@@ -42,12 +38,9 @@ GenerateHistogramData <-
     # Error handling
     logger::log_info('  Generating histogram data for region `{region[4]}`')
     if (lastOne) {
-      coverage <-
-        coverage[(floor(region[1, 2] / windowSize) + 1):ceiling(region[1, 3] / windowSize),]
+      coverage <- coverage[(floor(region[1, 2] / windowSize) + 1):ceiling(region[1, 3] / windowSize),]
     } else {
-      coverage <-
-        coverage[(floor(region[1, 2] / windowSize) + 1):floor(region[1, 3] / windowSize) +
-                   1,]
+      coverage <- coverage[(floor(region[1, 2] / windowSize) + 1):floor(region[1, 3] / windowSize) + 1,]
     }
     coverage[, 4] <- mean(coverage[, 4])
     return(coverage)

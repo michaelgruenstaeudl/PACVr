@@ -1,6 +1,13 @@
 CHANGELOG
 ---------
 
+#### Version 1.0.6 (2024.01.07)
+* Moved all functions that pertain to inverted repeats or quadripartite genome structure into a separate file and made their application optional
+
+#### Version 1.0.5 (2023.12.07)
+* Minor bugfixes
+* New version submitted to CRAN
+
 #### Version 1.0.4 (2023.12.06)
 * Implemented a logger
 * Several bug fixes (e.g., error caused by function masking)

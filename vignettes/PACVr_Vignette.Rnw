@@ -70,7 +70,7 @@ outFile <- paste(tempdir(), "/NC_045072_AssemblyCoverage_viz.pdf", sep="")
 
 # Run PACVr
 PACVr.complete(gbkFile, bamFile, windowSize=250, 
-           logScale=FALSE, threshold=0.5, syntenyLineType=3,
+           logScale=FALSE, threshold=0.5, syntenyLineType=1,
            relative=TRUE, textSize=0.5, regionsCheck=FALSE,
            verbose=FALSE, output=outFile)
 \end{BGVerbatim}

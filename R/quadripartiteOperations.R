@@ -1,7 +1,7 @@
-#!/usr/bin/R
+#!/usr/bin/env RScript
 #contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2023.12.18.2100"
+#version="2024.01.07.2200"
 
 FilterByKeywords <- function(allRegions, where) {
   # Function to filter list based on genomic keywords
@@ -74,8 +74,7 @@ fillDataFrame <- function(gbkData, regions) {
   logger::log_info('  Annotating plastid genome with quadripartite regions')
   seqLength <- read.gbLengths(gbkData)
   if ((nrow(regions) == 0) || (regions[1, 2] == -1)) {
-    regions[1,] <-
-      c("", as.numeric(1), as.numeric(seqLength), "NA", "gpos100")
+    regions[1,] <- c("", as.numeric(1), as.numeric(seqLength), "NA", "gpos100")
     regions[, 2] <- as.numeric(regions[, 2])
     regions[, 3] <- as.numeric(regions[, 3])
     return(regions)
@@ -90,8 +89,7 @@ fillDataFrame <- function(gbkData, regions) {
     if (start - 1 < seqLength) {
       regions[nrow(regions) + 1,] <- c("", start, seqLength, "NA", "gpos100")
     }
-    regions <-
-      regions[order(as.numeric(regions[, 2]), decreasing=FALSE),]
+    regions <- regions[order(as.numeric(regions[, 2]), decreasing=FALSE),]
     row.names(regions) <- 1:nrow(regions)
     regions[, 2] <- as.numeric(regions[, 2])
     regions[, 3] <- as.numeric(regions[, 3])
@@ -122,8 +120,7 @@ fillDataFrame <- function(gbkData, regions) {
       }
     } else if (regionAvail == 11) {
       # only LSC, SSC and IRa
-      regions[which(regions[, 4] == "NA" &
-                      regions[, 6] == regions[which(regions[, 4] == "IRa"), 6]), 4] <- "IRb"
+      regions[which(regions[, 4] == "NA" & regions[, 6] == regions[which(regions[, 4] == "IRa"), 6]), 4] <- "IRb"
       message("Annotation for IRb was automatically added")
     } else if (regionAvail == 13) {
       # only LSC, IRb and IRa
@@ -132,8 +129,7 @@ fillDataFrame <- function(gbkData, regions) {
       message("Annotation for SSC was automatically added")
     } else if (regionAvail == 14) {
       # only LSC, IRb and SSC
-      regions[which(regions[, 4] == "NA" &
-                      regions[, 6] == regions[which(regions[, 4] == "IRb"), 6]), 4] <- "IRa"
+      regions[which(regions[, 4] == "NA" & regions[, 6] == regions[which(regions[, 4] == "IRb"), 6]), 4] <- "IRa"
       message("Annotation for IRa was automatically added")
     }
     regions <- regions[-6]
@@ -148,12 +144,8 @@ fillDataFrame <- function(gbkData, regions) {
 plotAverageLines <- function(regions, coverage, windowSize, positions) {
   averageLines <- c()
   for (i in 1:nrow(regions)) {
-    lineData <-
-      GenerateHistogramData(regions[i,], coverage, windowSize, 
-                            (i == nrow(regions)))
-    averageLines <-
-      c(averageLines, 
-        paste(regions[i, 4], ": ", trunc(lineData[1, 4]), "X", sep = ""))
+    lineData <- GenerateHistogramData(regions[i,], coverage, windowSize, (i == nrow(regions)))
+    averageLines <- c(averageLines, paste(regions[i, 4], ": ", trunc(lineData[1, 4]), "X", sep = ""))
     PACVr.Line.Plot(
       line.data = lineData,
       data.col = 4,

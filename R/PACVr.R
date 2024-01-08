@@ -1,7 +1,7 @@
-#!/usr/bin/R
+#!/usr/bin/env RScript
 #contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2023.11.23.1530"
+#version="2024.01.07.2200"
 
 PACVr.parseName <- function (gbkData) {
   return(read.gbSampleName(gbkData))
@@ -123,7 +123,7 @@ PACVr.visualizeWithRCircos <- function(gbkData,
 #'                        package="PACVr")
 #' outFile <- paste(tempdir(), "/NC_045072__all_reads.pdf", sep="")
 #' PACVr.complete(gbkFile=gbkFile, bamFile=bamFile, windowSize=250, logScale=FALSE,
-#'                threshold=0.5, syntenyLineType=3, relative=TRUE, textSize=0.5,
+#'                threshold=0.5, syntenyLineType=1, relative=TRUE, textSize=0.5,
 #'                regionsCheck=FALSE, verbose=FALSE, output=outFile
 #'                }
 PACVr.complete <- function(gbkFile,
@@ -131,7 +131,7 @@ PACVr.complete <- function(gbkFile,
                            windowSize=250,
                            logScale=FALSE,
                            threshold=0.5,
-                           syntenyLineType=3,
+                           syntenyLineType=1,
                            relative=TRUE,
                            textSize=0.5,
                            regionsCheck=FALSE,
@@ -144,7 +144,7 @@ PACVr.complete <- function(gbkFile,
   
   ###################################
   if (regionsCheck) {
-    logger::log_info('Parsing different genome regions')
+    logger::log_info('Parsing the different genome regions')
     regions <- PACVr.parseRegions(gbkData,
                                   gbkDataDF)
   } else {
@@ -152,11 +152,11 @@ PACVr.complete <- function(gbkFile,
   }
 
   ###################################
-  logger::log_info('Parsing different genes')
+  logger::log_info('Parsing the different genes')
   genes <- PACVr.parseGenes(gbkDataDF)
 
   ###################################
-  logger::log_info('Calculating sequencing coverage')
+  logger::log_info('Calculating the sequencing coverage')
   coverage <- PACVr.calcCoverage(bamFile,
                                  windowSize)
 
@@ -164,7 +164,7 @@ PACVr.complete <- function(gbkFile,
   linkData <- NULL
   IRCheck <- regionsCheck && isSyntenyLineType(syntenyLineType)
   if (IRCheck) {
-    logger::log_info('Inferring IR regions and genes within IRs')
+    logger::log_info('Inferring the IR regions and the genes within the IRs')
     linkData <- PACVr.generateIRGeneData(genes,
                                          regions,
                                          syntenyLineType)
@@ -172,7 +172,7 @@ PACVr.complete <- function(gbkFile,
 
   ###################################
   if (regionsCheck && verbose) {
-      logger::log_info('Generating statistical information on sequencing coverage')
+      logger::log_info('Generating statistical information on the sequencing coverage')
       PACVr.verboseInformation(gbkData,
                            bamFile,
                            genes,
@@ -182,7 +182,7 @@ PACVr.complete <- function(gbkFile,
   
   ###################################
   if (!is.na(output)) {
-    logger::log_info('Generating visualization of sequencing coverage')
+    logger::log_info('Generating a visualization of the sequencing coverage')
     pdf(output, width=10, height=10)
     PACVr.visualizeWithRCircos(
       gbkData,
@@ -198,7 +198,7 @@ PACVr.complete <- function(gbkFile,
       textSize
     )
     dev.off()
-    logger::log_info('Saved visualization including coverage as `{output}`')
+    logger::log_info('Visualization (including coverage) saved as `{output}`')
   } else {
     logger::log_info('No coverage data inferred; generating empty visualization')
     PACVr.visualizeWithRCircos(
@@ -215,7 +215,7 @@ PACVr.complete <- function(gbkFile,
       textSize
     )
     dev.off()
-    logger::log_info('Saved visualization excluding coverage as `{output}`')
+    logger::log_info('Visualization (excluding coverage) saved as `{output}`')
   }
   ######################################################################
   logger::log_success('Done.')

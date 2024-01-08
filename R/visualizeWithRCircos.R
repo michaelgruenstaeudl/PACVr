@@ -1,7 +1,7 @@
-#!/usr/bin/R
+#!/usr/bin/env RScript
 #contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2023.12.18.2100"
+#version="2024.01.07.2200"
 
  
 #' Title
@@ -214,12 +214,7 @@ getLegendParams <- function(relative, coverage, threshold, averageLines) {
     ),
     as.expression(bquote(
       "Coverage" <= .(
-      paste(
-        legendParams$vals[[3]],
-        "X (=", 
-        legendParams$vals[[4]], 
-        "% of avg. cov.)", 
-        sep = "")
+      paste(legendParams$vals[[3]], "X (=", legendParams$vals[[4]], "% of avg. cov.)", sep = "")
     )))
   )
   

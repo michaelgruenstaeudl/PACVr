@@ -1,6 +1,6 @@
 Package: PACVr
-Version: 1.0.5
-Date: 2023-12-07
+Version: 1.0.6
+Date: 2024-01-07
 Title: Plastome Assembly Coverage Visualization
 Authors@R: c(person("Gregory", "Smith", role=c("ctb")),
              person("Nils", "Jenke", role=c("ctb")),

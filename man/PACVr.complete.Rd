@@ -9,7 +9,7 @@ PACVr.complete(gbkFile,
                windowSize = 250,
                logScale = FALSE,
                threshold = 0.5,
-               syntenyLineType = 3,
+               syntenyLineType = 1,
                relative = TRUE,
                textSize = 0.5,
                regionsCheck = FALSE,
@@ -52,7 +52,8 @@ bamFile <- system.file("extdata",
                        package="PACVr")
 outFile <- paste(tempdir(), "/NC_045072__all_reads.pdf", sep="")
 PACVr.complete(gbkFile, bamFile, windowSize=250, 
-               threshold=0.5, syntenyLineType=1, relative=TRUE, 
-               textSize=0.5, verbose=FALSE, output=outFile)
+               logScale=FALSE, threshold=0.5, syntenyLineType=1, 
+               relative=TRUE, textSize=0.5, regionsCheck=TRUE,
+               verbose=FALSE, output=outFile)
 }
 }

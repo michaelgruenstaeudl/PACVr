@@ -10,15 +10,6 @@ install_github("michaelgruenstaeudl/PACVr")
 ```
 Note: Detailed installation instructions can be found in the package vignette.
 
-## PRE-FORMATTING INPUT
-Due to the internal usage of R package [genbankr](https://bioconductor.org/packages/release/bioc/html/genbankr.html), any GenBank flatfile must conform to the following specifications: 
-- Flatfile must include a _source_ feature at start of feature table
-- All _exon_ features (plus their qualifier lines) must be removed: `sed -i -e '/    exon/,+2d' input.gb`
-- All redundant _complement_ specifications must be removed: `sed -i -z 's/),\s*complement(/,/g' input.gb`
-<!--
-- All duplicate lines, if any, must be removed: `sed -i '$!N; /^\(.*\)\n\1$/!P; D' input.gb`
--->
-
 ## USAGE
 ```
 # In R:
@@ -26,11 +17,27 @@ library(PACVr)
 gbkFile <- system.file("extdata", "NC_045072/NC_045072.gb", package="PACVr")
 bamFile <- system.file("extdata", "NC_045072/NC_045072_PlastomeReadsOnly.sorted.bam", 
                        package="PACVr")
+
 outFile <- paste(tempdir(), "/NC_045072_AssemblyCoverage_viz.pdf", sep="")
 #outFile <- "../Desktop/test.pdf"  # on R-Studio for Windows
+#outFile <- "~/test.pdf"  # on R-Studio for Linux
+
+## ONLY COVERAGE VALUES, NO REGION INDICATORS ##
 PACVr.complete(gbkFile, bamFile, windowSize=250, 
-               logScale=FALSE, threshold=0.5, syntenyLineType=3, 
-               relative=TRUE, textSize=0.5,  regionsCheck=FALSE,
+               logScale=FALSE, threshold=0.5, syntenyLineType=NA, 
+               relative=TRUE, textSize=0.5, regionsCheck=FALSE,
+               verbose=FALSE, output=outFile)
+
+## COVERAGE VALUES PLUS REGION INDICATORS ##
+PACVr.complete(gbkFile, bamFile, windowSize=250, 
+               logScale=FALSE, threshold=0.5, syntenyLineType=NA, 
+               relative=TRUE, textSize=0.5, regionsCheck=TRUE,
+               verbose=FALSE, output=outFile)
+
+## COVERAGE VALUES PLUS REGION INDICATORS PLUS IR SYNTENY LINES ##
+PACVr.complete(gbkFile, bamFile, windowSize=250, 
+               logScale=FALSE, threshold=0.5, syntenyLineType=1, 
+               relative=TRUE, textSize=0.5, regionsCheck=TRUE,
                verbose=FALSE, output=outFile)
 ```
 
@@ -75,6 +82,14 @@ Using PACVr in your research? Please cite it!
 * Foo bar baz
 -->
 
+<!--
+## PRE-FORMATTING INPUT
+Due to the internal usage of R package [genbankr](https://bioconductor.org/packages/release/bioc/html/genbankr.html), any GenBank flatfile must conform to the following specifications: 
+- Flatfile must include a _source_ feature at start of feature table
+- All _exon_ features (plus their qualifier lines) must be removed: `sed -i -e '/    exon/,+2d' input.gb`
+- All redundant _complement_ specifications must be removed: `sed -i -z 's/),\s*complement(/,/g' input.gb`
+- All duplicate lines, if any, must be removed: `sed -i '$!N; /^\(.*\)\n\1$/!P; D' input.gb`
+-->
 
 ## CHANGELOG
 See [`CHANGELOG.md`](CHANGELOG.md) for a list of recent changes to the software.

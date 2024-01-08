@@ -1,7 +1,7 @@
-#!/usr/bin/R
+#!/usr/bin/env RScript
 #contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2023.12.07.1830"
+#version="2024.01.07.2200"
 
 read.gb2DF <- function(gbkData) {
   fileDF <- data.frame()
@@ -94,8 +94,7 @@ read.gbOther <- function(gbkDataDF) {
 read.gbLengths <- function(gbkData) {
   sampleLengths <- c()
   for (sample in gbkData) {
-    sampleLengths <- c(sampleLengths, 
-                       nchar(sample$ORIGIN))
+    sampleLengths <- c(sampleLengths, nchar(sample$ORIGIN))
   }
   return(sampleLengths)
 }
@@ -104,8 +103,8 @@ read.gbSampleName <- function(gbkData) {
   sampleNames <- c()
   for (sample in gbkData) {
     sampleNames <- c(sampleNames, 
-                     c(sample_name = sample$ACCESSION, 
-                       genome_name = sample$VERSION))
+                   c(sample_name = sample$ACCESSION, 
+                     genome_name = sample$VERSION))
   }
   return(sampleNames)
 }
@@ -113,9 +112,7 @@ read.gbSampleName <- function(gbkData) {
 read.gbPlotTitle <- function(gbkData) {
   plotTitles <- c()
   for (sample in gbkData) {
-    plotTitles <- c(plotTitles, 
-                    paste(sample$DEFINITION, 
-                          sample$ACCESSION))
+    plotTitles <- c(plotTitles, paste(sample$DEFINITION, sample$ACCESSION))
   }
   return(plotTitles)
 }
@@ -138,7 +135,7 @@ HistCol <- function(cov, threshold, relative, logScale) {
     threshold <- mean(cov[, 4]) * threshold
   }
   color <- rep("black", nrow(cov))
-  ind   <- as.numeric(cov[, 4]) <= threshold
+  ind <- as.numeric(cov[, 4]) <= threshold
   color <- replace(color, ind, "red")
   return(color)
 }
@@ -152,20 +149,13 @@ boolToDeci <- function(boolList) {
   return(out)
 }
 
-writeTables <-
-  function(regions,
-           bamFile,
-           genes,
-           dir,
-           sample_name) {
-    ir_regions <-
-      IRanges::IRanges(
+writeTables <- function(regions, bamFile, genes, dir, sample_name) {
+    ir_regions <- IRanges::IRanges(
         start = regions$chromStart,
         end = regions$chromEnd,
         names = regions$Band
       )
-    ir_genes <-
-      unlist(IRanges::slidingWindows(
+    ir_genes <- unlist(IRanges::slidingWindows(
         IRanges::reduce(
           IRanges::IRanges(
             start = genes$chromStart,
@@ -176,8 +166,7 @@ writeTables <-
         width = 250L,
         step = 250L
       ))
-    ir_noncoding <-
-      unlist(IRanges::slidingWindows(
+    ir_noncoding <- unlist(IRanges::slidingWindows(
         IRanges::reduce(IRanges::gaps(
           ir_genes,
           start = min(regions$chromStart),
@@ -186,75 +175,45 @@ writeTables <-
         width = 250L,
         step = 250L
       ))
-    overlaps_genes <-
-      IRanges::findOverlaps(
+    overlaps_genes <- IRanges::findOverlaps(
         query = ir_genes,
         subject = ir_regions,
         type = "any",
         select = "all"
       )
-
-    ir_genes <-
-      GenomicRanges::GRanges(seqnames = sample_name["genome_name"], ir_genes)
-    ir_genes <-
-      GenomicRanges::binnedAverage(ir_genes,
-                                   GenomicAlignments::coverage(bamFile),
-                                   "coverage")
-    ir_genes <-
-      as.data.frame(ir_genes)[c("seqnames", "start", "end", "coverage")]
-    colnames(ir_genes) <-
-      c("Chromosome", "chromStart", "chromEnd", "coverage")
-    ir_genes$coverage <- ceiling(as.numeric(ir_genes$coverage))
-    ir_genes$Chromosome <-
-      sapply(overlaps_genes, function(x)
-        regions$Band[x])
-    ir_genes$Chromosome <-
-      gsub("^c\\(\"|\"|\"|\"\\)$",
-           "",
-           as.character(ir_genes$Chromosome))
-    
-    overlaps_noncoding <-
-      IRanges::findOverlaps(
+    overlaps_noncoding <- IRanges::findOverlaps(
         query = ir_noncoding,
         subject = ir_regions,
         type = "any",
         select = "all"
       )
-    
-    ir_noncoding <-
-      GenomicRanges::GRanges(seqnames = sample_name["genome_name"], ir_noncoding)
-    ir_noncoding <-
-      GenomicRanges::binnedAverage(ir_noncoding,
-                                   GenomicAlignments::coverage(bamFile),
-                                   "coverage")
-    ir_noncoding <-
-      as.data.frame(ir_noncoding)[c("seqnames", "start", "end", "coverage")]
-    colnames(ir_noncoding) <-
-      c("Chromosome", "chromStart", "chromEnd", "coverage")
-    ir_noncoding$coverage <-
-      ceiling(as.numeric(ir_noncoding$coverage))
-    ir_noncoding$Chromosome <-
-      sapply(overlaps_noncoding, function(x)
-        regions$Band[x])
-    ir_noncoding$Chromosome <-
-      gsub("^c\\(\"|\"|\"|\"\\)$",
-           "",
-           as.character(ir_noncoding$Chromosome))
-    
-    ir_regions <-
-      unlist(IRanges::slidingWindows(ir_regions, width = 250L, step = 250L))
-    ir_regions <-
-      GenomicRanges::GRanges(seqnames = sample_name["genome_name"], ir_regions)
-    ir_regions <-
-      GenomicRanges::binnedAverage(ir_regions,
-                                   GenomicAlignments::coverage(bamFile),
-                                   "coverage")
+
+	# Operations on genes
+    ir_genes <- GenomicRanges::GRanges(seqnames = sample_name["genome_name"], ir_genes)
+    ir_genes <- GenomicRanges::binnedAverage(ir_genes, GenomicAlignments::coverage(bamFile), "coverage")
+    ir_genes <- as.data.frame(ir_genes)[c("seqnames", "start", "end", "coverage")]
+    colnames(ir_genes) <- c("Chromosome", "chromStart", "chromEnd", "coverage")
+    ir_genes$coverage <- ceiling(as.numeric(ir_genes$coverage))
+    ir_genes$Chromosome <- sapply(overlaps_genes, function(x) regions$Band[x])
+    ir_genes$Chromosome <- gsub("^c\\(\"|\"|\"|\"\\)$", "", as.character(ir_genes$Chromosome))
+   
+    # Operations on non-coding regions
+    ir_noncoding <- GenomicRanges::GRanges(seqnames = sample_name["genome_name"], ir_noncoding)
+    ir_noncoding <- GenomicRanges::binnedAverage(ir_noncoding, GenomicAlignments::coverage(bamFile), "coverage")
+    ir_noncoding <- as.data.frame(ir_noncoding)[c("seqnames", "start", "end", "coverage")]
+    colnames(ir_noncoding) <- c("Chromosome", "chromStart", "chromEnd", "coverage")
+    ir_noncoding$coverage <- ceiling(as.numeric(ir_noncoding$coverage))
+    ir_noncoding$Chromosome <- sapply(overlaps_noncoding, function(x) regions$Band[x])
+    ir_noncoding$Chromosome <- gsub("^c\\(\"|\"|\"|\"\\)$", "", as.character(ir_noncoding$Chromosome))
+
+    # Operations on IRs
+    ir_regions <- unlist(IRanges::slidingWindows(ir_regions, width = 250L, step = 250L))
+    ir_regions <- GenomicRanges::GRanges(seqnames = sample_name["genome_name"], ir_regions)
+    ir_regions <- GenomicRanges::binnedAverage(ir_regions, GenomicAlignments::coverage(bamFile), "coverage")
     chr <- ir_regions@ranges@NAMES
-    ir_regions <-
-      as.data.frame(ir_regions, row.names = NULL)[c("seqnames", "start", "end", "coverage")]
+    ir_regions <- as.data.frame(ir_regions, row.names = NULL)[c("seqnames", "start", "end", "coverage")]
     ir_regions["seqnames"] <- chr
-    colnames(ir_regions) <-
-      c("Chromosome", "chromStart", "chromEnd", "coverage")
+    colnames(ir_regions) <- c("Chromosome", "chromStart", "chromEnd", "coverage")
     ir_regions$coverage <- ceiling(as.numeric(ir_regions$coverage))
     
     cov_regions <-
@@ -264,13 +223,9 @@ writeTables <-
         FUN = function(x)
           ceiling(mean(x) - sd(x))
       )
-    ir_regions$lowCoverage <-
-      with(ir_regions, ir_regions$coverage < cov_regions$coverage[match(Chromosome, cov_regions$Chromosome)])
-    
-    ir_genes$lowCoverage <-
-      ir_genes$coverage < mean(ir_genes$coverage) - sd(ir_genes$coverage)
-    ir_noncoding$lowCoverage <-
-      ir_noncoding$coverage < mean(ir_noncoding$coverage) - sd(ir_noncoding$coverage)
+    ir_regions$lowCoverage <- with(ir_regions, ir_regions$coverage < cov_regions$coverage[match(Chromosome, cov_regions$Chromosome)])
+    ir_genes$lowCoverage <- ir_genes$coverage < mean(ir_genes$coverage) - sd(ir_genes$coverage)
+    ir_noncoding$lowCoverage <- ir_noncoding$coverage < mean(ir_noncoding$coverage) - sd(ir_noncoding$coverage)
     
     ir_genes$lowCoverage[ir_genes$lowCoverage == TRUE] <- "*"
     ir_genes$lowCoverage[ir_genes$lowCoverage == FALSE] <- ""
@@ -279,46 +234,29 @@ writeTables <-
     ir_noncoding$lowCoverage[ir_noncoding$lowCoverage == TRUE] <- "*"
     ir_noncoding$lowCoverage[ir_noncoding$lowCoverage == FALSE] <- ""
     
+    # Writing values to output table
     write.table(
       ir_genes,
-      paste(
-        dir,
-        .Platform$file.sep,
-        sample_name["sample_name"],
-        "_coverage.genes.bed",
-        sep = ""
-      ),
+      paste(dir, .Platform$file.sep, sample_name["sample_name"], "_coverage.genes.bed", sep = ""),
       row.names = FALSE,
       quote = FALSE,
       sep = "\t"
     )
     write.table(
       ir_regions,
-      paste(
-        dir,
-        .Platform$file.sep,
-        sample_name["sample_name"],
-        "_coverage.regions.bed",
-        sep = ""
-      ),
+      paste(dir, .Platform$file.sep, sample_name["sample_name"], "_coverage.regions.bed", sep = ""),
       row.names = FALSE,
       quote = FALSE,
       sep = "\t"
     )
     write.table(
       ir_noncoding,
-      paste(
-        dir,
-        .Platform$file.sep,
-        sample_name["sample_name"],
-        "_coverage.noncoding.bed",
-        sep = ""
-      ),
+      paste(dir, .Platform$file.sep, sample_name["sample_name"], "_coverage.noncoding.bed", sep = ""),
       row.names = FALSE,
       quote = FALSE,
       sep = "\t"
     )
-  }
+ }
 
 validateColors <- function(colorsToValidate) {
   colorNames <- colors()

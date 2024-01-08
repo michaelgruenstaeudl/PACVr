@@ -25,5 +25,5 @@
 }
 
 \references{
-  Gruenstaeudl, M. and Jenke, N. (2019). PACVr: Plastome Assembly Coverage Visualization in R. bioRxiv 697821; doi: https://doi.org/10.1101/697821
+  Gruenstaeudl, M. and Jenke, N. (2020). PACVr: plastome assembly coverage visualization in R. BMC Bioinformatics 21: 207. doi: https://doi.org/10.1186/s12859-020-3475-0
 }
