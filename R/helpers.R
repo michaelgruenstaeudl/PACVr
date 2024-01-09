@@ -21,11 +21,13 @@ parseFeatures <- function(features) {
   type <- NULL
   source <- sampleDF %>%
               dplyr::filter(type=="source")
+  candidateCols <- c("start", "end", "gene", "note", 
+                     "standard_name", "type")
+  subsetCols <- getColsToSubset(candidateCols, sampleDF)
+  subsetCols <- c(subsetCols, "seqnames")
   sampleDF <- sampleDF %>% 
                 dplyr::mutate(seqnames = as.factor(source[, "organism"])) %>%
-                dplyr::select(dplyr::all_of(c("seqnames", "start", "end", 
-                                              "gene", "note", "standard_name", 
-                                              "type")))
+                dplyr::select(dplyr::all_of(subsetCols))
   return(sampleDF)
 }
 
@@ -75,20 +77,24 @@ read.gbSeq <- function(gbkData) {
 
 read.gbGenes <- function(gbkDataDF) {
   type <- NULL
+  candidateCols <- c("seqnames", "start", "end", "gene")
+  subsetCols <- getColsToSubset(candidateCols, gbkDataDF)
   gene_L <- gbkDataDF %>%
               dplyr::filter(type=="gene") %>% 
-              dplyr::select(dplyr::all_of(c("seqnames", "start", "end", "gene")))
+              dplyr::select(dplyr::all_of(subsetCols))
   rownames(gene_L) <- NULL
   return(gene_L)
 }
 
 read.gbOther <- function(gbkDataDF) {
   type <- NULL
+  candidateCols <- c("seqnames", "start", "end", 
+                     "gene", "note", "standard_name")
+  subsetCols <- getColsToSubset(candidateCols, gbkDataDF)
   regions <- gbkDataDF %>%
               dplyr::filter(!type %in% c("gene", "exon", "transcript",
                                   "CDS", "variant")) %>% 
-              dplyr::select(dplyr::all_of(c("seqnames", "start", "end", 
-                              "gene", "note", "standard_name")))
+              dplyr::select(dplyr::all_of(subsetCols))
   rownames(regions) <- NULL
   return(regions)
 }
@@ -266,4 +272,8 @@ validateColors <- function(colorsToValidate) {
   if (length(unsupportedColors) > 0) {
     stop("Unsupported R plot color defined.")
   }
+}
+
+getColsToSubset <- function(candidateCols, df) {
+  return(candidateCols[candidateCols %in% colnames(df)])
 }
