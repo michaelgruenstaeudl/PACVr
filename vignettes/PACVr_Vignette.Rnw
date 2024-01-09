@@ -107,7 +107,7 @@ Rscript ./inst/extdata/PACVr_Rscript.R \
 For PACVr to compute and visualize coverage depth along a given plastid genome, users must provide textual information on the mapping of sequence reads on the input genome. This information is supplied via an input file in the binary alignment/map (BAM) format, which stores alignment and mapping information and is typically generated through the mapping of sequence reads to a reference genome with automated read-mappers in conjunction with the software samtools (\href{https://doi.org/10.1093/bioinformatics/btp352}{Li 2009}).
 
 
-\subsection{Mapping via BWA}
+\subsection{Option A: Mapping via BWA}
 The following is a minimal code example for mapping reads to a reference genome via BWA (\href{https://doi.org/10.1093/bioinformatics/btp324}{Li and Durbin 2009}).
 \begin{BGVerbatim}[fontsize=\normalsize]
 # Building the index
@@ -118,7 +118,7 @@ bwa mem <ref.fasta> <reads_R1.fastq> <reads_R2.fastq> > <mapping_result.sam>
 \end{BGVerbatim}
 
 
-\subsection{Mapping via Bowtie2}
+\subsection{Option B: Mapping via Bowtie2}
 The following is a minimal code example for mapping reads to a reference genome via Bowtie2 (\href{https://doi.org/10.1038/nmeth.1923}{Langmead and Salzberg 2012}).
 \begin{BGVerbatim}[fontsize=\normalsize]
 # Building the index
@@ -130,7 +130,7 @@ bowtie2 -x db/<ref_name> -1 <reads_R1.fastq> -2 <reads_R2.fastq> -S <mapping_res
 \end{BGVerbatim}
 
 
-\subsection{Indexing via samtools}
+\subsection{(Optional -- Indexing under different read filtering options)}
 The following are code examples for generating sorted and indexed BAM files via samtools under different read filtering options.
 \begin{BGVerbatim}[fontsize=\normalsize]
 # Not filtered; 6877 reads in example dataset
