@@ -30,10 +30,12 @@ parseFeatures <- function(features) {
 }
 
 parseFeature <- function(feature) {
-  # transform source data frame
+  # transform source data frame making sure final result
+  # is still data frame
   feature <- as.data.frame(t(feature))
-  colnames(feature) <- feature[1,]
-  feature <- feature[-1,]
+  colNames <- feature[1,]
+  feature <- as.data.frame(feature[-1,])
+  colnames(feature) <- colNames
   rownames(feature) <- NULL
   
   # fix sequence location(s) and feature type
