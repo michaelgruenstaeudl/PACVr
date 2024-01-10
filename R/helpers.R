@@ -16,7 +16,9 @@ parseFeatures <- function(features) {
   sampleDF <- data.frame()
   for (feature in features) {
     feature <- parseFeature(feature)
-    sampleDF <- dplyr::bind_rows(sampleDF, feature)
+    if (!is.null(feature)) {
+      sampleDF <- dplyr::bind_rows(sampleDF, feature)
+    }
   }
   type <- NULL
   source <- sampleDF %>%
@@ -32,6 +34,13 @@ parseFeatures <- function(features) {
 }
 
 parseFeature <- function(feature) {
+  # first check if feature is desired
+  locAndTypeIndex <- 1
+  type <- feature[locAndTypeIndex,1]
+  if (isIgnoredFeature(type)) {
+    return(NULL)
+  }
+  
   # transform source data frame making sure final result
   # is still data frame
   feature <- as.data.frame(t(feature))
@@ -41,9 +50,7 @@ parseFeature <- function(feature) {
   rownames(feature) <- NULL
   
   # fix sequence location(s) and feature type
-  locAndTypeIndex <- 1
   locationsStr <- feature[1,locAndTypeIndex]
-  type <- names(feature)[locAndTypeIndex]
   feature <- feature %>% 
               dplyr::rename_with(~ "locations", 
                                  .cols = dplyr::all_of(locAndTypeIndex)) %>%
@@ -276,4 +283,9 @@ validateColors <- function(colorsToValidate) {
 
 getColsToSubset <- function(candidateCols, df) {
   return(candidateCols[candidateCols %in% colnames(df)])
+}
+
+isIgnoredFeature <- function(featureName) {
+  ignoredFeatures <- c("D-loop")
+  return(featureName %in% ignoredFeatures)
 }
