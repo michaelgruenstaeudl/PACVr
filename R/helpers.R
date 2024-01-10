@@ -24,13 +24,13 @@ parseFeatures <- function(features, regionsCheck) {
       sampleDF <- dplyr::bind_rows(sampleDF, feature)
     }
   }
-  type <- NULL
-  source <- sampleDF %>%
-              dplyr::filter(type=="source")
   subsetCols <- checkFeatureQualifiers(sampleDF, regionsCheck)
   if (is.null(subsetCols)) {
     return(NULL)
   }
+  type <- NULL
+  source <- sampleDF %>%
+              dplyr::filter(type=="source")
   sampleDF <- sampleDF %>% 
                 dplyr::mutate(seqnames = as.factor(source[, "organism"])) %>%
                 dplyr::select(dplyr::all_of(subsetCols))
