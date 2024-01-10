@@ -3,6 +3,29 @@
 #email="m_gruenstaeudl@fhsu.edu"
 #version="2024.01.07.2200"
 
+PACVr.read.gb <- function(gbkFile) {
+  gbkFile <- tryCatch({
+    read.gb::read.gb(gbkFile, DNA=TRUE, Type="full", Source="File")
+  },
+  error = function(e) {
+    if (conditionMessage(e) == "dim(X) must have a positive length") {
+      logger::log_error(
+        paste("read.gb encountered an unqualified feature;", 
+              "fix w/",
+              "devtools::install_github(\"alephnull7/read.gb\")")
+      )
+    } else {
+      print(e)
+      logger::log_error(
+        logger::skip_formatter(
+          paste("read.gb encountered an unexpected error:", e)
+          )
+        )
+    }
+    return(NULL)
+  })
+}
+
 PACVr.parseName <- function (gbkData) {
   return(read.gbSampleName(gbkData))
 }
@@ -139,7 +162,7 @@ PACVr.complete <- function(gbkFile,
                            output=NA) {
   ######################################################################
   logger::log_info('Reading GenBank flatfile `{gbkFile}`')
-  gbkData <- read.gb::read.gb(gbkFile, DNA=TRUE, Type="full", Source="File")
+  gbkData <- PACVr.read.gb(gbkFile)
   gbkDataDF <- read.gb2DF(gbkData, regionsCheck)
   if (is.null(gbkDataDF)) {
     logger::log_error(paste("No usable data to perform specified analysis"))
