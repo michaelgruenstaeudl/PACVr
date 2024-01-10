@@ -3,16 +3,16 @@
 #email="m_gruenstaeudl@fhsu.edu"
 #version="2024.01.07.2200"
 
-read.gb2DF <- function(gbkData) {
+read.gb2DF <- function(gbkData, regionsCheck) {
   fileDF <- data.frame()
   for (sample in gbkData) {
-    sampleDF <- parseFeatures(sample$FEATURES)
+    sampleDF <- parseFeatures(sample$FEATURES, regionsCheck)
     fileDF <- dplyr::bind_rows(fileDF, sampleDF)
   }
   return(fileDF)
 }
 
-parseFeatures <- function(features) {
+parseFeatures <- function(features, regionsCheck) {
   sampleDF <- data.frame()
   for (feature in features) {
     feature <- parseFeature(feature)
@@ -23,10 +23,10 @@ parseFeatures <- function(features) {
   type <- NULL
   source <- sampleDF %>%
               dplyr::filter(type=="source")
-  candidateCols <- c("start", "end", "gene", "note", 
-                     "standard_name", "type")
-  subsetCols <- getColsToSubset(candidateCols, sampleDF)
-  subsetCols <- c(subsetCols, "seqnames")
+  subsetCols <- checkFeatureQualifiers(sampleDF, regionsCheck)
+  if (is.null(subsetCols)) {
+    return(NULL)
+  }
   sampleDF <- sampleDF %>% 
                 dplyr::mutate(seqnames = as.factor(source[, "organism"])) %>%
                 dplyr::select(dplyr::all_of(subsetCols))
@@ -84,8 +84,7 @@ read.gbSeq <- function(gbkData) {
 
 read.gbGenes <- function(gbkDataDF) {
   type <- NULL
-  candidateCols <- c("seqnames", "start", "end", "gene")
-  subsetCols <- getColsToSubset(candidateCols, gbkDataDF)
+  subsetCols <- c("seqnames", "start", "end", "gene")
   gene_L <- gbkDataDF %>%
               dplyr::filter(type=="gene") %>% 
               dplyr::select(dplyr::all_of(subsetCols))
@@ -95,9 +94,8 @@ read.gbGenes <- function(gbkDataDF) {
 
 read.gbOther <- function(gbkDataDF) {
   type <- NULL
-  candidateCols <- c("seqnames", "start", "end", 
-                     "gene", "note", "standard_name")
-  subsetCols <- getColsToSubset(candidateCols, gbkDataDF)
+  subsetCols <- c("seqnames", "start", "end", 
+                  "gene", "note", "standard_name")
   regions <- gbkDataDF %>%
               dplyr::filter(!type %in% c("gene", "exon", "transcript",
                                   "CDS", "variant")) %>% 
@@ -281,8 +279,23 @@ validateColors <- function(colorsToValidate) {
   }
 }
 
-getColsToSubset <- function(candidateCols, df) {
-  return(candidateCols[candidateCols %in% colnames(df)])
+checkFeatureQualifiers <- function(sampleDF, regionsCheck) {
+  subsetCols <- c("start", "end", "gene", 
+                  "note", "type")
+  if (regionsCheck) {
+    subsetCols <- c(subsetCols, "standard_name")
+  }
+  missingCols <- subsetCols[!(subsetCols %in% colnames(sampleDF))]
+  if (length(missingCols) > 0) {
+    logger::log_warn(paste0("Unable to analyze sample as specified; ", 
+                            "missing feature qualifiers: ",
+                            "'",
+                            paste(missingCols, collapse = "', '"),
+                            "'"))
+    return(NULL)
+  }
+  subsetCols <- c(subsetCols, "seqnames")
+  return(subsetCols)
 }
 
 isIgnoredFeature <- function(featureName) {
