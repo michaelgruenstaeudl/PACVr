@@ -37,7 +37,11 @@ ExtractAllRegions <- function(gbkDataDF) {
       warning = function(w)
         FilterByKeywords(allRegions, "standard_name")
     ),
-    error = function(e)
+    error = function(e) {
+      if (conditionMessage(e) == "undefined columns selected") {
+        logger::log_warn(paste("Features do not contain 'standard_name';", 
+                               "regions not properly analyzed"))
+      }
       return(
         data.frame(
           start = c(-1),
@@ -46,6 +50,7 @@ ExtractAllRegions <- function(gbkDataDF) {
           stringsAsFactors=FALSE
         )
       )
+  }
   )
   regions <- regions[, c("start", "end", "note")]
   colnames(regions) <- c("chromStart", "chromEnd", "Band")
