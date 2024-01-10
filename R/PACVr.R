@@ -141,6 +141,10 @@ PACVr.complete <- function(gbkFile,
   logger::log_info('Reading GenBank flatfile `{gbkFile}`')
   gbkData <- read.gb::read.gb(gbkFile, DNA=TRUE, Type="full", Source="File")
   gbkDataDF <- read.gb2DF(gbkData, regionsCheck)
+  if (is.null(gbkDataDF)) {
+    logger::log_error(paste("No usable data to perform specified analysis"))
+    return(NULL)
+  }
   
   ###################################
   if (regionsCheck) {

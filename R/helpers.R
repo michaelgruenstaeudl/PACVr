@@ -9,6 +9,10 @@ read.gb2DF <- function(gbkData, regionsCheck) {
     sampleDF <- parseFeatures(sample$FEATURES, regionsCheck)
     fileDF <- dplyr::bind_rows(fileDF, sampleDF)
   }
+  # signal no usable data
+  if (ncol(fileDF) == 0 && nrow(fileDF) == 0) {
+    return(NULL)
+  }
   return(fileDF)
 }
 
