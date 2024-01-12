@@ -4,7 +4,7 @@
 #version="2024.01.07.2200"
 
 PACVr.read.gb <- function(gbkFile) {
-  gbkFile <- tryCatch({
+  gbkData <- tryCatch({
     read.gb::read.gb(gbkFile, DNA=TRUE, Type="full", Source="File")
   },
   error = function(e) {
@@ -24,6 +24,7 @@ PACVr.read.gb <- function(gbkFile) {
     }
     return(NULL)
   })
+  return(gbkData)
 }
 
 PACVr.parseName <- function (gbkData) {
