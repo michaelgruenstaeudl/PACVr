@@ -33,6 +33,11 @@ parseFeatures <- function(features, regionsCheck) {
   if (is.null(subsetCols)) {
     return(NULL)
   }
+  
+  # create derivative "start" and "end" variables from "locations"
+  sampleDF <- addStartEnd(sampleDF)
+  
+  # add "seqname" and subset according to analysis needs
   type <- NULL
   source <- sampleDF %>%
               dplyr::filter(type=="source")
@@ -58,28 +63,90 @@ parseFeature <- function(feature) {
   colnames(feature) <- colNames
   
   # fix sequence location(s) and feature type
-  locationsStr <- feature[1,locAndTypeIndex]
   feature <- feature %>% 
               dplyr::rename_with(~ "locations", 
                                  .cols = dplyr::all_of(locAndTypeIndex)) %>%
               dplyr::mutate(type = type)
-  
-  # create derivative "start" and "end" variables from "locations"
-  # and create feature copies for multiple sequences
-  locationsList <- 
-    regmatches(locationsStr, gregexpr("\\d+", locationsStr))[[1]] %>%
-    as.integer()
-  feature <- feature %>%
-              dplyr::mutate(start = NA, end = NA)
-  for (pairIndex in 1:(length(locationsList) / 2)) {
-    if (pairIndex > 1) {
-      feature <- dplyr::bind_rows(feature, feature[pairIndex-1,])
-    }
-    startIndex = pairIndex * 2 - 1
-    feature[pairIndex, "start"] = locationsList[startIndex]
-    feature[pairIndex, "end"]   = locationsList[startIndex+1]
-  }
   return(feature)
+}
+
+addStartEnd <- function(sampleDF) {
+  start <-
+    end <- 
+    feature_index <-
+    . <-
+    NULL
+  
+  # keep track of feature ordering in case of multiple sequences
+  # for features
+  sampleDF <- sampleDF %>%
+                dplyr::mutate("feature_index" = as.integer(rownames(.)))
+  
+  locationsList <- getLocationsList(sampleDF)
+  for (index in 1:length(locationsList)) {
+    featureLocations <- locationsList[[index]]
+    locationsCount <- length(featureLocations)
+    if (locationsCount == 0) {
+      next
+    }
+    
+    sampleDF[index, c("start", "end")] <- c(featureLocations[[1]][[1]],
+                                            featureLocations[[1]][[2]])
+    # create feature copies for multiple sequences
+    if (locationsCount > 1) {
+      featureLocations <- featureLocations[-1]
+      featureCopies <- sampleDF %>%
+                        dplyr::slice(index) %>%
+                        replicate(locationsCount-1, 
+                                  ., simplify=FALSE) %>%
+                        dplyr::bind_rows() %>%
+                        dplyr::mutate(start = featureLocations[[1]][[1]],
+                                      end = featureLocations[[1]][[2]])
+      sampleDF <- sampleDF %>%
+                    dplyr::bind_rows(., featureCopies)
+    }
+  }
+  
+  sampleDF <- sampleDF %>%
+                dplyr::mutate(start = as.integer(start),
+                              end = as.integer(end)) %>%
+                dplyr::arrange(feature_index) %>%
+                dplyr::select(-feature_index)
+  return(sampleDF)
+}
+
+getLocationsList <- function(sampleDF, removeRemotes=TRUE) {
+  locationsList <- sampleDF %>%
+                    dplyr::pull("locations") %>%
+                    lapply(normalizeLocation) %>%
+                    lapply(function(x) unlist(strsplit(x, ",")))
+  if (removeRemotes) {
+    locationsList <- lapply(locationsList,
+                            function(x) x[!grepl(":", x)])
+  }
+  locationsList <- lapply(locationsList, 
+                          function(x) strsplit(x, ":|\\.{2,}"))
+  return(locationsList)
+}
+
+# based on standard listed by INSDC
+# https://www.insdc.org/submitting-standards/feature-table/
+normalizeLocation <- function(locationsStr) {
+  # standardize delimiter
+  cleanStr <- gsub("(?![A-Za-z]+)(\\d+)\\.(\\d+)(?!:)", 
+                   "\\1..\\2", locationsStr, perl=TRUE)
+  cleanStr <- gsub("(?![A-Za-z]+)(\\d+)\\^(\\d+)(?!:)", 
+                   "\\1..\\2", cleanStr, perl=TRUE)
+  # remove unknown boundary identifiers
+  cleanStr <- gsub("[<>](\\d+)", 
+                   "\\1", cleanStr)
+  # remove operators
+  cleanStr <- gsub("complement|join|order|[\\(\\)]", 
+                   "", cleanStr)
+  # standardize single bases
+  cleanStr <- gsub("(^|,)(.+:)?(\\d+)($|,)", 
+                   "\\1\\2\\3..\\3\\4", cleanStr, perl=TRUE)
+  return(cleanStr)
 }
 
 read.gbSeq <- function(gbkData) {
@@ -288,8 +355,7 @@ validateColors <- function(colorsToValidate) {
 }
 
 checkFeatureQualifiers <- function(sampleDF, regionsCheck) {
-  subsetCols <- c("start", "end", "gene", 
-                  "note", "type")
+  subsetCols <- c("gene", "note", "type")
   if (regionsCheck) {
     subsetCols <- c(subsetCols, "standard_name")
   }
@@ -302,7 +368,8 @@ checkFeatureQualifiers <- function(sampleDF, regionsCheck) {
                             "'"))
     return(NULL)
   }
-  subsetCols <- c(subsetCols, "seqnames")
+  # add future generated columns that are needed
+  subsetCols <- c(subsetCols, "start", "end", "seqnames")
   return(subsetCols)
 }
 
