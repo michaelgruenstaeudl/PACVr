@@ -33,16 +33,13 @@ parseFeatures <- function(features, regionsCheck) {
   }
   rownames(sampleDF) <- NULL
   
-  # create derivative "start" and "end" variables from "locations"
-  sampleDF <- addStartEnd(sampleDF)
-  
-  # add "seqname" and subset according to analysis needs
-  type <- NULL
-  source <- sampleDF %>%
-              dplyr::filter(type=="source")
-  sampleDF <- sampleDF %>% 
-                dplyr::mutate(seqnames = as.factor(source[, "organism"])) %>%
-                dplyr::select(dplyr::all_of(subsetCols))
+  # create derivative "start" and "end" variables from "locations",
+  # create "seqname", and subset according to analysis needs
+  . <- NULL
+  sampleDF <- sampleDF %>%
+                addStartEnd() %>%
+                addSeqname() %>%
+                subset4Analysis(., subsetCols)
   return(sampleDF)
 }
 
@@ -111,6 +108,21 @@ addStartEnd <- function(sampleDF) {
                               end = as.integer(end)) %>%
                 dplyr::arrange(feature_index) %>%
                 dplyr::select(-feature_index)
+  return(sampleDF)
+}
+
+addSeqname <- function(sampleDF, subsetCols) {
+  type <- NULL
+  source <- sampleDF %>%
+    dplyr::filter(type=="source")
+  sampleDF <- sampleDF %>%
+    dplyr::mutate(seqnames = as.factor(source[, "organism"]))
+  return(sampleDF)
+}
+
+subset4Analysis <- function(sampleDF, subsetCols) {
+  sampleDF <- sampleDF %>%
+    dplyr::select(dplyr::all_of(subsetCols))
   return(sampleDF)
 }
 
