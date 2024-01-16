@@ -26,13 +26,12 @@ parseFeatures <- function(features, regionsCheck) {
       sampleDF <- dplyr::bind_rows(sampleDF, feature)
     }
   }
-  rownames(sampleDF) <- NULL
-  
   # check if can we can use the sample
   subsetCols <- checkFeatureQualifiers(sampleDF, regionsCheck)
   if (is.null(subsetCols)) {
     return(NULL)
   }
+  rownames(sampleDF) <- NULL
   
   # create derivative "start" and "end" variables from "locations"
   sampleDF <- addStartEnd(sampleDF)
