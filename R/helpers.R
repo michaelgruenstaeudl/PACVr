@@ -26,6 +26,9 @@ parseFeatures <- function(features, regionsCheck) {
       sampleDF <- dplyr::bind_rows(sampleDF, feature)
     }
   }
+  rownames(sampleDF) <- NULL
+  
+  # check if can we can use the sample
   subsetCols <- checkFeatureQualifiers(sampleDF, regionsCheck)
   if (is.null(subsetCols)) {
     return(NULL)
@@ -53,7 +56,6 @@ parseFeature <- function(feature) {
   colNames <- feature[1,]
   feature <- as.data.frame(feature[-1,])
   colnames(feature) <- colNames
-  rownames(feature) <- NULL
   
   # fix sequence location(s) and feature type
   locationsStr <- feature[1,locAndTypeIndex]
