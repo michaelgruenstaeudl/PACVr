@@ -76,7 +76,7 @@ addStartEnd <- function(sampleDF) {
   # keep track of feature ordering in case of multiple sequences
   # for features
   sampleDF <- sampleDF %>%
-                dplyr::mutate("feature_index" = as.integer(rownames(.)))
+                dplyr::mutate(feature_index = as.integer(rownames(.)))
   
   locationsList <- getLocationsList(sampleDF)
   for (index in 1:length(locationsList)) {
@@ -90,16 +90,7 @@ addStartEnd <- function(sampleDF) {
                                             featureLocations[[1]][[2]])
     # create feature copies for multiple sequences
     if (locationsCount > 1) {
-      featureLocations <- featureLocations[-1]
-      featureCopies <- sampleDF %>%
-                        dplyr::slice(index) %>%
-                        replicate(locationsCount-1, 
-                                  ., simplify=FALSE) %>%
-                        dplyr::bind_rows() %>%
-                        dplyr::mutate(start = featureLocations[[1]][[1]],
-                                      end = featureLocations[[1]][[2]])
-      sampleDF <- sampleDF %>%
-                    dplyr::bind_rows(., featureCopies)
+      sampleDF <- addMultiSeqFeats(sampleDF, featureLocations, index)
     }
   }
   
@@ -111,7 +102,23 @@ addStartEnd <- function(sampleDF) {
   return(sampleDF)
 }
 
-addSeqname <- function(sampleDF, subsetCols) {
+addMultiSeqFeats <- function(sampleDF, featureLocations, index) {
+  . <- NULL
+
+  featureLocations <- featureLocations[-1]
+  featureCopies <- sampleDF %>%
+    dplyr::slice(index) %>%
+    replicate(length(featureLocations),
+              ., simplify=FALSE) %>%
+    dplyr::bind_rows() %>%
+    dplyr::mutate(start = featureLocations[[1]][[1]],
+                  end = featureLocations[[1]][[2]])
+  sampleDF <- sampleDF %>%
+    dplyr::bind_rows(., featureCopies)
+  return(sampleDF)
+}
+
+addSeqname <- function(sampleDF) {
   type <- NULL
   source <- sampleDF %>%
     dplyr::filter(type=="source")
