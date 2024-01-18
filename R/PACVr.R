@@ -4,7 +4,12 @@
 #version="2024.01.07.2200"
 
 PACVr.read.gb <- function(gbkFile) {
-  return(read.gbWithHandling(gbkFile))
+  gbkChar <- getGbkChar(gbkFile)
+  if (is.null(gbkChar)) {
+    return(NULL)
+  }
+  gbkData <- read.gbWithHandling(gbkFile, gbkChar)
+  return(gbkData)
 }
 
 PACVr.parseName <- function (gbkData) {
@@ -142,7 +147,6 @@ PACVr.complete <- function(gbkFile,
                            verbose=FALSE,
                            output=NA) {
   ######################################################################
-  logger::log_info('Reading GenBank flatfile `{gbkFile}`')
   gbkData <- PACVr.read.gb(gbkFile)
   gbkDataDF <- read.gb2DF(gbkData, regionsCheck)
   if (is.null(gbkDataDF)) {
