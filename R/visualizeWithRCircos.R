@@ -3,19 +3,6 @@
 #email="m_gruenstaeudl@fhsu.edu"
 #version="2024.01.07.2200"
 
- 
-#' Title
-#'
-#' @param plotTitle
-#' @param genes
-#' @param regions
-#' @param coverage
-#' @param threshold
-#'
-#' @return
-#' @export
-#'
-#' @examples
 visualizeWithRCircos <- function(plotTitle,
                                  genes,
                                  regions,
@@ -27,20 +14,6 @@ visualizeWithRCircos <- function(plotTitle,
                                  linkData,
                                  syntenyLineType = 3,
                                  textSize) {
-
-  # Generates the visualization of genome data and their tracks
-  # ARGS:
-  #   plotTitle: character string
-  #   genes_withUpdRegions: data frame that contains the genomic region, gene start, gene end and gene names
-  #   regions_withUpdRegions: data frame that contains the genomic region, region start, region end and two dummy columns
-  #   cov_withUpdRegions: data frame that contains the genomic region, coverage start, coverage end and coverage value
-  #   threshold: numeric value that indicate how many bases are covered at a given threshold
-  #   avg:  numeric value of the average coverage value
-  #   lineData: data frame that contains IRb region information, gene start (IRb), gene end (IRb), gene names, IRa region
-  #             information, gene start (IRa), gene end (IRb)and gene names.
-  #   linkData: data frame that contains genomic region, coverage start, coverage end and coverage value
-  # RETURNS:
-  #   ---
 
   if (logScale == TRUE) {
     coverage$coverage <- log(cov$coverage)
