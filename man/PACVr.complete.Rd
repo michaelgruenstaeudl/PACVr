@@ -19,7 +19,8 @@ PACVr.complete(
 )
 }
 \arguments{
-\item{gbkFile}{a character vector that specifies the name of, and path to, the GenBank input file}
+\item{gbkFile}{a character vector that specifies the name of, and path to, the GenBank input file;
+alternatively, a string of the GenBank data}
 
 \item{bamFile}{a character vector that specifies the name of, and path to, the BAM input file}
 

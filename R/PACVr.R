@@ -109,7 +109,8 @@ PACVr.visualizeWithRCircos <- function(gbkData,
 #' @title Execute the complete pipeline of \pkg{PACVr}
 #' @description This function executes the complete pipeline of \pkg{PACVr} via a single command.
 #'
-#' @param gbkFile a character vector that specifies the name of, and path to, the GenBank input file
+#' @param gbkFile a character vector that specifies the name of, and path to, the GenBank input file;
+#' alternatively, a string of the GenBank data
 #' @param bamFile a character vector that specifies the name of, and path to, the BAM input file
 #' @param windowSize a numeric value that specifies window size in which the coverage is calculated
 #' @param logScale a boolean that specifies if the coverage depth is to be log-transformed before visualizing it

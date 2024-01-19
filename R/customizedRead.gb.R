@@ -170,11 +170,32 @@ getFeatureTags <- function() {
 }
 
 getGbkChar <- function(gbkFile) {
-  if (!grepl("\\.gb$", gbkFile)) {
-    logger::log_error("Non-GenBank file provided")
-    return(NULL)
+  if (grepl("\\.gb$", gbkFile) || file.exists(gbkFile)) {
+    logger::log_info('Reading GenBank flatfile `{gbkFile}`')
+    gbkChar <- tryCatch({
+      suppressWarnings(readChar(gbkFile, 
+                                file.info(gbkFile)$size, 
+                                nchars = 99999999)
+                       )
+    },
+    error = function(e) {
+      logger::log_error(paste0('Error when reading GenBank flatfile',
+                              '`{gbkFile}`: "{e}"')
+                        )
+      return(NULL)
+    })
+  } else if (grepl("\\.gb$", gbkFile)) {
+    logger::log_error("GenBank flatfile does not exist `{gbkFile}`")
+    gbkChar <- NULL
+  } else if (grepl("\\..{2,4}$", gbkFile)) {
+    logger::log_error("Non-GenBank file provided `{gbkFile}`")
+    gbkChar <- NULL
+  } else {
+    logger::log_info(paste0("Reading GenBank string \"",
+                            substr(gbkFile, 1, 20),
+                            "...\"")
+                    )
+    gbkChar <- gbkFile
   }
-  logger::log_info('Reading GenBank flatfile `{gbkFile}`')
-  gbkChar <- readChar(gbkFile, file.info(gbkFile)$size, nchars = 99999999)
   return(gbkChar)
 }
