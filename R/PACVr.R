@@ -4,11 +4,11 @@
 #version="2024.01.07.2200"
 
 PACVr.read.gb <- function(gbkFile) {
-  gbkChar <- getGbkChar(gbkFile)
-  if (is.null(gbkChar)) {
+  gbkRaw <- getGbkRaw(gbkFile)
+  if (is.null(gbkRaw$char)) {
     return(NULL)
   }
-  gbkData <- read.gbWithHandling(gbkFile, gbkChar)
+  gbkData <- read.gbWithHandling(gbkRaw)
   return(gbkData)
 }
 
