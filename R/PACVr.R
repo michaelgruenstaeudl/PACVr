@@ -3,6 +3,15 @@
 #email="m_gruenstaeudl@fhsu.edu"
 #version="2024.01.07.2200"
 
+PACVr.read.gb <- function(gbkFile) {
+  gbkChar <- getGbkChar(gbkFile)
+  if (is.null(gbkChar)) {
+    return(NULL)
+  }
+  gbkData <- read.gbWithHandling(gbkFile, gbkChar)
+  return(gbkData)
+}
+
 PACVr.parseName <- function (gbkData) {
   return(read.gbSampleName(gbkData))
 }
@@ -138,9 +147,12 @@ PACVr.complete <- function(gbkFile,
                            verbose=FALSE,
                            output=NA) {
   ######################################################################
-  logger::log_info('Reading GenBank flatfile `{gbkFile}`')
-  gbkData <- read.gb::read.gb(gbkFile, DNA=TRUE, Type="full", Source="File")
-  gbkDataDF <- read.gb2DF(gbkData)
+  gbkData <- PACVr.read.gb(gbkFile)
+  gbkDataDF <- read.gb2DF(gbkData, regionsCheck)
+  if (is.null(gbkDataDF)) {
+    logger::log_error(paste("No usable data to perform specified analysis"))
+    return(NULL)
+  }
   
   ###################################
   if (regionsCheck) {

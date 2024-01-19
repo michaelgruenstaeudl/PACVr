@@ -4,17 +4,19 @@
 \alias{PACVr.complete}
 \title{Execute the complete pipeline of \pkg{PACVr}}
 \usage{
-PACVr.complete(gbkFile,
-               bamFile,
-               windowSize = 250,
-               logScale = FALSE,
-               threshold = 0.5,
-               syntenyLineType = 1,
-               relative = TRUE,
-               textSize = 0.5,
-               regionsCheck = FALSE,
-               verbose = FALSE,
-               output = NA)
+PACVr.complete(
+  gbkFile,
+  bamFile,
+  windowSize = 250,
+  logScale = FALSE,
+  threshold = 0.5,
+  syntenyLineType = 1,
+  relative = TRUE,
+  textSize = 0.5,
+  regionsCheck = FALSE,
+  verbose = FALSE,
+  output = NA
+)
 }
 \arguments{
 \item{gbkFile}{a character vector that specifies the name of, and path to, the GenBank input file}
@@ -35,25 +37,27 @@ PACVr.complete(gbkFile,
 
 \item{regionsCheck}{a boolean that specifies if region analysis of genome should be performed; FALSE disables syntenyLineType and verbose}
 
-\item{verbose}{the decision to show additional information regarding the quality of the assembly}
+\item{verbose}{the decision to generate additional files with detailed genomic region information}
 
 \item{output}{a character vector that specifies the name of, and path to, the output file}
+}
+\value{
+A file in pdf format containing a circular visualization of the submitted plastid sample.
 }
 \description{
 This function executes the complete pipeline of \pkg{PACVr} via a single command.
 }
 \examples{
 \dontrun{
-gbkFile <- system.file("extdata", 
-                       "NC_045072/NC_045072.gb", 
+gbkFile <- system.file("extdata",
+                       "NC_045072/NC_045072.gb",
                        package="PACVr")
-bamFile <- system.file("extdata", 
-                       "NC_045072/NC_045072_PlastomeReadsOnly.sorted.bam", 
+bamFile <- system.file("extdata",
+                       "NC_045072/NC_045072_PlastomeReadsOnly.sorted.bam",
                        package="PACVr")
 outFile <- paste(tempdir(), "/NC_045072__all_reads.pdf", sep="")
-PACVr.complete(gbkFile, bamFile, windowSize=250, 
-               logScale=FALSE, threshold=0.5, syntenyLineType=1, 
-               relative=TRUE, textSize=0.5, regionsCheck=TRUE,
-               verbose=FALSE, output=outFile)
-}
+PACVr.complete(gbkFile=gbkFile, bamFile=bamFile, windowSize=250, logScale=FALSE,
+               threshold=0.5, syntenyLineType=1, relative=TRUE, textSize=0.5,
+               regionsCheck=FALSE, verbose=FALSE, output=outFile
+               }
 }
