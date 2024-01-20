@@ -198,7 +198,7 @@ getGbkRaw <- function(gbkFile) {
   } else if (grepl("\\.gb$", gbkFile)) {
     logger::log_error("GenBank flatfile does not exist `{gbkFile}`")
     gbkChar <- NULL
-  } else if (grepl("\\..{2,4}$", gbkFile)) {
+  } else if (grepl("\\.\\w+$", gbkFile)) {
     logger::log_error("Non-GenBank file provided `{gbkFile}`")
     gbkChar <- NULL
   } else {
