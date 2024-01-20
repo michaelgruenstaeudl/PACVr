@@ -127,7 +127,7 @@ PACVr.visualizeWithRCircos <- function(gbkData,
 #' value of the average coverage instead of an absolute value
 #' @param textSize a numeric value that specifies the relative font size of the 
 #' text element in the visualization
-#' @param verbose the boolean, that went TRUE, generates additional files with 
+#' @param verbose a boolean, that went TRUE, generates additional files with
 #' detailed genomic region information
 #' @param regionsCheck a boolean that specifies if region analysis of genome 
 #' should be performed; FALSE disables syntenyLineType and verbose
