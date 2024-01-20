@@ -47,7 +47,7 @@ text element in the visualization}
 \item{regionsCheck}{a boolean that specifies if region analysis of genome 
 should be performed; FALSE disables syntenyLineType and verbose}
 
-\item{verbose}{the boolean, that went TRUE, generates additional files with 
+\item{verbose}{a boolean, that went TRUE, generates additional files with
 detailed genomic region information}
 
 \item{output}{a character string that specifies the name of, and path to, 
