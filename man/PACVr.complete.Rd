@@ -19,34 +19,47 @@ PACVr.complete(
 )
 }
 \arguments{
-\item{gbkFile}{a character vector that specifies the name of, and path to, the GenBank input file;
-alternatively, a string of the GenBank data}
+\item{gbkFile}{a character string that specifies the name of, and path to, 
+the GenBank input file; alternatively, a character string of GenBank data}
 
-\item{bamFile}{a character vector that specifies the name of, and path to, the BAM input file}
+\item{bamFile}{a character string that specifies the name of, and path to, 
+the BAM input file}
 
-\item{windowSize}{a numeric value that specifies window size in which the coverage is calculated}
+\item{windowSize}{a numeric value that specifies window size in which the 
+coverage is calculated}
 
-\item{logScale}{a boolean that specifies if the coverage depth is to be log-transformed before visualizing it}
+\item{logScale}{a boolean that specifies if the coverage depth is to be 
+log-transformed before visualizing it}
 
-\item{threshold}{a numeric value that specifies the threshold for plotting coverage depth bars in red as opposed to the default black}
+\item{threshold}{a numeric value that specifies the threshold for plotting 
+coverage depth bars in red as opposed to the default black}
 
-\item{syntenyLineType}{a numeric value of 1 or 2 that specifies the line type for visualizing IR gene synteny; 1 = ribbon lines, 2 = solid lines, otherwise = no line}
+\item{syntenyLineType}{a numeric value of 1 or 2 that specifies the line 
+type for visualizing IR gene synteny; 1 = ribbon lines, 2 = solid lines, 
+otherwise = no line}
 
-\item{relative}{a boolean that specifies whether the threshold is a relative value of the average coverage instead of an absolute value}
+\item{relative}{a boolean that specifies whether the threshold is a relative 
+value of the average coverage instead of an absolute value}
 
-\item{textSize}{a numeric value that specifies the relative font size of the text element in the visualization}
+\item{textSize}{a numeric value that specifies the relative font size of the 
+text element in the visualization}
 
-\item{regionsCheck}{a boolean that specifies if region analysis of genome should be performed; FALSE disables syntenyLineType and verbose}
+\item{regionsCheck}{a boolean that specifies if region analysis of genome 
+should be performed; FALSE disables syntenyLineType and verbose}
 
-\item{verbose}{the decision to generate additional files with detailed genomic region information}
+\item{verbose}{the boolean, that went TRUE, generates additional files with 
+detailed genomic region information}
 
-\item{output}{a character vector that specifies the name of, and path to, the output file}
+\item{output}{a character string that specifies the name of, and path to, 
+the output file}
 }
 \value{
-A file in pdf format containing a circular visualization of the submitted plastid sample.
+A file in pdf format containing a circular visualization of the 
+submitted plastid sample.
 }
 \description{
-This function executes the complete pipeline of \pkg{PACVr} via a single command.
+This function executes the complete pipeline of \pkg{PACVr} 
+via a single command.
 }
 \examples{
 \dontrun{
