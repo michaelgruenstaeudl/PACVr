@@ -4,11 +4,11 @@
 #version="2024.01.07.2200"
 
 PACVr.read.gb <- function(gbkFile) {
-  gbkChar <- getGbkChar(gbkFile)
-  if (is.null(gbkChar)) {
+  gbkRaw <- getGbkRaw(gbkFile)
+  if (is.null(gbkRaw$char)) {
     return(NULL)
   }
-  gbkData <- read.gbWithHandling(gbkFile, gbkChar)
+  gbkData <- read.gbWithHandling(gbkRaw)
   return(gbkData)
 }
 
@@ -107,20 +107,34 @@ PACVr.visualizeWithRCircos <- function(gbkData,
 }
 
 #' @title Execute the complete pipeline of \pkg{PACVr}
-#' @description This function executes the complete pipeline of \pkg{PACVr} via a single command.
+#' @description This function executes the complete pipeline of \pkg{PACVr} 
+#' via a single command.
 #'
-#' @param gbkFile a character vector that specifies the name of, and path to, the GenBank input file
-#' @param bamFile a character vector that specifies the name of, and path to, the BAM input file
-#' @param windowSize a numeric value that specifies window size in which the coverage is calculated
-#' @param logScale a boolean that specifies if the coverage depth is to be log-transformed before visualizing it
-#' @param threshold a numeric value that specifies the threshold for plotting coverage depth bars in red as opposed to the default black
-#' @param syntenyLineType a numeric value of 1 or 2 that specifies the line type for visualizing IR gene synteny; 1 = ribbon lines, 2 = solid lines, otherwise = no line
-#' @param relative a boolean that specifies whether the threshold is a relative value of the average coverage instead of an absolute value
-#' @param textSize a numeric value that specifies the relative font size of the text element in the visualization
-#' @param verbose the decision to generate additional files with detailed genomic region information
-#' @param regionsCheck a boolean that specifies if region analysis of genome should be performed; FALSE disables syntenyLineType and verbose
-#' @param output a character vector that specifies the name of, and path to, the output file
-#' @return A file in pdf format containing a circular visualization of the submitted plastid sample.
+#' @param gbkFile a character string that specifies the name of, and path to, 
+#' the GenBank input file; alternatively, a character string of GenBank data 
+#' @param bamFile a character string that specifies the name of, and path to, 
+#' the BAM input file
+#' @param windowSize a numeric value that specifies window size in which the 
+#' coverage is calculated
+#' @param logScale a boolean that specifies if the coverage depth is to be 
+#' log-transformed before visualizing it
+#' @param threshold a numeric value that specifies the threshold for plotting 
+#' coverage depth bars in red as opposed to the default black
+#' @param syntenyLineType a numeric value of 1 or 2 that specifies the line 
+#' type for visualizing IR gene synteny; 1 = ribbon lines, 2 = solid lines, 
+#' otherwise = no line
+#' @param relative a boolean that specifies whether the threshold is a relative 
+#' value of the average coverage instead of an absolute value
+#' @param textSize a numeric value that specifies the relative font size of the 
+#' text element in the visualization
+#' @param verbose a boolean, that when TRUE, generates additional files with
+#' detailed genomic region information
+#' @param regionsCheck a boolean that specifies if region analysis of genome 
+#' should be performed; FALSE disables syntenyLineType and verbose
+#' @param output a character string that specifies the name of, and path to, 
+#' the output file
+#' @return A file in pdf format containing a circular visualization of the 
+#' submitted plastid sample.
 #' @export
 #' @examples
 #'\dontrun{

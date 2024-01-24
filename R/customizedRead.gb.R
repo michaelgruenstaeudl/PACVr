@@ -3,9 +3,9 @@
 #email="m_gruenstaeudl@fhsu.edu"
 #version="2024.01.07.2200"
 
-read.gbWithHandling <- function(gbkFile, gbkChar, count=0) {
+read.gbWithHandling <- function(gbkRaw, count=0) {
   gbkData <- tryCatch({
-    read.gb::read.gb(gbkChar, DNA=TRUE, Type="full", Source="Char")
+    read.gb::read.gb(gbkRaw$char, DNA=TRUE, Type="full", Source="Char")
   },
     error = function(e) {
       if (conditionMessage(e) == "dim(X) must have a positive length") {
@@ -14,7 +14,7 @@ read.gbWithHandling <- function(gbkFile, gbkChar, count=0) {
                 "permanent fix w/",
                 "devtools::install_github(\"alephnull7/read.gb\")")
         )
-        return(read.gbOnFix(gbkFile, gbkChar, count))
+        return(read.gbOnFix(gbkRaw, count))
       } else {
         logger::log_error(
           logger::skip_formatter(
@@ -27,28 +27,34 @@ read.gbWithHandling <- function(gbkFile, gbkChar, count=0) {
   return(gbkData)
 }
 
-read.gbOnFix <- function(gbkFile, gbkChar, count) {
+read.gbOnFix <- function(gbkRaw, count) {
   count <- count+1
   if (count > 1) {
     logger::log_error("Unable to fix file for read.gb")
     return(NULL)
   }
   
-  gbkCharFixed <- getGbkCharFixed(gbkFile, gbkChar)
+  gbkRaw <- fixGbkChar(gbkRaw)
   logger::log_info("Retrying read.gb with fixed data")
-  gbkData <- read.gbWithHandling(gbkFile, gbkCharFixed, count)
+  gbkData <- read.gbWithHandling(gbkRaw, count)
   return(gbkData)
 }
 
 # adapted from read.gb::read.gb
-getGbkCharFixed <- function(gbkFile, gbkChar) {
-  gbkFileFixed <- gsub("\\.gb$", "-PACVr.gb",  gbkFile)
-  if (file.exists(gbkFileFixed)) {
-    logger::log_info('Reading fixed GenBank flatfile `{gbkFileFixed}`')
-    return(readChar(gbkFileFixed, 
-                    file.info(gbkFileFixed)$size, 
-                    nchars = 99999999)
-           )
+fixGbkChar <- function(gbkRaw) {
+  gbkFile <- gbkRaw$file
+  gbkChar <- gbkRaw$char
+  
+  # intended directory of fixed file if file was provided
+  if (!is.null(gbkFile)) {
+    gbkFileFixed <- gsub("\\.gb$", "-PACVr.gb",  gbkFile)
+  } else {
+    gbkFileFixed <- NULL
+  }
+
+  # used fixed file if already created
+  if (!is.null(gbkFileFixed) && file.exists(gbkFileFixed)) {
+    return(getGbkRaw(gbkFileFixed))
   }
 
   ## Separation of reports :
@@ -66,9 +72,14 @@ getGbkCharFixed <- function(gbkFile, gbkChar) {
     Temp <- Collapse.report(y)
     gbkCharFixed <- paste0(gbkCharFixed, Temp)
   }
-  writeLines(gbkCharFixed, gbkFileFixed)
-  logger::log_info('Fixed GenBank file saved at `{gbkFileFixed}`')
-  return(gbkCharFixed)
+  
+  if (!is.null(gbkFileFixed)) {
+    writeLines(gbkCharFixed, gbkFileFixed)
+    logger::log_info('Fixed GenBank file saved at `{gbkFileFixed}`')
+  }
+  
+  gbkRaw$char <- gbkCharFixed
+  return(gbkRaw)
 }
 
 # adapted from read.gb::Reorganize.report
@@ -169,12 +180,36 @@ getFeatureTags <- function() {
   return(Tag)
 }
 
-getGbkChar <- function(gbkFile) {
-  if (!grepl("\\.gb$", gbkFile)) {
-    logger::log_error("Non-GenBank file provided")
-    return(NULL)
+getGbkRaw <- function(gbkFile) {
+  if (grepl("\\.gb$", gbkFile) || file.exists(gbkFile)) {
+    logger::log_info('Reading GenBank flatfile `{gbkFile}`')
+    gbkChar <- tryCatch({
+      suppressWarnings(readChar(gbkFile, 
+                                file.info(gbkFile)$size, 
+                                nchars = 99999999)
+                       )
+    },
+    error = function(e) {
+      logger::log_error(paste0('Error when reading GenBank flatfile',
+                              '`{gbkFile}`: "{e}"')
+                        )
+      return(NULL)
+    })
+  } else if (grepl("\\.gb$", gbkFile)) {
+    logger::log_error("GenBank flatfile does not exist `{gbkFile}`")
+    gbkChar <- NULL
+  } else if (grepl("\\.\\w+$", gbkFile)) {
+    logger::log_error("Non-GenBank file provided `{gbkFile}`")
+    gbkChar <- NULL
+  } else {
+    logger::log_info(paste0("Reading GenBank string \"",
+                            substr(gbkFile, 1, 20),
+                            "...\"")
+                    )
+    gbkChar <- gbkFile
+    gbkFile <- NULL
   }
-  logger::log_info('Reading GenBank flatfile `{gbkFile}`')
-  gbkChar <- readChar(gbkFile, file.info(gbkFile)$size, nchars = 99999999)
-  return(gbkChar)
+  gbkRaw <- list(file = gbkFile,
+                 char = gbkChar)
+  return(gbkRaw)
 }
