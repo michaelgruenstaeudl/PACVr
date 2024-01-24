@@ -14,38 +14,55 @@ install_github("michaelgruenstaeudl/PACVr")
 Note: Detailed installation instructions can be found in the package vignette.
 
 ## USAGE
+### Plastid Genome
 ```
 # In R:
 library(PACVr)
 gbkFile <- system.file("extdata", "NC_045072/NC_045072.gb", package="PACVr")
-bamFile <- system.file("extdata", "NC_045072/NC_045072_PlastomeReadsOnly.sorted.bam", 
+bamFile <- system.file("extdata", "NC_045072/NC_045072_subsampled.bam", 
                        package="PACVr")
 
-outFile <- paste(tempdir(), "/NC_045072_AssemblyCoverage_viz.pdf", sep="")
-#outFile <- "../Desktop/test.pdf"  # on R-Studio for Windows
-#outFile <- "~/test.pdf"  # on R-Studio for Linux
+outFile <- paste(tempdir(), "/NC_045072_CoverageViz.pdf", sep="")
+#outFile <- "../NC_045072_CoverageViz.pdf"  # on R-Studio for Windows
+#outFile <- "~/NC_045072_CoverageViz.pdf"   # on R-Studio for Linux
 
 ## ONLY COVERAGE VALUES, NO REGION INDICATORS ##
-PACVr.complete(gbkFile, bamFile, windowSize=250, 
-               logScale=FALSE, threshold=0.5, syntenyLineType=NA, 
-               relative=TRUE, textSize=0.5, regionsCheck=FALSE,
-               verbose=FALSE, output=outFile)
+PACVr.complete(gbkFile, bamFile, windowSize=250, logScale=FALSE, 
+               threshold=0.5, relative=TRUE, textSize=0.5, 
+               output=outFile)
 
 ## COVERAGE VALUES PLUS REGION INDICATORS ##
-PACVr.complete(gbkFile, bamFile, windowSize=250, 
-               logScale=FALSE, threshold=0.5, syntenyLineType=NA, 
-               relative=TRUE, textSize=0.5, regionsCheck=TRUE,
-               verbose=FALSE, output=outFile)
+PACVr.complete(gbkFile, bamFile, windowSize=250, logScale=FALSE, 
+               threshold=0.5, relative=TRUE, textSize=0.5, 
+               regionsCheck=TRUE, output=outFile)
 
 ## COVERAGE VALUES PLUS REGION INDICATORS PLUS IR SYNTENY LINES ##
-PACVr.complete(gbkFile, bamFile, windowSize=250, 
-               logScale=FALSE, threshold=0.5, syntenyLineType=1, 
-               relative=TRUE, textSize=0.5, regionsCheck=TRUE,
-               verbose=FALSE, output=outFile)
+PACVr.complete(gbkFile, bamFile, windowSize=250, logScale=FALSE, 
+               threshold=0.5, relative=TRUE, textSize=0.5, 
+               regionsCheck=TRUE, syntenyLineType=1, output=outFile)
+```
+
+### Mitochondrial Genome
+```
+# In R:
+library(PACVr)
+gbkFile <- system.file("extdata", "MG936619/MG936619.gb", package="PACVr")
+bamFile <- system.file("extdata", "MG936619/MG936619_subsampled.bam", 
+                       package="PACVr")
+
+outFile <- paste(tempdir(), "/MG936619_CoverageViz.pdf", sep="")
+#outFile <- "../MG936619_CoverageViz.pdf"  # on R-Studio for Windows
+#outFile <- "~/MG936619_CoverageViz.pdf"   # on R-Studio for Linux
+
+## ONLY COVERAGE VALUES, NO REGION INDICATORS ##
+PACVr.complete(gbkFile, bamFile, windowSize=50, logScale=FALSE, 
+               threshold=0.5, relative=TRUE, textSize=0.5, 
+               output=outFile)
+
 ```
 
 ## OUTPUT
-![](NC_045072__all_reads.png)
+![](NC_045072_CoverageViz.png)
 
 ## FULLY AUTOMATED
 ```
@@ -61,6 +78,7 @@ samtools view -Sb -F 0x04 ${SMPLNME}_mapping.sam > ${SMPLNME}_mapping_OneMoreLoc
 samtools sort ${SMPLNME}_mapping_OneMoreLocations.bam > ${SMPLNME}_mapping_OneMoreLocations.sorted.bam
 rm $(ls *.?am | grep -v sorted)
 samtools index ${SMPLNME}_mapping_OneMoreLocations.sorted.bam
+# samtools view -s 0.5 -b ${SMPLNME}_mapping_OneMoreLocations.sorted.bam | samtools view -bS > ${SMPLNME}_subsampled.bam  # subsampling, if desired
 Rscript PACVr/inst/extdata/PACVr_Rscript.R -k ${SMPLNME}.gb -b ${SMPLNME}_mapping_OneMoreLocations.sorted.bam -t 0.5 -r TRUE -d FALSE -o ${SMPLNME}_CoverageDepth.pdf
 ```
 

@@ -142,7 +142,7 @@ PACVr.visualizeWithRCircos <- function(gbkData,
 #'                        "NC_045072/NC_045072.gb",
 #'                        package="PACVr")
 #' bamFile <- system.file("extdata",
-#'                        "NC_045072/NC_045072_PlastomeReadsOnly.sorted.bam",
+#'                        "NC_045072/NC_045072_subsampled.bam",
 #'                        package="PACVr")
 #' outFile <- paste(tempdir(), "/NC_045072__all_reads.pdf", sep="")
 #' PACVr.complete(gbkFile=gbkFile, bamFile=bamFile, windowSize=250, logScale=FALSE,

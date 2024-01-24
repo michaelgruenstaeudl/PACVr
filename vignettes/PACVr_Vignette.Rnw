@@ -62,11 +62,11 @@ library(PACVr)
 
 # Specify input files
 gbkFile <- system.file("extdata", "NC_045072/NC_045072.gb", package="PACVr")
-bamFile <- system.file("extdata", "NC_045072/NC_045072_PlastomeReadsOnly.sorted.bam", 
+bamFile <- system.file("extdata", "NC_045072/NC_045072_subsampled.bam", 
                    package="PACVr")
 
 # Specify output file
-outFile <- paste(tempdir(), "/NC_045072_AssemblyCoverage_viz.pdf", sep="")
+outFile <- paste(tempdir(), "/NC_045072_CoverageViz.pdf", sep="")
 
 # Run PACVr
 PACVr.complete(gbkFile, bamFile, windowSize=250, 
@@ -81,10 +81,10 @@ PACVr can also be executed from the Unix command-line shell via script \texttt{P
 \begin{BGVerbatim}[fontsize=\normalsize]
 Rscript ./inst/extdata/PACVr_Rscript.R \
  -k ./inst/extdata/NC_045072.gb \
- -b ./inst/extdata/NC_045072_PlastomeReadsOnly.sorted.bam \
+ -b ./inst/extdata/NC_045072_subsampled.bam \
  -t 0.5 \
  -r TRUE \
- -o ./inst/extdata/NC_045072__all_reads.pdf
+ -o ./inst/extdata/NC_045072_CoverageViz.pdf
 \end{BGVerbatim}
 
 
@@ -171,4 +171,9 @@ samtools index <mapping_result.sorted.bam>
 \centering
 \end{figure}
 
+\subsection{(Optional -- Subsampling reads to decrease the file size of the BAM files)}
+The following code helps to decrease the file size of BAM files by subsampling the input reads
+\begin{BGVerbatim}[fontsize=\normalsize]
+\end{BGVerbatim}
+samtools view -s 0.75 -b <input.bam> | samtools view -bS > <subsampled_input.bam>
 \end{document}
