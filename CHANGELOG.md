@@ -1,8 +1,12 @@
 CHANGELOG
 ---------
 
+#### Version 1.0.7 (2024.01.25)
+* list by Greg here
+
 #### Version 1.0.6 (2024.01.07)
-* Moved all functions that pertain to inverted repeats or quadripartite genome structure into a separate file and made their application optional
+* Moved functions reg. IRs, quadripartite structure into separate file
+* Made various plastid-specific functions optional
 
 #### Version 1.0.5 (2023.12.07)
 * Minor bugfixes

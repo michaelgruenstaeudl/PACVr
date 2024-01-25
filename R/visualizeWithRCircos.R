@@ -1,7 +1,7 @@
 #!/usr/bin/env RScript
 #contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2024.01.07.2200"
+#version="2024.01.25.1500"
 
 visualizeWithRCircos <- function(plotTitle,
                                  genes,
@@ -12,7 +12,7 @@ visualizeWithRCircos <- function(plotTitle,
                                  threshold,
                                  relative,
                                  linkData,
-                                 syntenyLineType = 3,
+                                 syntenyLineType = NA,
                                  textSize) {
 
   if (logScale == TRUE) {

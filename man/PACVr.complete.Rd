@@ -10,7 +10,7 @@ PACVr.complete(
   windowSize = 250,
   logScale = FALSE,
   threshold = 0.5,
-  syntenyLineType = 1,
+  syntenyLineType = NA,
   relative = TRUE,
   textSize = 0.5,
   regionsCheck = FALSE,
@@ -68,14 +68,15 @@ bamFile <- system.file("extdata", "NC_045072/NC_045072_subsampled.bam", package=
 outFile <- paste(tempdir(), "/NC_045072_CoverageViz.pdf", sep="")
 PACVr.complete(gbkFile=gbkFile, bamFile=bamFile, windowSize=250, logScale=FALSE,
                threshold=0.5, syntenyLineType=1, relative=TRUE, textSize=0.5,
-               regionsCheck=FALSE, verbose=FALSE, output=outFile
-               }
+               regionsCheck=TRUE, verbose=FALSE, output=outFile)
+	}
 
+\dontrun{
 gbkFile <- system.file("extdata", "MG936619/MG936619.gb", package="PACVr")
 bamFile <- system.file("extdata", "MG936619/MG936619_subsampled.bam", package="PACVr")
 outFile <- paste(tempdir(), "/MG936619_CoverageViz.pdf", sep="")
 PACVr.complete(gbkFile=gbkFile, bamFile=bamFile, windowSize=50, logScale=FALSE,
                threshold=0.5, syntenyLineType=NA, relative=TRUE, textSize=0.5,
-               regionsCheck=FALSE, verbose=FALSE, output=outFile
-               }
+               regionsCheck=FALSE, verbose=FALSE, output=outFile)
+	}
 }

@@ -1,7 +1,7 @@
 #!/usr/bin/env RScript
 #contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2024.01.07.2200"
+#version="2024.01.25.1500"
 
 PACVr.read.gb <- function(gbkFile) {
   gbkRaw <- getGbkRaw(gbkFile)
@@ -137,24 +137,29 @@ PACVr.visualizeWithRCircos <- function(gbkData,
 #' submitted plastid sample.
 #' @export
 #' @examples
-#'\dontrun{
-#' gbkFile <- system.file("extdata",
-#'                        "NC_045072/NC_045072.gb",
-#'                        package="PACVr")
-#' bamFile <- system.file("extdata",
-#'                        "NC_045072/NC_045072_subsampled.bam",
-#'                        package="PACVr")
+#' \dontrun{
+#' gbkFile <- system.file("extdata", "NC_045072/NC_045072.gb", package="PACVr")
+#' bamFile <- system.file("extdata", "NC_045072/NC_045072_subsampled.bam", package="PACVr")
 #' outFile <- paste(tempdir(), "/NC_045072__all_reads.pdf", sep="")
 #' PACVr.complete(gbkFile=gbkFile, bamFile=bamFile, windowSize=250, logScale=FALSE,
 #'                threshold=0.5, syntenyLineType=1, relative=TRUE, textSize=0.5,
-#'                regionsCheck=FALSE, verbose=FALSE, output=outFile
-#'                }
+#'                regionsCheck=FALSE, verbose=FALSE, output=outFile)
+#' }
+#' \dontrun{
+#' gbkFile <- system.file("extdata", "MG936619/MG936619.gb", package="PACVr")
+#' bamFile <- system.file("extdata", "MG936619/MG936619_subsampled.bam", package="PACVr")
+#' outFile <- paste(tempdir(), "/MG936619_CoverageViz.pdf", sep="")
+#' PACVr.complete(gbkFile=gbkFile, bamFile=bamFile, windowSize=50, logScale=FALSE,
+#'                threshold=0.5, syntenyLineType=NA, relative=TRUE, textSize=0.5,
+#'                regionsCheck=FALSE, verbose=FALSE, output=outFile)
+#' }
+	
 PACVr.complete <- function(gbkFile,
                            bamFile,
                            windowSize=250,
                            logScale=FALSE,
                            threshold=0.5,
-                           syntenyLineType=1,
+                           syntenyLineType=NA,
                            relative=TRUE,
                            textSize=0.5,
                            regionsCheck=FALSE,
