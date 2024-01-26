@@ -75,7 +75,7 @@ fixGbkChar <- function(gbkRaw) {
   
   if (!is.null(gbkFileFixed)) {
     writeLines(gbkCharFixed, gbkFileFixed)
-    logger::log_info('Fixed GenBank file saved at `{gbkFileFixed}`')
+    logger::log_info('Fixed GenBank file saved as `{gbkFileFixed}`')
   }
   
   gbkRaw$char <- gbkCharFixed
