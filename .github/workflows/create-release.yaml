@@ -1,0 +1,155 @@
+# Workflow derived from https://github.com/r-lib/actions/tree/v2/examples
+# Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
+on:
+  push:
+    paths: ["CHANGELOG.md"]
+
+name: create-release
+
+jobs:
+  release-documentation:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      CHANGELOG: "CHANGELOG.md"
+      DESCRIPTION: "DESCRIPTION"
+    outputs:
+      version: ${{ steps.extract-version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Extract release version from first level 4 heading
+        id: extract-version
+        run: |
+          version=$(grep -oP '####[^0-9]*\K\d+\.\d+\.\d+' -m 1 $CHANGELOG)
+          echo "version=$version" >> $GITHUB_ENV
+          echo "version=$version" >> $GITHUB_OUTPUT
+          echo "Version: $version"
+
+      - name: Get current UTC timestamp
+        id: get-timestamp
+        run: |
+          timestamp=$(date -u +"%Y.%m.%d.%H%M")
+          echo "timestamp=$timestamp" >> $GITHUB_ENV
+          echo "Timestamp: $timestamp"
+
+      - name: Standardize first level 4 heading
+        id: update-change-header
+        run: |
+          timestamp=$(echo "${{ env.timestamp }}" | awk -F'.' '{print $1"."$2"."$3}')
+          sed -i "0,/^####.*$/s/^####.*$/#### Version ${{ env.version }} \($timestamp\)/" $CHANGELOG
+          echo "CHANGELOG Timestamp: $timestamp"
+
+      - name: Update DESCRIPTION `Version` and `Date`
+        id: update-description
+        run: |
+          timestamp=$(echo "${{ env.timestamp }}" | awk -F'.' '{print $1"-"$2"-"$3}')
+          sed -i "s|^Date:.*$|Date: $timestamp|" $DESCRIPTION
+          sed -i "s|^Version:.*$|Version: ${{ env.version }}|" $DESCRIPTION
+          echo "DESCRIPTION Timestamp: $timestamp"
+
+      - name: Update `version` comments on R files
+        id: update-r-version-comment
+        run: |
+          cd .github/scripts
+          chmod +x update_version_tag.py
+          python update_version_tag.py ${{ env.timestamp }}
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.name "$GITHUB_ACTOR"
+          git config --local user.email "$GITHUB_ACTOR@users.noreply.github.com"
+          git add ./R/*.R
+          git add DESCRIPTION
+          git add CHANGELOG.md
+          git commit -m "Updated documentation for release" || echo "No changes to commit"
+          git pull --ff-only
+          git push origin
+
+  release-build:
+    runs-on: ubuntu-latest
+    needs: release-documentation
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      CHANGELOG: "CHANGELOG.md"
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: r-lib/actions/setup-tinytex@v2
+      - run: tlmgr --version
+
+      - name: Install additional LaTeX packages
+        run: |
+          tlmgr install preprint
+          tlmgr install listings
+          tlmgr install tcolorbox
+          tlmgr install pgf
+          tlmgr install environ
+          tlmgr install tikzfill
+          tlmgr install pdfcol
+          tlmgr install grfext
+          tlmgr list --only-installed
+
+      - uses: r-lib/actions/setup-pandoc@v2
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: "release"
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::rcmdcheck
+          needs: check
+
+      - name: Build R package
+        run: |
+          R CMD build --compact-vignettes=gs+qpdf .
+          tar_file="$(find . -maxdepth 1 -type f -name '*.tar.gz' -print -quit | sed 's|^\./||')"
+          artifacts="artifacts"
+          mkdir $artifacts
+          mv $tar_file "$artifacts/"
+          echo "tar_file=$artifacts/$tar_file" >> $GITHUB_ENV
+          echo "asset_name=$tar_file" >> $GITHUB_ENV
+
+      - name: Make release properties
+        id: release-fields
+        run: |
+          version="${{ needs.release-documentation.outputs.version }}"
+          echo "version=$version" >> $GITHUB_ENV
+          echo "Version: $version"
+          tag="v${version}"
+          echo "tag=$tag" >> $GITHUB_ENV
+          echo "Tag: $tag"
+          name="Version ${version}"
+          echo "name=$name" >> $GITHUB_ENV
+          echo "Name: $name"
+          body="$(awk '/^\*.*$/{print; next} /^####/{count++; if(count==2) exit}' $CHANGELOG)"
+          echo "body<<EOF" >> "$GITHUB_ENV"
+          echo "$body" >> "$GITHUB_ENV"
+          echo "EOF" >> "$GITHUB_ENV"
+          echo "Body: $body"
+
+      - name: Create Release
+        id: create-release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.tag }}
+          release_name: ${{ env.name }}
+          draft: false
+          prerelease: false
+          body: |
+            ${{ env.body }}
+
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create-release.outputs.upload_url }}
+          asset_path: ${{ env.tar_file }}
+          asset_name: ${{ env.asset_name }}
+          asset_content_type: application/gzip
