@@ -1,7 +1,7 @@
 CHANGELOG
 ---------
 
-#### Version 1.0.7 (2024.01.25)
+#### Version 1.0.7 (2024.02.01)
 * More robust parsing of feature sequence locations using INSDC standards
 * Exception handling for attempted reading of GenBank data
 * "Repair" GenBank data with unqualified features to handle `read.gb` bug 
