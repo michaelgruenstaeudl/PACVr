@@ -5,8 +5,7 @@ CHANGELOG
 * More robust parsing of feature sequence locations using INSDC standards
 * Exception handling for attempted reading of GenBank data
 * "Repair" GenBank data with unqualified features to handle `read.gb` bug 
-* Preemptively checks for presence of data property necessary for specified analysis, 
-    with `logger` info in case of issues
+* Preemptively checks for presence of data property necessary for specified analysis, with `logger` info in case of issues
 
 #### Version 1.0.6 (2024.01.07)
 * Moved functions reg. IRs, quadripartite structure into separate file
