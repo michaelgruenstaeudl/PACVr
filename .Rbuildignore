@@ -2,3 +2,6 @@
 ^\.Rproj\.user$
 ^tests/
 ^\.github/
+^README.md
+^NC_045072_CoverageViz.png
+^CHANGELOG.md
