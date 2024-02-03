@@ -184,6 +184,11 @@ isRealRegions <- function(regions) {
 }
 
 getIsRegionsCheck <- function(regionsCheck) {
-  regionsCheckTypes <- c(0, 1, 2)
+  regionsCheckTypes <- getRegionsCheckTypes()
   return(regionsCheck %in% regionsCheckTypes)
+}
+
+getRegionsCheckTypes <- function() {
+  regionsCheckTypes <- c(0, 1, 2)
+  return(regionsCheckTypes)
 }

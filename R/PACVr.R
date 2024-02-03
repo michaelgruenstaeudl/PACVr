@@ -130,7 +130,8 @@ PACVr.visualizeWithRCircos <- function(gbkData,
 #' @param textSize a numeric value that specifies the relative font size of the 
 #' text element in the visualization
 #' @param verbose a boolean, that when TRUE, generates additional files with
-#' detailed genomic region information
+#' detailed genomic region information;
+#' requires a `regionsCheck` value that will perform region analysis
 #' @param output a character string that specifies the name of, and path to, 
 #' the output file
 #' @return A file in pdf format containing a circular visualization of the 
@@ -210,6 +211,9 @@ PACVr.complete <- function(gbkFile,
                            genes,
                            regions,
                            output)
+  } else if (verbose) {
+      logger::log_warn(paste0('Verbose output requires `regionsCheck` in ',
+                              '`', deparse(getRegionsCheckTypes()), '`'))
   }
   
   ###################################
