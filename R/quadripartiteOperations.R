@@ -182,3 +182,8 @@ plotRegionNames <- function(regions) {
 isRealRegions <- function(regions) {
   return(nrow(regions) > 1)
 }
+
+getIsRegionsCheck <- function(regionsCheck) {
+  regionsCheckTypes <- c(0, 1, 2)
+  return(regionsCheck %in% regionsCheckTypes)
+}
