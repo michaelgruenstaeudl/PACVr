@@ -53,6 +53,7 @@ PACVr.verboseInformation <- function(gbkData,
                                      bamFile,
                                      genes,
                                      regions,
+                                     IRCheck,
                                      output) {
   sampleName <- read.gbSampleName(gbkData)
   # Step 1. Check ...
@@ -74,7 +75,9 @@ PACVr.verboseInformation <- function(gbkData,
   }
   # Step 3. Write output
   writeTables(regions, bamFile, genes, tmpDir, sampleName)
-  checkIREquality(gbkData, regions, tmpDir, sampleName)
+  if (IRCheck) {
+    checkIREquality(gbkData, regions, tmpDir, sampleName)
+  }
 }
 
 PACVr.visualizeWithRCircos <- function(gbkData,
@@ -207,10 +210,11 @@ PACVr.complete <- function(gbkFile,
   if (isRegionsCheck && verbose) {
       logger::log_info('Generating statistical information on the sequencing coverage')
       PACVr.verboseInformation(gbkData,
-                           bamFile,
-                           genes,
-                           regions,
-                           output)
+                               bamFile,
+                               genes,
+                               regions,
+                               IRCheck,
+                               output)
   } else if (verbose) {
       logger::log_warn(paste0('Verbose output requires `regionsCheck` in ',
                               '`', deparse(getRegionsCheckTypes()), '`'))
