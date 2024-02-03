@@ -134,7 +134,8 @@ PACVr.visualizeWithRCircos <- function(gbkData,
 #' @param output a character string that specifies the name of, and path to, 
 #' the output file
 #' @return A file in pdf format containing a circular visualization of the 
-#' submitted plastid sample.
+#' submitted plastid sample. 
+#' As a function, returns 0 in case of visualization success.
 #' @export
 #' @examples
 #' \dontrun{
