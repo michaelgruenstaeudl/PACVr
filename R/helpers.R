@@ -370,7 +370,7 @@ validateColors <- function(colorsToValidate) {
 }
 
 checkFeatureQualifiers <- function(sampleDF, analysisSpecs) {
-  subsetData <- getSubsetData(sampleDF, subsetCols, analysisSpecs)
+  subsetData <- getSubsetData(sampleDF, analysisSpecs)
   if (length(subsetData$missingCols) > 0) {
     logger::log_warn(paste0("Unable to analyze sample as specified; ",
                             "missing feature qualifiers: ",
