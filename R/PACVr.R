@@ -108,7 +108,7 @@ PACVr.quadripRegions <- function(gbkData,
     quadripRegions <- PACVr.parseQuadripRegions(gbkData,
                                                 gbkDataDF)
   } else {
-    quadripRegions <- PACVr.parseQuadripRegions(gbkDataDF)
+    quadripRegions <- PACVr.parseSource(gbkDataDF)
   }
   return(quadripRegions)
 }
