@@ -53,6 +53,7 @@ PACVr.verboseInformation <- function(gbkData,
                                      bamFile,
                                      genes,
                                      regions,
+                                     IRCheck,
                                      output) {
   sampleName <- read.gbSampleName(gbkData)
   # Step 1. Check ...
@@ -74,7 +75,9 @@ PACVr.verboseInformation <- function(gbkData,
   }
   # Step 3. Write output
   writeTables(regions, bamFile, genes, tmpDir, sampleName)
-  checkIREquality(gbkData, regions, tmpDir, sampleName)
+  if (IRCheck) {
+    checkIREquality(gbkData, regions, tmpDir, sampleName)
+  }
 }
 
 PACVr.visualizeWithRCircos <- function(gbkData,
@@ -120,21 +123,23 @@ PACVr.visualizeWithRCircos <- function(gbkData,
 #' log-transformed before visualizing it
 #' @param threshold a numeric value that specifies the threshold for plotting 
 #' coverage depth bars in red as opposed to the default black
-#' @param syntenyLineType a numeric value of 1 or 2 that specifies the line 
-#' type for visualizing IR gene synteny; 1 = ribbon lines, 2 = solid lines, 
-#' otherwise = no line
+#' @param regionsCheck a numeric value that specifies if region analysis of 
+#' genome should be performed, and if performed, the type of line for 
+#' visualizing gene synteny;
+#' 0 = region analysis and no line, 1 = region analysis and ribbon lines,
+#' 2 = region analysis and solid lines, otherwise = no analysis and no line
 #' @param relative a boolean that specifies whether the threshold is a relative 
 #' value of the average coverage instead of an absolute value
 #' @param textSize a numeric value that specifies the relative font size of the 
 #' text element in the visualization
 #' @param verbose a boolean, that when TRUE, generates additional files with
-#' detailed genomic region information
-#' @param regionsCheck a boolean that specifies if region analysis of genome 
-#' should be performed; FALSE disables syntenyLineType and verbose
+#' detailed genomic region information;
+#' requires a `regionsCheck` value that will perform region analysis
 #' @param output a character string that specifies the name of, and path to, 
 #' the output file
 #' @return A file in pdf format containing a circular visualization of the 
-#' submitted plastid sample.
+#' submitted plastid sample. 
+#' As a function, returns 0 in case of visualization success.
 #' @export
 #' @examples
 #' \dontrun{
@@ -142,16 +147,16 @@ PACVr.visualizeWithRCircos <- function(gbkData,
 #' bamFile <- system.file("extdata", "NC_045072/NC_045072_subsampled.bam", package="PACVr")
 #' outFile <- paste(tempdir(), "/NC_045072__all_reads.pdf", sep="")
 #' PACVr.complete(gbkFile=gbkFile, bamFile=bamFile, windowSize=250, logScale=FALSE,
-#'                threshold=0.5, syntenyLineType=1, relative=TRUE, textSize=0.5,
-#'                regionsCheck=FALSE, verbose=FALSE, output=outFile)
+#'                threshold=0.5, regionsCheck=1, relative=TRUE, textSize=0.5,
+#'                verbose=FALSE, output=outFile)
 #' }
 #' \dontrun{
 #' gbkFile <- system.file("extdata", "MG936619/MG936619.gb", package="PACVr")
 #' bamFile <- system.file("extdata", "MG936619/MG936619_subsampled.bam", package="PACVr")
 #' outFile <- paste(tempdir(), "/MG936619_CoverageViz.pdf", sep="")
 #' PACVr.complete(gbkFile=gbkFile, bamFile=bamFile, windowSize=50, logScale=FALSE,
-#'                threshold=0.5, syntenyLineType=NA, relative=TRUE, textSize=0.5,
-#'                regionsCheck=FALSE, verbose=FALSE, output=outFile)
+#'                threshold=0.5, regionsCheck=NA, relative=TRUE, textSize=0.5,
+#'                verbose=FALSE, output=outFile)
 #' }
 	
 PACVr.complete <- function(gbkFile,
@@ -159,22 +164,22 @@ PACVr.complete <- function(gbkFile,
                            windowSize=250,
                            logScale=FALSE,
                            threshold=0.5,
-                           syntenyLineType=NA,
+                           regionsCheck=NA,
                            relative=TRUE,
                            textSize=0.5,
-                           regionsCheck=FALSE,
                            verbose=FALSE,
                            output=NA) {
   ######################################################################
   gbkData <- PACVr.read.gb(gbkFile)
-  gbkDataDF <- read.gb2DF(gbkData, regionsCheck)
+  isRegionsCheck <- getIsRegionsCheck(regionsCheck)
+  gbkDataDF <- read.gb2DF(gbkData, isRegionsCheck)
   if (is.null(gbkDataDF)) {
     logger::log_error(paste("No usable data to perform specified analysis"))
     return(NULL)
   }
   
   ###################################
-  if (regionsCheck) {
+  if (isRegionsCheck) {
     logger::log_info('Parsing the different genome regions')
     regions <- PACVr.parseRegions(gbkData,
                                   gbkDataDF)
@@ -193,22 +198,26 @@ PACVr.complete <- function(gbkFile,
 
   ###################################
   linkData <- NULL
-  IRCheck <- regionsCheck && isSyntenyLineType(syntenyLineType)
+  IRCheck <- isSyntenyLineType(regionsCheck)
   if (IRCheck) {
     logger::log_info('Inferring the IR regions and the genes within the IRs')
     linkData <- PACVr.generateIRGeneData(genes,
                                          regions,
-                                         syntenyLineType)
+                                         regionsCheck)
   }
 
   ###################################
-  if (regionsCheck && verbose) {
+  if (isRegionsCheck && verbose) {
       logger::log_info('Generating statistical information on the sequencing coverage')
       PACVr.verboseInformation(gbkData,
-                           bamFile,
-                           genes,
-                           regions,
-                           output)
+                               bamFile,
+                               genes,
+                               regions,
+                               IRCheck,
+                               output)
+  } else if (verbose) {
+      logger::log_warn(paste0('Verbose output requires `regionsCheck` in ',
+                              '`', deparse(getRegionsCheckTypes()), '`'))
   }
   
   ###################################
@@ -225,7 +234,7 @@ PACVr.complete <- function(gbkFile,
       logScale,
       relative,
       linkData,
-      syntenyLineType,
+      regionsCheck,
       textSize
     )
     dev.off()
@@ -242,7 +251,7 @@ PACVr.complete <- function(gbkFile,
       logScale,
       relative,
       linkData,
-      syntenyLineType,
+      regionsCheck,
       textSize
     )
     dev.off()
@@ -251,4 +260,5 @@ PACVr.complete <- function(gbkFile,
   ######################################################################
   logger::log_success('Done.')
   ######################################################################
+  return(0)
 }
