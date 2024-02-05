@@ -109,6 +109,33 @@ PACVr.visualizeWithRCircos <- function(gbkData,
   )
 }
 
+PACVr.quadripRegions <- function(gbkData,
+                                 gbkDataDF,
+                                 isIRCheck) {
+  if (isIRCheck) {
+    logger::log_info('Parsing the different genome regions')
+    quadripRegions <- PACVr.parseQuadripRegions(gbkData,
+                                                gbkDataDF)
+  } else {
+    quadripRegions <- PACVr.parseQuadripRegions(gbkDataDF)
+  }
+  return(quadripRegions)
+}
+
+PACVr.linkData <- function(genes,
+                           quadripRegions,
+                           IRCheck) {
+  linkData <- NULL
+  isSyntenyLine <- getIsSyntenyLine(IRCheck)
+  if (isSyntenyLine) {
+    logger::log_info('Inferring the IR regions and the genes within the IRs')
+    linkData <- PACVr.generateIRGeneData(genes,
+                                         quadripRegions,
+                                         IRCheck)
+  }
+  return(linkData)
+}
+
 #' @title Execute the complete pipeline of \pkg{PACVr}
 #' @description This function executes the complete pipeline of \pkg{PACVr} 
 #' via a single command.
@@ -181,13 +208,9 @@ PACVr.complete <- function(gbkFile,
   }
   
   ###################################
-  if (isIRCheck) {
-    logger::log_info('Parsing the different genome regions')
-    quadripRegions <- PACVr.parseQuadripRegions(gbkData,
-										 gbkDataDF)
-  } else {
-    quadripRegions <- PACVr.parseQuadripRegions(gbkDataDF)
-  }
+  quadripRegions <- PACVr.quadripRegions(gbkData,
+                                         gbkDataDF,
+                                         isIRCheck)
 
   ###################################
   logger::log_info('Parsing the different genes')
@@ -199,14 +222,9 @@ PACVr.complete <- function(gbkFile,
                                  windowSize)
 
   ###################################
-  linkData <- NULL
-  isSyntenyLine <- getIsSyntenyLine(IRCheck)
-  if (isSyntenyLine) {
-    logger::log_info('Inferring the IR regions and the genes within the IRs')
-    linkData <- PACVr.generateIRGeneData(genes,
-                                         quadripRegions,
-                                         IRCheck)
-  }
+  linkData <- PACVr.linkData(genes,
+                             quadripRegions,
+                             IRCheck)
 
   ###################################
   if (isIRCheck && verbose) {
