@@ -370,7 +370,6 @@ validateColors <- function(colorsToValidate) {
 }
 
 checkFeatureQualifiers <- function(sampleDF, analysisSpecs) {
-  subsetCols <- getSubsetCols(analysisSpecs)
   subsetData <- getSubsetData(sampleDF, subsetCols, analysisSpecs)
   if (length(subsetData$missingCols) > 0) {
     logger::log_warn(paste0("Unable to analyze sample as specified; ",
@@ -394,6 +393,7 @@ getSubsetCols <- function(analysisSpecs) {
 }
 
 getSubsetData <- function(sampleDF, subsetCols, analysisSpecs) {
+  subsetCols <- getSubsetCols(analysisSpecs)
   missingCols <- subsetCols[!(subsetCols %in% colnames(sampleDF))]
   if (analysisSpecs$isIRCheck && ("standard_name" %in% missingCols)) {
     logger::log_info("Using `note` for IR name qualifier")
