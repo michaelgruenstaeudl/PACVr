@@ -126,14 +126,13 @@ PACVr.quadripRegions <- function(gbkData,
 
 PACVr.linkData <- function(genes,
                            quadripRegions,
-                           IRCheck) {
+                           syntenyLineType) {
   linkData <- NULL
-  isSyntenyLine <- getIsSyntenyLine(IRCheck)
-  if (isSyntenyLine) {
+  if (!is.null(syntenyLineType)) {
     logger::log_info('Inferring the IR regions and the genes within the IRs')
     linkData <- PACVr.generateIRGeneData(genes,
                                          quadripRegions,
-                                         IRCheck)
+                                         syntenyLineType)
   }
   return(linkData)
 }
@@ -202,8 +201,9 @@ PACVr.complete <- function(gbkFile,
                            output=NA) {
   ######################################################################
   gbkData <- PACVr.read.gb(gbkFile)
-  isIRCheck <- getIsIRCheck(IRCheck)
-  gbkDataDF <- read.gb2DF(gbkData, isIRCheck)
+  analysisSpecs <- getAnalysisSpecs(IRCheck)
+  gbkDataDF <- read.gb2DF(gbkData,
+                          analysisSpecs$isIRCheck)
   if (is.null(gbkDataDF)) {
     logger::log_error(paste("No usable data to perform specified analysis"))
     return(NULL)
@@ -212,7 +212,7 @@ PACVr.complete <- function(gbkFile,
   ###################################
   quadripRegions <- PACVr.quadripRegions(gbkData,
                                          gbkDataDF,
-                                         isIRCheck)
+                                         analysisSpecs$isIRCheck)
 
   ###################################
   genes <- PACVr.parseGenes(gbkDataDF)
@@ -224,17 +224,17 @@ PACVr.complete <- function(gbkFile,
   ###################################
   linkData <- PACVr.linkData(genes,
                              quadripRegions,
-                             IRCheck)
+                             analysisSpecs$syntenyLineType)
 
   ###################################
   if (isIRCheck && verbose) {
-      logger::log_info('Generating statistical information on the sequencing coverage')
-      PACVr.verboseInformation(gbkData,
-                               bamFile,
-                               genes,
-                               quadripRegions,
-                               IRCheck,
-                               output)
+    logger::log_info('Generating statistical information on the sequencing coverage')
+    PACVr.verboseInformation(gbkData,
+                             bamFile,
+                             genes,
+                             quadripRegions,
+                             !is.null(analysisSpecs$syntenyLineType),
+                             output)
   } else if (verbose) {
       logger::log_warn(paste0('Verbose output requires `IRCheck` in ',
                               '`', deparse(getIRCheckTypes()), '`'))

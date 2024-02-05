@@ -395,3 +395,11 @@ isIgnoredFeature <- function(featureName) {
   ignoredFeatures <- c("D-loop")
   return(featureName %in% ignoredFeatures)
 }
+
+getAnalysisSpecs <- function(IRCheck) {
+  analysisSpecs <- c(
+    syntenyLineType = getSyntenyLineType(IRCheck),
+    isIRCheck = getIsIRCheck(IRCheck)
+  )
+  return(analysisSpecs)
+}
