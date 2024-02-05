@@ -56,7 +56,7 @@ the output file}
 }
 \value{
 A file in pdf format containing a circular visualization of the 
-submitted plastid sample. 
+input plastid genome and its sequence reads. 
 As a function, returns 0 in case of visualization success.
 }
 \description{
