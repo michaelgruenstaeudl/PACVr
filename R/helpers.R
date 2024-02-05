@@ -370,13 +370,10 @@ validateColors <- function(colorsToValidate) {
 }
 
 checkFeatureQualifiers <- function(sampleDF, analysisSpecs) {
-  subsetCols <- c("gene", "note", "type")
-  if (analysisSpecs$isIRCheck) {
-    subsetCols <- c(subsetCols, "standard_name")
-  }
-  missingCols <- subsetCols[!(subsetCols %in% colnames(sampleDF))]
-  if (length(missingCols) > 0) {
-    logger::log_warn(paste0("Unable to analyze sample as specified; ", 
+  subsetCols <- getSubsetCols(analysisSpecs)
+  subsetData <- getSubsetData(sampleDF, subsetCols, analysisSpecs)
+  if (length(subsetData$missingCols) > 0) {
+    logger::log_warn(paste0("Unable to analyze sample as specified; ",
                             "missing feature qualifiers: ",
                             "'",
                             paste(missingCols, collapse = "', '"),
@@ -384,8 +381,30 @@ checkFeatureQualifiers <- function(sampleDF, analysisSpecs) {
     return(NULL)
   }
   # add future generated columns that are needed
-  subsetCols <- c(subsetCols, "start", "end", "seqnames")
+  subsetCols <- c(subsetData$subsetCols, "start", "end", "seqnames")
   return(subsetCols)
+}
+
+getSubsetCols <- function(analysisSpecs) {
+  subsetCols <- c("gene", "note", "type")
+  if (analysisSpecs$isIRCheck) {
+    subsetCols <- c(subsetCols, "standard_name")
+  }
+  return(subsetCols)
+}
+
+getSubsetData <- function(sampleDF, subsetCols, analysisSpecs) {
+  missingCols <- subsetCols[!(subsetCols %in% colnames(sampleDF))]
+  if (analysisSpecs$isIRCheck && ("standard_name" %in% missingCols)) {
+    logger::log_info("Using `note` for IR name qualifier")
+    subsetCols <- subsetCols[subsetCols != "standard_name"]
+    missingCols <- missingCols[missingCols != "standard_name"]
+  }
+  subsetData <- list(
+    subsetCols = subsetCols,
+    missingCols = missingCols
+  )
+  return(subsetData)
 }
 
 isIgnoredFeature <- function(featureName) {
