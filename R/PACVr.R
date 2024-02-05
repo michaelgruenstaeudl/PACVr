@@ -55,30 +55,19 @@ PACVr.verboseInformation <- function(gbkData,
                                      bamFile,
                                      genes,
                                      quadripRegions,
-                                     IRCheck,
+                                     analysisSpecs,
                                      output) {
-  sampleName <- read.gbSampleName(gbkData)
-  # Step 1. Check ...
-  if (!is.na(output)) {
-    outDir <- dirname(output)
-    tmpDir <- file.path(outDir, 
-            paste(sampleName["sample_name"],
-            ".tmp",
-            sep=""))
+  if (analysisSpecs$isIRCheck) {
+    logger::log_info('Generating statistical information on the sequencing coverage')
+    verboseInformation(gbkData,
+                       bamFile,
+                       genes,
+                       quadripRegions,
+                       analysisSpecs,
+                       output)
   } else {
-    tmpDir <-
-      file.path(".", paste(sampleName["sample_name"],
-                   ".tmp",
-                   sep=""))
-  }
-  # Step 2. Check ...
-  if (dir.exists(tmpDir) == FALSE) {
-    dir.create(tmpDir)
-  }
-  # Step 3. Write output
-  writeTables(quadripRegions, bamFile, genes, tmpDir, sampleName)
-  if (IRCheck) {
-    checkIREquality(gbkData, quadripRegions, tmpDir, sampleName)
+    logger::log_warn(paste0('Verbose output requires `IRCheck` in ',
+                            '`', deparse(getIRCheckTypes()), '`'))
   }
 }
 
@@ -227,17 +216,13 @@ PACVr.complete <- function(gbkFile,
                              analysisSpecs$syntenyLineType)
 
   ###################################
-  if (isIRCheck && verbose) {
-    logger::log_info('Generating statistical information on the sequencing coverage')
+  if (verbose) {
     PACVr.verboseInformation(gbkData,
                              bamFile,
                              genes,
                              quadripRegions,
-                             !is.null(analysisSpecs$syntenyLineType),
+                             analysisSpecs,
                              output)
-  } else if (verbose) {
-      logger::log_warn(paste0('Verbose output requires `IRCheck` in ',
-                              '`', deparse(getIRCheckTypes()), '`'))
   }
   
   ###################################

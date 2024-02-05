@@ -403,3 +403,34 @@ getAnalysisSpecs <- function(IRCheck) {
   )
   return(analysisSpecs)
 }
+
+verboseInformation <- function(gbkData,
+                               bamFile,
+                               genes,
+                               quadripRegions,
+                               analysisSpecs,
+                               output) {
+  sampleName <- read.gbSampleName(gbkData)
+  # Step 1. Check ...
+  if (!is.na(output)) {
+    outDir <- dirname(output)
+    tmpDir <- file.path(outDir,
+                        paste(sampleName["sample_name"],
+                              ".tmp",
+                              sep=""))
+  } else {
+    tmpDir <-
+      file.path(".", paste(sampleName["sample_name"],
+                           ".tmp",
+                           sep=""))
+  }
+  # Step 2. Check ...
+  if (dir.exists(tmpDir) == FALSE) {
+    dir.create(tmpDir)
+  }
+  # Step 3. Write output
+  writeTables(quadripRegions, bamFile, genes, tmpDir, sampleName)
+  if (!is.null(analysisSpecs$syntenyLineType)) {
+    checkIREquality(gbkData, quadripRegions, tmpDir, sampleName)
+  }
+}
