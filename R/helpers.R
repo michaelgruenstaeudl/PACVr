@@ -209,8 +209,8 @@ read.gbSampleName <- function(gbkData) {
   sampleNames <- c()
   for (sample in gbkData) {
     sampleNames <- c(sampleNames, 
-                   c(sample_name = sample$ACCESSION, 
-                     genome_name = sample$VERSION))
+                   c(sample_name = sample$VERSION,
+                     genome_name = sample$ACCESSION))
   }
   return(sampleNames)
 }
