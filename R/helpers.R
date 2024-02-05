@@ -430,7 +430,7 @@ verboseInformation <- function(gbkData,
   }
   # Step 3. Write output
   writeTables(quadripRegions, bamFile, genes, tmpDir, sampleName)
-  if (!is.null(analysisSpecs$syntenyLineType)) {
+  if (!is.null(analysisSpecs["syntenyLineType"])) {
     checkIREquality(gbkData, quadripRegions, tmpDir, sampleName)
   }
 }
