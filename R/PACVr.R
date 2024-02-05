@@ -28,12 +28,14 @@ PACVr.parseSource <- function(gbkDataDF) {
 
 PACVr.parseGenes <- function (gbkDataDF) {
   # This function parses the genes of a GenBank file
+  logger::log_info('Parsing the different genes')
   genes <- ExtractAllGenes(gbkDataDF)
   return(genes)
 }
 
 PACVr.calcCoverage <-
   function (bamFile, windowSize=250) {
+    logger::log_info('Calculating the sequencing coverage')
     coverage <- CovCalc(bamFile, windowSize)
     return(coverage)
   }
@@ -213,11 +215,9 @@ PACVr.complete <- function(gbkFile,
                                          isIRCheck)
 
   ###################################
-  logger::log_info('Parsing the different genes')
   genes <- PACVr.parseGenes(gbkDataDF)
 
   ###################################
-  logger::log_info('Calculating the sequencing coverage')
   coverage <- PACVr.calcCoverage(bamFile,
                                  windowSize)
 
