@@ -392,7 +392,7 @@ getSubsetCols <- function(analysisSpecs) {
   return(subsetCols)
 }
 
-getSubsetData <- function(sampleDF, subsetCols, analysisSpecs) {
+getSubsetData <- function(sampleDF, analysisSpecs) {
   subsetCols <- getSubsetCols(analysisSpecs)
   missingCols <- subsetCols[!(subsetCols %in% colnames(sampleDF))]
   if (analysisSpecs$isIRCheck && ("standard_name" %in% missingCols)) {
