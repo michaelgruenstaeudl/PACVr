@@ -1,7 +1,7 @@
 #!/usr/bin/env RScript
 #contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2024.02.02.2100"
+#version="2024.02.05.2100"
 
 library("optparse")
 
@@ -75,7 +75,7 @@ CmdLineArgs <- function() {
                               dest    = "verbose",
                               help    = paste("a boolean, that when TRUE, generates additional files with",
                                               "detailed genomic region information;",
-                                              "requires a `regionsCheck` value that will perform region analysis"),
+                                              "requires a `IRCheck` value that will perform region analysis"),
                               metavar = "logical"),
                   make_option(opt_str = c("-o","--output"), 
                               type    = "character", 
