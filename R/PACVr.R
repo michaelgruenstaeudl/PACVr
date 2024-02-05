@@ -200,8 +200,8 @@ PACVr.complete <- function(gbkFile,
 
   ###################################
   linkData <- NULL
-  IRCheck <- isSyntenyLineType(IRCheck)
-  if (IRCheck) {
+  isSyntenyLine <- getIsSyntenyLine(IRCheck)
+  if (isSyntenyLine) {
     logger::log_info('Inferring the IR regions and the genes within the IRs')
     linkData <- PACVr.generateIRGeneData(genes,
                                          quadripRegions,
