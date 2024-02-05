@@ -192,7 +192,7 @@ PACVr.complete <- function(gbkFile,
   gbkData <- PACVr.read.gb(gbkFile)
   analysisSpecs <- getAnalysisSpecs(IRCheck)
   gbkDataDF <- read.gb2DF(gbkData,
-                          analysisSpecs$isIRCheck)
+                          analysisSpecs)
   if (is.null(gbkDataDF)) {
     logger::log_error(paste("No usable data to perform specified analysis"))
     return(NULL)
