@@ -34,12 +34,12 @@ PACVr.complete(gbkFile, bamFile, windowSize=250, logScale=FALSE,
 ## COVERAGE VALUES PLUS REGION INDICATORS ##
 PACVr.complete(gbkFile, bamFile, windowSize=250, logScale=FALSE, 
                threshold=0.5, relative=TRUE, textSize=0.5, 
-               regionsCheck=0, output=outFile)
+               IRCheck=0, output=outFile)
 
 ## COVERAGE VALUES PLUS REGION INDICATORS PLUS IR SYNTENY LINES ##
 PACVr.complete(gbkFile, bamFile, windowSize=250, logScale=FALSE, 
                threshold=0.5, relative=TRUE, textSize=0.5, 
-               regionsCheck=1, output=outFile)
+               IRCheck=1, output=outFile)
 ```
 
 ### Mitochondrial Genome

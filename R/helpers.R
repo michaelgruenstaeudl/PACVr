@@ -3,10 +3,10 @@
 #email="m_gruenstaeudl@fhsu.edu"
 #version="2024.02.01.1736"
 
-read.gb2DF <- function(gbkData, regionsCheck) {
+read.gb2DF <- function(gbkData, IRPresenceAndSyntenyCheck) {
   fileDF <- data.frame()
   for (sample in gbkData) {
-    sampleDF <- parseFeatures(sample$FEATURES, regionsCheck)
+    sampleDF <- parseFeatures(sample$FEATURES, IRPresenceAndSyntenyCheck)
     if (!is.null(sampleDF)) {
       fileDF <- dplyr::bind_rows(fileDF, sampleDF)
     }
@@ -18,7 +18,7 @@ read.gb2DF <- function(gbkData, regionsCheck) {
   return(fileDF)
 }
 
-parseFeatures <- function(features, regionsCheck) {
+parseFeatures <- function(features, IRPresenceAndSyntenyCheck) {
   sampleDF <- data.frame()
   for (feature in features) {
     feature <- parseFeature(feature)
@@ -27,7 +27,7 @@ parseFeatures <- function(features, regionsCheck) {
     }
   }
   # check if can we can use the sample
-  subsetCols <- checkFeatureQualifiers(sampleDF, regionsCheck)
+  subsetCols <- checkFeatureQualifiers(sampleDF, IRPresenceAndSyntenyCheck)
   if (is.null(subsetCols)) {
     return(NULL)
   }
@@ -372,9 +372,9 @@ validateColors <- function(colorsToValidate) {
   }
 }
 
-checkFeatureQualifiers <- function(sampleDF, regionsCheck) {
+checkFeatureQualifiers <- function(sampleDF, IRPresenceAndSyntenyCheck) {
   subsetCols <- c("gene", "note", "type")
-  if (regionsCheck) {
+  if (IRPresenceAndSyntenyCheck) {
     subsetCols <- c(subsetCols, "standard_name")
   }
   missingCols <- subsetCols[!(subsetCols %in% colnames(sampleDF))]

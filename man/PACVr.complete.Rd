@@ -10,7 +10,7 @@ PACVr.complete(
   windowSize = 250,
   logScale = FALSE,
   threshold = 0.5,
-  regionsCheck = NA,
+  IRCheck = NA,
   relative = TRUE,
   textSize = 0.5,
   verbose = FALSE,
@@ -33,11 +33,13 @@ log-transformed before visualizing it}
 \item{threshold}{a numeric value that specifies the threshold for plotting 
 coverage depth bars in red as opposed to the default black}
 
-\item{regionsCheck}{a numeric value that specifies if region analysis of 
-genome should be performed, and if performed, the type of line for 
-visualizing gene synteny;
-0 = region analysis and no line, 1 = region analysis and ribbon lines,
-2 = region analysis and solid lines, otherwise = no analysis and no line}
+\item{IRCheck}{a numeric value that specifies if tests 
+for IRs of input genome should be performed, and - if IRs are present - 
+which line type to be used for visualizing gene synteny between IRs;
+0 = IR presence test but no synteny visualization, 
+1 = IR presence test and synteny visualization, with ribbon lines between IRs,
+2 = IR presence test and synteny visualization, with solid lines between IRs,
+otherwise = neither IR presence test nor synteny visualization}
 
 \item{relative}{a boolean that specifies whether the threshold is a relative 
 value of the average coverage instead of an absolute value}
@@ -47,7 +49,7 @@ text element in the visualization}
 
 \item{verbose}{a boolean, that when TRUE, generates additional files with
 detailed genomic region information;
-requires a `regionsCheck` value that will perform region analysis}
+requires a `IRCheck` value that will perform region analysis}
 
 \item{output}{a character string that specifies the name of, and path to, 
 the output file}
@@ -67,7 +69,7 @@ gbkFile <- system.file("extdata", "NC_045072/NC_045072.gb", package="PACVr")
 bamFile <- system.file("extdata", "NC_045072/NC_045072_subsampled.bam", package="PACVr")
 outFile <- paste(tempdir(), "/NC_045072__all_reads.pdf", sep="")
 PACVr.complete(gbkFile=gbkFile, bamFile=bamFile, windowSize=250, logScale=FALSE,
-               threshold=0.5, regionsCheck=1, relative=TRUE, textSize=0.5,
+               threshold=0.5, IRCheck=1, relative=TRUE, textSize=0.5,
                verbose=FALSE, output=outFile)
 }
 \dontrun{
@@ -75,7 +77,7 @@ gbkFile <- system.file("extdata", "MG936619/MG936619.gb", package="PACVr")
 bamFile <- system.file("extdata", "MG936619/MG936619_subsampled.bam", package="PACVr")
 outFile <- paste(tempdir(), "/MG936619_CoverageViz.pdf", sep="")
 PACVr.complete(gbkFile=gbkFile, bamFile=bamFile, windowSize=50, logScale=FALSE,
-               threshold=0.5, regionsCheck=NA, relative=TRUE, textSize=0.5,
+               threshold=0.5, IRCheck=NA, relative=TRUE, textSize=0.5,
                verbose=FALSE, output=outFile)
 }
 }
