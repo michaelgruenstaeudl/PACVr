@@ -187,12 +187,9 @@ read.gbGenes <- function(gbkDataDF) {
 
 read.gbOther <- function(gbkDataDF) {
   type <- NULL
-  subsetCols <- c("seqnames", "start", "end", 
-                  "gene", "note", "standard_name")
   regions <- gbkDataDF %>%
               dplyr::filter(!type %in% c("gene", "exon", "transcript",
-                                  "CDS", "variant")) %>% 
-              dplyr::select(dplyr::all_of(subsetCols))
+                                  "CDS", "variant"))
   rownames(regions) <- NULL
   return(regions)
 }
