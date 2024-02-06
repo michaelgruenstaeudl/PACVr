@@ -10,7 +10,6 @@ on:
     paths: ["tests/**"]
   pull_request:
     branches: [main, master]
-    paths: ["tests/**"]
 
 name: R-CMD-check
 

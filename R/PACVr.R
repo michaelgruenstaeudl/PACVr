@@ -28,12 +28,14 @@ PACVr.parseSource <- function(gbkDataDF) {
 
 PACVr.parseGenes <- function (gbkDataDF) {
   # This function parses the genes of a GenBank file
+  logger::log_info('Parsing the different genes')
   genes <- ExtractAllGenes(gbkDataDF)
   return(genes)
 }
 
 PACVr.calcCoverage <-
   function (bamFile, windowSize=250) {
+    logger::log_info('Calculating the sequencing coverage')
     coverage <- CovCalc(bamFile, windowSize)
     return(coverage)
   }
@@ -53,30 +55,19 @@ PACVr.verboseInformation <- function(gbkData,
                                      bamFile,
                                      genes,
                                      quadripRegions,
-                                     IRCheck,
+                                     analysisSpecs,
                                      output) {
-  sampleName <- read.gbSampleName(gbkData)
-  # Step 1. Check ...
-  if (!is.na(output)) {
-    outDir <- dirname(output)
-    tmpDir <- file.path(outDir, 
-            paste(sampleName["sample_name"],
-            ".tmp",
-            sep=""))
+  if (analysisSpecs$isIRCheck) {
+    logger::log_info('Generating statistical information on the sequencing coverage')
+    verboseInformation(gbkData,
+                       bamFile,
+                       genes,
+                       quadripRegions,
+                       analysisSpecs,
+                       output)
   } else {
-    tmpDir <-
-      file.path(".", paste(sampleName["sample_name"],
-                   ".tmp",
-                   sep=""))
-  }
-  # Step 2. Check ...
-  if (dir.exists(tmpDir) == FALSE) {
-    dir.create(tmpDir)
-  }
-  # Step 3. Write output
-  writeTables(quadripRegions, bamFile, genes, tmpDir, sampleName)
-  if (IRCheck) {
-    checkIREquality(gbkData, quadripRegions, tmpDir, sampleName)
+    logger::log_warn(paste0('Verbose output requires `IRCheck` in ',
+                            '`', deparse(getIRCheckTypes()), '`'))
   }
 }
 
@@ -107,6 +98,32 @@ PACVr.visualizeWithRCircos <- function(gbkData,
     syntenyLineType,
     textSize
   )
+}
+
+PACVr.quadripRegions <- function(gbkData,
+                                 gbkDataDF,
+                                 isIRCheck) {
+  if (isIRCheck) {
+    logger::log_info('Parsing the different genome regions')
+    quadripRegions <- PACVr.parseQuadripRegions(gbkData,
+                                                gbkDataDF)
+  } else {
+    quadripRegions <- PACVr.parseSource(gbkDataDF)
+  }
+  return(quadripRegions)
+}
+
+PACVr.linkData <- function(genes,
+                           quadripRegions,
+                           syntenyLineType) {
+  linkData <- NULL
+  if (!is.null(syntenyLineType)) {
+    logger::log_info('Inferring the IR regions and the genes within the IRs')
+    linkData <- PACVr.generateIRGeneData(genes,
+                                         quadripRegions,
+                                         syntenyLineType)
+  }
+  return(linkData)
 }
 
 #' @title Execute the complete pipeline of \pkg{PACVr}
@@ -173,53 +190,39 @@ PACVr.complete <- function(gbkFile,
                            output=NA) {
   ######################################################################
   gbkData <- PACVr.read.gb(gbkFile)
-  isIRCheck <- getIsIRCheck(IRCheck)
-  gbkDataDF <- read.gb2DF(gbkData, isIRCheck)
+  analysisSpecs <- getAnalysisSpecs(IRCheck)
+  gbkDataDF <- read.gb2DF(gbkData,
+                          analysisSpecs)
   if (is.null(gbkDataDF)) {
     logger::log_error(paste("No usable data to perform specified analysis"))
     return(NULL)
   }
   
   ###################################
-  if (isIRCheck) {
-    logger::log_info('Parsing the different genome regions')
-    quadripRegions <- PACVr.parseQuadripRegions(gbkData,
-										 gbkDataDF)
-  } else {
-    quadripRegions <- PACVr.parseQuadripRegions(gbkDataDF)
-  }
+  quadripRegions <- PACVr.quadripRegions(gbkData,
+                                         gbkDataDF,
+                                         analysisSpecs$isIRCheck)
 
   ###################################
-  logger::log_info('Parsing the different genes')
   genes <- PACVr.parseGenes(gbkDataDF)
 
   ###################################
-  logger::log_info('Calculating the sequencing coverage')
   coverage <- PACVr.calcCoverage(bamFile,
                                  windowSize)
 
   ###################################
-  linkData <- NULL
-  IRCheck <- isSyntenyLineType(IRCheck)
-  if (IRCheck) {
-    logger::log_info('Inferring the IR regions and the genes within the IRs')
-    linkData <- PACVr.generateIRGeneData(genes,
-                                         quadripRegions,
-                                         IRCheck)
-  }
+  linkData <- PACVr.linkData(genes,
+                             quadripRegions,
+                             analysisSpecs$syntenyLineType)
 
   ###################################
-  if (isIRCheck && verbose) {
-      logger::log_info('Generating statistical information on the sequencing coverage')
-      PACVr.verboseInformation(gbkData,
-                               bamFile,
-                               genes,
-                               quadripRegions,
-                               IRCheck,
-                               output)
-  } else if (verbose) {
-      logger::log_warn(paste0('Verbose output requires `IRCheck` in ',
-                              '`', deparse(getIRCheckTypes()), '`'))
+  if (verbose) {
+    PACVr.verboseInformation(gbkData,
+                             bamFile,
+                             genes,
+                             quadripRegions,
+                             analysisSpecs,
+                             output)
   }
   
   ###################################

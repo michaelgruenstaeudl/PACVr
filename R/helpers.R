@@ -3,10 +3,10 @@
 #email="m_gruenstaeudl@fhsu.edu"
 #version="2024.02.01.1736"
 
-read.gb2DF <- function(gbkData, IRPresenceAndSyntenyCheck) {
+read.gb2DF <- function(gbkData, analysisSpecs) {
   fileDF <- data.frame()
   for (sample in gbkData) {
-    sampleDF <- parseFeatures(sample$FEATURES, IRPresenceAndSyntenyCheck)
+    sampleDF <- parseFeatures(sample$FEATURES, analysisSpecs)
     if (!is.null(sampleDF)) {
       fileDF <- dplyr::bind_rows(fileDF, sampleDF)
     }
@@ -18,7 +18,7 @@ read.gb2DF <- function(gbkData, IRPresenceAndSyntenyCheck) {
   return(fileDF)
 }
 
-parseFeatures <- function(features, IRPresenceAndSyntenyCheck) {
+parseFeatures <- function(features, analysisSpecs) {
   sampleDF <- data.frame()
   for (feature in features) {
     feature <- parseFeature(feature)
@@ -27,7 +27,7 @@ parseFeatures <- function(features, IRPresenceAndSyntenyCheck) {
     }
   }
   # check if can we can use the sample
-  subsetCols <- checkFeatureQualifiers(sampleDF, IRPresenceAndSyntenyCheck)
+  subsetCols <- checkFeatureQualifiers(sampleDF, analysisSpecs)
   if (is.null(subsetCols)) {
     return(NULL)
   }
@@ -187,12 +187,9 @@ read.gbGenes <- function(gbkDataDF) {
 
 read.gbOther <- function(gbkDataDF) {
   type <- NULL
-  subsetCols <- c("seqnames", "start", "end", 
-                  "gene", "note", "standard_name")
   regions <- gbkDataDF %>%
               dplyr::filter(!type %in% c("gene", "exon", "transcript",
-                                  "CDS", "variant")) %>% 
-              dplyr::select(dplyr::all_of(subsetCols))
+                                  "CDS", "variant"))
   rownames(regions) <- NULL
   return(regions)
 }
@@ -372,14 +369,10 @@ validateColors <- function(colorsToValidate) {
   }
 }
 
-checkFeatureQualifiers <- function(sampleDF, IRPresenceAndSyntenyCheck) {
-  subsetCols <- c("gene", "note", "type")
-  if (IRPresenceAndSyntenyCheck) {
-    subsetCols <- c(subsetCols, "standard_name")
-  }
-  missingCols <- subsetCols[!(subsetCols %in% colnames(sampleDF))]
-  if (length(missingCols) > 0) {
-    logger::log_warn(paste0("Unable to analyze sample as specified; ", 
+checkFeatureQualifiers <- function(sampleDF, analysisSpecs) {
+  subsetData <- getSubsetData(sampleDF, analysisSpecs)
+  if (length(subsetData$missingCols) > 0) {
+    logger::log_warn(paste0("Unable to analyze sample as specified; ",
                             "missing feature qualifiers: ",
                             "'",
                             paste(missingCols, collapse = "', '"),
@@ -387,11 +380,73 @@ checkFeatureQualifiers <- function(sampleDF, IRPresenceAndSyntenyCheck) {
     return(NULL)
   }
   # add future generated columns that are needed
-  subsetCols <- c(subsetCols, "start", "end", "seqnames")
+  subsetCols <- c(subsetData$subsetCols, "start", "end", "seqnames")
   return(subsetCols)
+}
+
+getSubsetCols <- function(analysisSpecs) {
+  subsetCols <- c("gene", "note", "type")
+  if (analysisSpecs$isIRCheck) {
+    subsetCols <- c(subsetCols, "standard_name")
+  }
+  return(subsetCols)
+}
+
+getSubsetData <- function(sampleDF, analysisSpecs) {
+  subsetCols <- getSubsetCols(analysisSpecs)
+  missingCols <- subsetCols[!(subsetCols %in% colnames(sampleDF))]
+  if (analysisSpecs$isIRCheck && ("standard_name" %in% missingCols)) {
+    logger::log_info("Using `note` for IR name qualifier")
+    subsetCols <- subsetCols[subsetCols != "standard_name"]
+    missingCols <- missingCols[missingCols != "standard_name"]
+  }
+  subsetData <- list(
+    subsetCols = subsetCols,
+    missingCols = missingCols
+  )
+  return(subsetData)
 }
 
 isIgnoredFeature <- function(featureName) {
   ignoredFeatures <- c("D-loop")
   return(featureName %in% ignoredFeatures)
+}
+
+getAnalysisSpecs <- function(IRCheck) {
+  analysisSpecs <- list(
+    syntenyLineType = getSyntenyLineType(IRCheck),
+    isIRCheck = getIsIRCheck(IRCheck)
+  )
+  return(analysisSpecs)
+}
+
+verboseInformation <- function(gbkData,
+                               bamFile,
+                               genes,
+                               quadripRegions,
+                               analysisSpecs,
+                               output) {
+  sampleName <- read.gbSampleName(gbkData)
+  # Step 1. Check ...
+  if (!is.na(output)) {
+    outDir <- dirname(output)
+    tmpDir <- file.path(outDir,
+                        paste(sampleName["sample_name"],
+                              ".tmp",
+                              sep=""))
+  } else {
+    tmpDir <-
+      file.path(".", paste(sampleName["sample_name"],
+                           ".tmp",
+                           sep=""))
+  }
+  # Step 2. Check ...
+  if (dir.exists(tmpDir) == FALSE) {
+    dir.create(tmpDir)
+  }
+  # Step 3. Write output
+  writeTables(quadripRegions, bamFile, genes, tmpDir, sampleName)
+  if (!is.null(analysisSpecs$syntenyLineType)) {
+    checkIREquality(gbkData, quadripRegions, tmpDir, sampleName)
+  }
 }
