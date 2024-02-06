@@ -104,7 +104,7 @@ PACVr.quadripRegions <- function(gbkData,
                                  gbkDataDF,
                                  isIRCheck) {
   if (isIRCheck) {
-    logger::log_info('Parsing the different genome regions')
+    logger::log_info('Parsing the quadripartite genome structure')
     quadripRegions <- PACVr.parseQuadripRegions(gbkData,
                                                 gbkDataDF)
   } else {
