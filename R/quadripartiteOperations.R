@@ -30,31 +30,18 @@ ParseQuadripartiteStructure <- function(gbkDataDF) {
   #   gbkDataDF (resulting data frame from parsing read.gb object)
   # RETURNS:
   #   regions in data frame format
-  logger::log_info('  Extracting information on genomic regions')
   allRegions <- read.gbOther(gbkDataDF)
-  quadripRegions <- tryCatch(
-    tryCatch(
-      FilterByKeywords(allRegions, "note"),
-      warning = function(w)
-        FilterByKeywords(allRegions, "standard_name")
-    ),
-    error = function(e) {
-      if (conditionMessage(e) == "undefined columns selected") {
-        logger::log_warn(paste("Features do not contain 'standard_name';", 
-                               "regions not properly analyzed"))
-      }
-      return(
-        data.frame(
-          start = c(-1),
-          end = c(-1),
-          note = c("empty"),
-          stringsAsFactors=FALSE
-        )
-      )
+  colNames <- colnames(allRegions)
+  if ("standard_name" %in% colNames) {
+    filterWhere <- "standard_name"
+  } else if ("note" %in% colNames) {
+    filterWhere <- "note"
   }
-  )
+  logger::log_info('  Extracting information on genomic regions')
+  quadripRegions <- FilterByKeywords(allRegions, filterWhere)
   quadripRegions <- quadripRegions[, c("start", "end", "note")]
   colnames(quadripRegions) <- c("chromStart", "chromEnd", "Band")
+
   quadripRegions$Chromosome <- ""
   quadripRegions$Stain <- "gpos100"
   quadripRegions <- quadripRegions[c("Chromosome", "chromStart", "chromEnd", "Band", "Stain")]
