@@ -30,6 +30,7 @@ ParseQuadripartiteStructure <- function(gbkDataDF) {
   #   gbkDataDF (resulting data frame from parsing read.gb object)
   # RETURNS:
   #   regions in data frame format
+  logger::log_info('  Extracting information on genomic regions')
   allRegions <- read.gbOther(gbkDataDF)
   colNames <- colnames(allRegions)
   if ("standard_name" %in% colNames) {
@@ -37,7 +38,6 @@ ParseQuadripartiteStructure <- function(gbkDataDF) {
   } else if ("note" %in% colNames) {
     filterWhere <- "note"
   }
-  logger::log_info('  Extracting information on genomic regions')
   quadripRegions <- FilterByKeywords(allRegions, filterWhere)
   quadripRegions <- quadripRegions[, c("start", "end", "note")]
   colnames(quadripRegions) <- c("chromStart", "chromEnd", "Band")
