@@ -340,21 +340,21 @@ printCovValsAsTable <- function(regions, bamFile, genes, dir, sample_name) {
     # Writing values to output table
     write.table(
       ir_genes,
-      paste(dir, .Platform$file.sep, sample_name["sample_name"], "_coverage.genes.bed", sep = ""),
+      paste(dir, .Platform$file.sep, sample_name["sample_name"], "_coverage.genes.tsv", sep = ""),
       row.names = FALSE,
       quote = FALSE,
       sep = "\t"
     )
     write.table(
       ir_regions,
-      paste(dir, .Platform$file.sep, sample_name["sample_name"], "_coverage.regions.bed", sep = ""),
+      paste(dir, .Platform$file.sep, sample_name["sample_name"], "_coverage.regions.tsv", sep = ""),
       row.names = FALSE,
       quote = FALSE,
       sep = "\t"
     )
     write.table(
       ir_noncoding,
-      paste(dir, .Platform$file.sep, sample_name["sample_name"], "_coverage.noncoding.bed", sep = ""),
+      paste(dir, .Platform$file.sep, sample_name["sample_name"], "_coverage.noncoding.tsv", sep = ""),
       row.names = FALSE,
       quote = FALSE,
       sep = "\t"
