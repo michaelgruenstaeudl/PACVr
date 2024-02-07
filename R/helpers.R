@@ -420,12 +420,12 @@ getAnalysisSpecs <- function(IRCheck) {
   return(analysisSpecs)
 }
 
-verboseInformation <- function(gbkData,
-                               bamFile,
-                               genes,
-                               quadripRegions,
-                               analysisSpecs,
-                               output) {
+printCovStats <- function(gbkData,
+                          bamFile,
+                          genes,
+                          quadripRegions,
+                          analysisSpecs,
+                          output) {
   sampleName <- read.gbSampleName(gbkData)
   # Step 1. Check ...
   if (!is.na(output)) {
