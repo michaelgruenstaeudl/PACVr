@@ -252,7 +252,7 @@ boolToDeci <- function(boolList) {
   return(out)
 }
 
-writeTables <- function(regions, bamFile, genes, dir, sample_name) {
+printCovValsAsTable <- function(regions, bamFile, genes, dir, sample_name) {
     ir_regions <- IRanges::IRanges(
         start = regions$chromStart,
         end = regions$chromEnd,
@@ -445,7 +445,7 @@ printCovStats <- function(gbkData,
     dir.create(tmpDir)
   }
   # Step 3. Write output
-  writeTables(quadripRegions, bamFile, genes, tmpDir, sampleName)
+  printCovValsAsTable(quadripRegions, bamFile, genes, tmpDir, sampleName)
   if (!is.null(analysisSpecs$syntenyLineType)) {
     checkIREquality(gbkData, quadripRegions, tmpDir, sampleName)
   }
