@@ -57,13 +57,16 @@ PACVr.verboseInformation <- function(gbkData,
                                      quadripRegions,
                                      analysisSpecs,
                                      output) {
-  logger::log_info('Generating statistical information on the sequencing coverage')
+  sampleName <- PACVr.parseName(gbkData)
+  verbosePath <- getVerbosePath(sampleName, output)
   printCovStats(gbkData,
                 bamFile,
                 genes,
                 quadripRegions,
+                sampleName,
                 analysisSpecs,
-                output)
+                verbosePath)
+  logger::log_info('Verbose output saved in `{verbosePath}`')
 }
 
 PACVr.visualizeWithRCircos <- function(gbkData,

@@ -3,13 +3,7 @@
 #email="m_gruenstaeudl@fhsu.edu"
 #version="2024.02.08.2300"
 
-printCovStats <- function(gbkData,
-                          bamFile,
-                          genes,
-                          quadripRegions,
-                          analysisSpecs,
-                          output) {
-  sampleName <- read.gbSampleName(gbkData)
+getVerbosePath <- function(sampleName, output) {
   # Step 1. Check ...
   if (!is.na(output)) {
     outDir <- dirname(output)
@@ -27,10 +21,28 @@ printCovStats <- function(gbkData,
   if (dir.exists(tmpDir) == FALSE) {
     dir.create(tmpDir)
   }
-  # Step 3. Write output
-  printCovValsAsTable(quadripRegions, bamFile, genes, tmpDir, sampleName, analysisSpecs)
+  return(tmpDir)
+}
+
+printCovStats <- function(gbkData,
+                          bamFile,
+                          genes,
+                          quadripRegions,
+                          sampleName,
+                          analysisSpecs,
+                          dir) {
+  logger::log_info('Generating statistical information on the sequencing coverage')
+  printCovValsAsTable(quadripRegions, 
+                      bamFile, 
+                      genes, 
+                      dir,
+                      sampleName, 
+                      analysisSpecs)
   if (!is.null(analysisSpecs$syntenyLineType)) {
-    checkIREquality(gbkData, quadripRegions, tmpDir, sampleName)
+    checkIREquality(gbkData, 
+                    quadripRegions, 
+                    dir,
+                    sampleName)
   }
 }
 
