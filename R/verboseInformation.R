@@ -154,7 +154,7 @@ setLowCoverage <- function(covData) {
   # ir_regions
   ir_regions <- covData$ir_regions
   regions_name <- covData$regions_name
-  aggFormula <- as.formula(paste("coverage ~", regions_name))
+  aggFormula <- stats::as.formula(paste("coverage ~", regions_name))
   cov_regions <-
     aggregate(
       aggFormula,
