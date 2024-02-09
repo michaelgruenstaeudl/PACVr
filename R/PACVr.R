@@ -59,13 +59,18 @@ PACVr.verboseInformation <- function(gbkData,
                                      output) {
   sampleName <- PACVr.parseName(gbkData)
   verbosePath <- getVerbosePath(sampleName, output)
-  printCovStats(gbkData,
-                bamFile,
+  printCovStats(bamFile,
                 genes,
                 quadripRegions,
                 sampleName,
                 analysisSpecs,
                 verbosePath)
+  if (!is.null(analysisSpecs$syntenyLineType)) {
+    checkIREquality(gbkData,
+                    quadripRegions,
+                    dir,
+                    sampleName)
+  }
   logger::log_info('Verbose output saved in `{verbosePath}`')
 }
 

@@ -24,8 +24,7 @@ getVerbosePath <- function(sampleName, output) {
   return(tmpDir)
 }
 
-printCovStats <- function(gbkData,
-                          bamFile,
+printCovStats <- function(bamFile,
                           genes,
                           quadripRegions,
                           sampleName,
@@ -38,12 +37,6 @@ printCovStats <- function(gbkData,
                       dir,
                       sampleName, 
                       analysisSpecs)
-  if (!is.null(analysisSpecs$syntenyLineType)) {
-    checkIREquality(gbkData, 
-                    quadripRegions, 
-                    dir,
-                    sampleName)
-  }
 }
 
 printCovValsAsTable <- function(regions, bamFile, genes, dir, sample_name, analysisSpecs) {
