@@ -182,23 +182,15 @@ setLowCoverage <- function(covData) {
 }
 
 writeCovTables <- function(covData, sample_name, dir) {
+  writeVerboseTable(covData$ir_genes, sample_name, dir, "coverage.genes")
+  writeVerboseTable(covData$ir_regions, sample_name, dir, "coverage.regions")
+  writeVerboseTable(covData$ir_noncoding, sample_name, dir, "coverage.noncoding")
+}
+
+writeVerboseTable <- function(df, sample_name, dir, fileName) {
   write.table(
-    covData$ir_genes,
-    paste(dir, .Platform$file.sep, sample_name["sample_name"], "_coverage.genes.tsv", sep = ""),
-    row.names = FALSE,
-    quote = FALSE,
-    sep = "\t"
-  )
-  write.table(
-    covData$ir_regions,
-    paste(dir, .Platform$file.sep, sample_name["sample_name"], "_coverage.regions.tsv", sep = ""),
-    row.names = FALSE,
-    quote = FALSE,
-    sep = "\t"
-  )
-  write.table(
-    covData$ir_noncoding,
-    paste(dir, .Platform$file.sep, sample_name["sample_name"], "_coverage.noncoding.tsv", sep = ""),
+    df,
+    paste(dir, .Platform$file.sep, sample_name["sample_name"], "_", fileName, ".tsv", sep = ""),
     row.names = FALSE,
     quote = FALSE,
     sep = "\t"
