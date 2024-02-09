@@ -39,6 +39,10 @@ printCovStats <- function(bamFile,
 
   # Writing values to output table
   writeCovTables(covData, sampleName, dir)
+
+  # Getting and writing summarized coverage data, grouped by `quadripRegions`
+  covSummaries <- getCovSummaries(covData)
+  writeCovSumTables(covSummaries, sampleName, dir)
 }
 
 getCovData <- function(regions, genes, analysisSpecs) {
@@ -195,4 +199,68 @@ writeVerboseTable <- function(df, sample_name, dir, fileName) {
     quote = FALSE,
     sep = "\t"
   )
+}
+
+# adapted from `nilsj9/PlastidSequenceCoverage`
+getCovSummaries <- function(covData) {
+  regions_name <- covData$regions_name
+
+  covSummaries <- getCovDepths(covData, regions_name)
+  regions_evenness <- getCovEvenness(covData$ir_regions, regions_name)
+  covSummaries$regions_summary <- dplyr::full_join(covSummaries$regions_summary,
+                                                   regions_evenness,
+                                                   regions_name)
+  return(covSummaries)
+}
+
+getCovDepths <- function(covData, regions_name) {
+  regions_depth <- getCovDepth(covData$ir_regions, regions_name)
+  genes_depth <- getCovDepth(covData$ir_genes, regions_name)
+  noncoding_depth <- getCovDepth(covData$ir_noncoding, regions_name)
+  
+  covDepths <- list(
+    regions_summary = regions_depth,
+    genes_summary = genes_depth,
+    noncoding_summary = noncoding_depth
+  )
+  return(covDepths)
+}
+
+getCovDepth <- function(covDataField, regions_name) {
+  covDepth <- covDataField %>%
+    groupByRegionsName(regions_name) %>%
+    dplyr::summarise(
+      lowCoverage = sum(lowCoverage == "*", na.rm = TRUE),
+      .groups = "drop"
+    )
+  return(covDepth)
+}
+
+getCovEvenness <- function(covDataField, regions_name) {
+  covEvenness <- covDataField %>%
+    groupByRegionsName(regions_name) %>%
+    dplyr::summarise(
+      evenness = evennessScore(coverage),
+      .groups = "drop"
+    )
+  return(covEvenness)
+}
+
+groupByRegionsName <- function(df, regions_name) {
+  return(
+    dplyr::group_by(df, dplyr::across(dplyr::all_of(regions_name)))
+  )
+}
+
+evennessScore <- function(coverage) {
+  coverage_mean <- round(mean(coverage))
+  D2 <- coverage[coverage <= coverage_mean]
+  E <- 1 - (length(D2) - sum(D2) / coverage_mean) / length(coverage)
+  return(E)
+}
+
+writeCovSumTables <- function(covSummaries, sample_name, dir) {
+  writeVerboseTable(covSummaries$genes_summary, sample_name, dir, "coverage.summary.genes")
+  writeVerboseTable(covSummaries$regions_summary, sample_name, dir, "coverage.summary.regions")
+  writeVerboseTable(covSummaries$noncoding_summary, sample_name, dir, "coverage.summary.noncoding")
 }
