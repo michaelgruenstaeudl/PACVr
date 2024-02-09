@@ -31,23 +31,14 @@ printCovStats <- function(bamFile,
                           analysisSpecs,
                           dir) {
   logger::log_info('Generating statistical information on the sequencing coverage')
-  printCovValsAsTable(quadripRegions, 
-                      bamFile, 
-                      genes, 
-                      dir,
-                      sampleName, 
-                      analysisSpecs)
-}
-
-printCovValsAsTable <- function(regions, bamFile, genes, dir, sample_name, analysisSpecs) {
-  covData <- getCovData(regions, genes, analysisSpecs)
-  covData <- update.ir_genes(regions, bamFile, sample_name, covData)
-  covData <- update.ir_noncoding(regions, bamFile, sample_name, covData)
-  covData <- update.ir_regions(bamFile, sample_name, covData)
+  covData <- getCovData(quadripRegions, genes, analysisSpecs)
+  covData <- update.ir_genes(quadripRegions, bamFile, sampleName, covData)
+  covData <- update.ir_noncoding(quadripRegions, bamFile, sampleName, covData)
+  covData <- update.ir_regions(bamFile, sampleName, covData)
   covData <- setLowCoverage(covData)
 
   # Writing values to output table
-  writeCovTables(covData, sample_name, dir)
+  writeCovTables(covData, sampleName, dir)
 }
 
 getCovData <- function(regions, genes, analysisSpecs) {
