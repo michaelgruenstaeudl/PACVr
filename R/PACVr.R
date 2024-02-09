@@ -68,7 +68,7 @@ PACVr.verboseInformation <- function(gbkData,
   if (!is.null(analysisSpecs$syntenyLineType)) {
     checkIREquality(gbkData,
                     quadripRegions,
-                    dir,
+                    verbosePath,
                     sampleName)
   }
   logger::log_info('Verbose output saved in `{verbosePath}`')
