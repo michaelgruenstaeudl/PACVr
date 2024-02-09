@@ -57,18 +57,13 @@ PACVr.verboseInformation <- function(gbkData,
                                      quadripRegions,
                                      analysisSpecs,
                                      output) {
-  if (analysisSpecs$isIRCheck) {
-    logger::log_info('Generating statistical information on the sequencing coverage')
-    printCovStats(gbkData,
-                 bamFile,
-                 genes,
-                 quadripRegions,
-                 analysisSpecs,
-                 output)
-  } else {
-    logger::log_warn(paste0('Verbose output requires `IRCheck` in ',
-                            '`', deparse(getIRCheckTypes()), '`'))
-  }
+  logger::log_info('Generating statistical information on the sequencing coverage')
+  printCovStats(gbkData,
+                bamFile,
+                genes,
+                quadripRegions,
+                analysisSpecs,
+                output)
 }
 
 PACVr.visualizeWithRCircos <- function(gbkData,
