@@ -227,6 +227,8 @@ getCovDepths <- function(covData, regions_name) {
 }
 
 getCovDepth <- function(covDataField, regions_name) {
+  lowCoverage <- NULL
+
   covDepth <- covDataField %>%
     groupByRegionsName(regions_name) %>%
     dplyr::summarise(
@@ -237,6 +239,8 @@ getCovDepth <- function(covDataField, regions_name) {
 }
 
 getCovEvenness <- function(covDataField, regions_name) {
+  coverage <- NULL
+
   covEvenness <- covDataField %>%
     groupByRegionsName(regions_name) %>%
     dplyr::summarise(
