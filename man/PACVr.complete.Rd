@@ -48,8 +48,7 @@ value of the average coverage instead of an absolute value}
 text element in the visualization}
 
 \item{verbose}{a boolean, that when TRUE, generates additional files with
-detailed genomic region information;
-requires a `IRCheck` value that will perform region analysis}
+detailed genomic region information}
 
 \item{output}{a character string that specifies the name of, and path to, 
 the output file}
