@@ -23,19 +23,19 @@ parseSource <- function(gbkDataDF) {
   type <-
     Band <-
     Stain <-
-    Chromosone <-
+    Chromosome <-
     start <-
     end <-
-    note <-
+    seqnames <-
     NULL
   source <- gbkDataDF %>%
     dplyr::filter(type=="source") %>%
     dplyr::rename(chromStart = start,
                   chromEnd = end,
-                  Band = note) %>%
-    dplyr::mutate(Chromosone = "",
+                  Band = seqnames) %>%
+    dplyr::mutate(Chromosome = "",
                   Stain = "gpos75") %>%
-    dplyr::select(dplyr::all_of(c("Chromosone", "chromStart",
+    dplyr::select(dplyr::all_of(c("Chromosome", "chromStart",
                                   "chromEnd", "Band", "Stain")))
   return(source)
 }
