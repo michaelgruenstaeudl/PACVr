@@ -13,7 +13,7 @@ inFiles <- list.files(path=inDir, pattern='annotated.gb', full.names=TRUE) 	 # U
 # Set up parallel backend to use multiple processors
 cores_avail <- floor((detectCores()-1)/2)  # only using half of available cores
 print(paste("Available cores:", cores_avail))
-cl <- makeCluster(cores_avail, outfile=paste0(inDir, "/", "MPI_runs.log"))
+cl <- makeCluster(cores_avail, type="FORK", outfile=paste0(inDir, "/", "MPI_runs.log"))
 registerDoParallel(cl)
 
 run_PACVr <- function(f) {
