@@ -227,7 +227,8 @@ getCovDepths <- function(covData, regions_name) {
 }
 
 getCovDepth <- function(covDataField, regions_name, removeSmall = FALSE) {
-  lowCovWin_abs <-
+  lowCoverage <-
+    lowCovWin_abs <-
     lowCovWin_relToRegionLen <-
     length <-
     regionLen <-
