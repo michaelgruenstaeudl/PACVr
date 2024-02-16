@@ -162,21 +162,9 @@ PACVr.complete <- function(gbkFile,
   }
   
   ###################################
-  quadripRegions <- PACVr.quadripRegions(gbkData,
-                                         gbkDataDF,
-                                         analysisSpecs$isIRCheck)
-
-  ###################################
-  genes <- PACVr.parseGenes(gbkDataDF)
-
-  ###################################
   coverage <- PACVr.calcCoverage(bamFile,
-                                 windowSize)
-
-  ###################################
-  linkData <- PACVr.linkData(genes,
-                             quadripRegions,
-                             analysisSpecs$syntenyLineType)
+                                 windowSize,
+                                 logScale)
 
   ###################################
   if (verbose) {

@@ -14,13 +14,6 @@ visualizeWithRCircos <- function(plotTitle,
                                  linkData,
                                  syntenyLineType = NA,
                                  textSize) {
-
-  if (logScale == TRUE) {
-    coverage$coverage <- log(cov$coverage)
-    #coverage$coverage <- log(coverage$coverage)
-  }
-  coverage$Chromosome <- ""
-  
   # STEP 1. RCIRCOS INITIALIZATION
   RCircosInit(regions)
   
