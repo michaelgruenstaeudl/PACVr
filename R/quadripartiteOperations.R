@@ -168,10 +168,6 @@ plotRegionNames <- function(quadripRegions) {
   )
 }
 
-isRealRegions <- function(quadripRegions) {
-  return(nrow(quadripRegions) > 1)
-}
-
 getIsIRCheck <- function(IRCheck) {
   IRCheckTypes <- getIRCheckTypes()
   return(IRCheck %in% IRCheckTypes)
