@@ -48,5 +48,6 @@ getAnalysisSpecs <- function(IRCheck) {
     syntenyLineType = getSyntenyLineType(IRCheck),
     isIRCheck = getIsIRCheck(IRCheck)
   )
+  analysisSpecs$isSyntenyLine <- !is.null(analysisSpecs$syntenyLineType)
   return(analysisSpecs)
 }
