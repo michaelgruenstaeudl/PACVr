@@ -237,11 +237,8 @@ read.gbOther <- function(gbkDataDF) {
   return(regions)
 }
 
-read.gbLengths <- function(gbkData) {
-  sampleLengths <- c()
-  for (sample in gbkData) {
-    sampleLengths <- c(sampleLengths, nchar(sample$ORIGIN))
-  }
+read.gbLengths <- function(gbSeqs) {
+  sampleLengths <- Biostrings::width(gbSeqs)
   return(sampleLengths)
 }
 
