@@ -58,7 +58,7 @@ ParseQuadripartiteStructure <- function(gbkDataDF) {
   return(quadripRegions)
 }
 
-fillDataFrame <- function(gbkData, quadripRegions) {
+fillDataFrame <- function(gbkLengths, quadripRegions) {
   # Function to annotate plastid genome with quadripartite regions 
   # based on their position within the genome
   # ARGS:
@@ -66,7 +66,7 @@ fillDataFrame <- function(gbkData, quadripRegions) {
   # RETURNS:
   #   ...
   logger::log_info('  Annotating plastid genome with quadripartite regions')
-  seqLength <- read.gbLengths(gbkData)
+  seqLength <- gbkLengths
   if ((nrow(quadripRegions) == 0) || (quadripRegions[1, 2] == -1)) {
     quadripRegions[1,] <- c("", as.numeric(1), as.numeric(seqLength), "NA", "gpos100")
     quadripRegions[, 2] <- as.numeric(quadripRegions[, 2])
