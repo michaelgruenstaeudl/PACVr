@@ -19,6 +19,43 @@ ExtractAllGenes <- function(gbkDataDF) {
   return(gene_L)
 }
 
+PACVr.gbkData <- function(read.gbData, analysisSpecs) {
+  gbkDataDF <- read.gb2DF(read.gbData, analysisSpecs)
+  if (is.null(gbkDataDF)) {
+    logger::log_error(paste("No usable data to perform specified analysis"))
+    return(NULL)
+  }
+
+  # derived from gbkData
+  gbkSeq <- read.gbSeq(read.gbData)
+  lengths <- read.gbLengths(gbkSeq)
+  sampleName <- read.gbSampleName(read.gbData)
+  plotTitle <- read.gbPlotTitle(read.gbData)
+  rm(read.gbData)
+  gc()
+
+  # primarily derived from gbkDataDF
+  quadripRegions <- PACVr.quadripRegions(lengths,
+                                         gbkDataDF,
+                                         analysisSpecs$isIRCheck)
+  genes <- PACVr.parseGenes(gbkDataDF)
+  linkData <- PACVr.linkData(genes,
+                             quadripRegions,
+                             analysisSpecs$syntenyLineType)
+  rm(gbkDataDF)
+  gc()
+
+  gbkData <- list(
+    genes = genes,
+    seq = gbkSeq,
+    lengths = lengths,
+    sampleName = sampleName,
+    plotTitle = plotTitle,
+    quadripRegions = quadripRegions,
+    linkData = linkData
+  )
+  return(gbkData)
+}
 
 PACVr.parseGenes <- function (gbkDataDF) {
   # This function parses the genes of a GenBank file
