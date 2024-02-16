@@ -3,17 +3,17 @@
 #email="m_gruenstaeudl@fhsu.edu"
 #version="2024.02.01.1736"
 
-visualizeWithRCircos <- function(plotTitle,
-                                 genes,
-                                 regions,
+visualizeWithRCircos <- function(gbkData,
                                  coverage,
                                  windowSize,
                                  logScale,
                                  threshold,
                                  relative,
-                                 linkData,
-                                 syntenyLineType = NA,
+                                 analysisSpecs,
                                  textSize) {
+  regions <- gbkData$quadripRegions
+  genes <- gbkData$genes
+
   # STEP 1. RCIRCOS INITIALIZATION
   RCircosInit(regions)
   
@@ -31,18 +31,18 @@ visualizeWithRCircos <- function(plotTitle,
   
   # STEP 5. OPTIONAL PLOTS
   averageLines <- NULL
-  if (isRealRegions(regions)) {
+  if (analysisSpecs$isIRCheck) {
     plotRegionNames(regions)
     averageLines <- plotAverageLines(regions, coverage, windowSize, positions)
   }
 
-  if (is.data.frame(linkData)) {
-    plotIRLinks(linkData, syntenyLineType)
+  if (analysisSpecs$isSyntenyLine) {
+    plotIRLinks(gbkData$linkData, analysisSpecs$syntenyLineType)
   }
   
   # STEP 6. GENERATE TITLE AND LEGEND
   logger::log_info('  Generating title and legend for visualization')
-  graphics::title(paste(plotTitle), line = -4.5, cex.main = 0.8)
+  graphics::title(paste(gbkData$plotTitle), line = -4.5, cex.main = 0.8)
   addLegend(relative, coverage, threshold, averageLines)
   
 }

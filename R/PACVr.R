@@ -34,58 +34,34 @@ PACVr.verboseInformation <- function(gbkData,
 }
 
 PACVr.visualizeWithRCircos <- function(gbkData,
-                                       genes,
-                                       quadripRegions,
                                        coverage,
                                        windowSize,
                                        logScale,
                                        threshold,
                                        relative,
-                                       linkData,
-                                       syntenyLineType,
-                                       textSize) {
-  # Step 1. Generate plot title
-  plotTitle <- read.gbPlotTitle(gbkData)
-  # Step 2. Visualize
+                                       analysisSpecs,
+                                       textSize,
+                                       output) {
+  if (!is.na(output)) {
+    logger::log_info('Generating a visualization of the sequencing coverage')
+    vizDoneSub <- "(including coverage)"
+    pdf(output, width=10, height=10)
+  } else {
+    logger::log_info('No coverage data inferred; generating empty visualization')
+    vizDoneSub <- "(excluding coverage)"
+  }
   visualizeWithRCircos(
-    plotTitle,
-    genes,
-    quadripRegions,
+    gbkData,
     coverage,
     windowSize,
-    threshold,
     logScale,
+    threshold,
     relative,
-    linkData,
-    syntenyLineType,
+    analysisSpecs,
     textSize
   )
-}
-
-PACVr.quadripRegions <- function(gbkData,
-                                 gbkDataDF,
-                                 isIRCheck) {
-  if (isIRCheck) {
-    logger::log_info('Parsing the quadripartite genome structure')
-    quadripRegions <- PACVr.parseQuadripRegions(gbkData,
-                                                gbkDataDF)
-  } else {
-    quadripRegions <- PACVr.parseSource(gbkDataDF)
-  }
-  return(quadripRegions)
-}
-
-PACVr.linkData <- function(genes,
-                           quadripRegions,
-                           syntenyLineType) {
-  linkData <- NULL
-  if (!is.null(syntenyLineType)) {
-    logger::log_info('Inferring the IR regions and the genes within the IRs')
-    linkData <- PACVr.generateIRGeneData(genes,
-                                         quadripRegions,
-                                         syntenyLineType)
-  }
-  return(linkData)
+  dev.off()
+  logger::log_info('Visualization {vizDoneSub} saved as `{output}`')
 }
 
 #' @title Execute the complete pipeline of \pkg{PACVr}
@@ -159,7 +135,7 @@ PACVr.complete <- function(gbkFile,
   if (is.null(gbkData)) {
     return(-1)
   }
-  
+
   ###################################
   coverage <- PACVr.calcCoverage(bamFile,
                                  windowSize,
@@ -174,42 +150,16 @@ PACVr.complete <- function(gbkFile,
   }
   
   ###################################
-  if (!is.na(output)) {
-    logger::log_info('Generating a visualization of the sequencing coverage')
-    pdf(output, width=10, height=10)
-    PACVr.visualizeWithRCircos(
-      gbkData,
-      genes,
-      quadripRegions,
-      coverage,
-      windowSize,
-      threshold,
-      logScale,
-      relative,
-      linkData,
-      IRCheck,
-      textSize
-    )
-    dev.off()
-    logger::log_info('Visualization (including coverage) saved as `{output}`')
-  } else {
-    logger::log_info('No coverage data inferred; generating empty visualization')
-    PACVr.visualizeWithRCircos(
-      gbkData,
-      genes,
-      quadripRegions,
-      coverage,
-      windowSize,
-      threshold,
-      logScale,
-      relative,
-      linkData,
-      IRCheck,
-      textSize
-    )
-    dev.off()
-    logger::log_info('Visualization (excluding coverage) saved as `{output}`')
-  }
+  PACVr.visualizeWithRCircos(gbkData,
+                             coverage,
+                             windowSize,
+                             logScale,
+                             threshold,
+                             relative,
+                             analysisSpecs,
+                             textSize,
+                             output)
+
   ######################################################################
   logger::log_success('Done.')
   ######################################################################
