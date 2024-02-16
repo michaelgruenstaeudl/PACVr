@@ -3,8 +3,7 @@
 #email="m_gruenstaeudl@fhsu.edu"
 #version="2024.02.01.1736"
 
-checkIREquality <- function(gbkData, regions, dir, sample_name) {
-  gbkSeq <- read.gbSeq(gbkData)
+checkIREquality <- function(gbkSeq, regions, dir, sample_name) {
   if ("IRb" %in% regions[, 4] && "IRa" %in% regions[, 4]) {
     repeatB <- as.numeric(regions[which(regions[, 4] == "IRb"), 2:3])
     repeatA <-
