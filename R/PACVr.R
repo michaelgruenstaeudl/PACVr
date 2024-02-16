@@ -14,21 +14,19 @@ PACVr.read.gb <- function(gbkFile) {
 
 PACVr.verboseInformation <- function(gbkData,
                                      bamFile,
-                                     genes,
-                                     quadripRegions,
                                      analysisSpecs,
                                      output) {
-  sampleName <- PACVr.parseName(gbkData)
+  sampleName <- gbkData$sampleName
   verbosePath <- getVerbosePath(sampleName, output)
   printCovStats(bamFile,
-                genes,
-                quadripRegions,
+                gbkData$genes,
+                gbkData$quadripRegions,
                 sampleName,
                 analysisSpecs,
                 verbosePath)
-  if (!is.null(analysisSpecs$syntenyLineType)) {
-    checkIREquality(gbkData,
-                    quadripRegions,
+  if (analysisSpecs$isSyntenyLine) {
+    checkIREquality(gbkData$seq,
+                    gbkData$quadripRegions,
                     verbosePath,
                     sampleName)
   }
@@ -171,8 +169,6 @@ PACVr.complete <- function(gbkFile,
   if (verbose) {
     PACVr.verboseInformation(gbkData,
                              bamFile,
-                             genes,
-                             quadripRegions,
                              analysisSpecs,
                              output)
   }
