@@ -19,7 +19,7 @@ ExtractAllGenes <- function(gbkDataDF) {
   return(gene_L)
 }
 
-parseSource <- function(gbkDataDF) {
+
 PACVr.parseGenes <- function (gbkDataDF) {
   # This function parses the genes of a GenBank file
   logger::log_info('Parsing the different genes')
