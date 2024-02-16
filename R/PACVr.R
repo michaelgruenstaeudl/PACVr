@@ -12,45 +12,6 @@ PACVr.read.gb <- function(gbkFile) {
   return(gbkData)
 }
 
-PACVr.parseName <- function (gbkData) {
-  return(read.gbSampleName(gbkData))
-}
-
-PACVr.parseQuadripRegions <- function (gbkData, gbkDataDF) {
-  raw_quadripRegions <- ParseQuadripartiteStructure(gbkDataDF)
-  quadripRegions <- fillDataFrame(gbkData, raw_quadripRegions)
-  return(quadripRegions)
-}
-
-PACVr.parseSource <- function(gbkDataDF) {
-  return(parseSource(gbkDataDF))
-}
-
-PACVr.parseGenes <- function (gbkDataDF) {
-  # This function parses the genes of a GenBank file
-  logger::log_info('Parsing the different genes')
-  genes <- ExtractAllGenes(gbkDataDF)
-  return(genes)
-}
-
-PACVr.calcCoverage <-
-  function (bamFile, windowSize=250) {
-    logger::log_info('Calculating the sequencing coverage')
-    coverage <- CovCalc(bamFile, windowSize)
-    return(coverage)
-  }
-
-PACVr.generateIRGeneData <- function(genes, quadripRegions,
-                                     syntenyLineType) {
-  # Parse GenBank file
-  if ("IRb" %in% quadripRegions[, 4] &&
-      "IRa" %in% quadripRegions[, 4]) {
-    linkData <- GenerateIRSynteny(genes, syntenyLineType)
-    return(linkData)
-  }
-  return(-1)
-}
-
 PACVr.verboseInformation <- function(gbkData,
                                      bamFile,
                                      genes,
