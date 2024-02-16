@@ -226,15 +226,30 @@ getCovDepths <- function(covData, regions_name) {
   return(covDepths)
 }
 
-getCovDepth <- function(covDataField, regions_name) {
-  lowCoverage <- NULL
+getCovDepth <- function(covDataField, regions_name, removeSmall = FALSE) {
+  lowCovWin_abs <-
+    lowCovWin_relToRegionLen <-
+    length <-
+    regionLen <-
+    chromEnd <-
+    chromStart <-
+    NULL
+
+  if (removeSmall) {
+    sizeThreshold <- 250
+  } else {
+    sizeThreshold <- 0
+  }
 
   covDepth <- covDataField %>%
+    dplyr::mutate(length = chromEnd - chromStart) %>%
+    dplyr::filter(length >= sizeThreshold) %>%
     groupByRegionsName(regions_name) %>%
     dplyr::summarise(
-      lowCoverage = sum(lowCoverage == "*", na.rm = TRUE),
-      .groups = "drop"
-    )
+      lowCovWin_abs = sum(lowCoverage == "*", na.rm = TRUE),
+      regionLen = sum(length, na.rm = TRUE),
+      .groups = "drop") %>%
+    dplyr::mutate(lowCovWin_relToRegionLen = lowCovWin_abs / regionLen)
   return(covDepth)
 }
 
