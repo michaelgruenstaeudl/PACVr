@@ -72,7 +72,7 @@ checkFeatureQualifiers <- function(sampleDF, analysisSpecs) {
     logger::log_warn(paste0("Unable to analyze sample as specified; ",
                             "missing feature qualifiers: ",
                             "'",
-                            paste(missingCols, collapse = "', '"),
+                            paste(subsetData$missingCols, collapse = "', '"),
                             "'"))
     return(NULL)
   }
