@@ -135,7 +135,8 @@ PACVr.parseSource <- function(gbkDataDF) {
                   chromEnd = end,
                   Band = seqnames) %>%
     dplyr::mutate(Chromosome = "",
-                  Stain = "gpos75") %>%
+                  Stain = "gpos75",
+                  Band = sub(" ", "_", Band)) %>%
     dplyr::select(dplyr::all_of(c("Chromosome", "chromStart",
                                   "chromEnd", "Band", "Stain")))
   return(source)
