@@ -54,15 +54,52 @@ parseFeature <- function(feature) {
   # transform source data frame making sure final result
   # is still data frame
   feature <- as.data.frame(t(feature))
-  colNames <- feature[1,]
+  colNames <- sub("^/", "", feature[1,])
   feature <- as.data.frame(feature[-1,])
   colnames(feature) <- colNames
+  colNames <- names(feature)
 
   # fix sequence location(s) and feature type
+  . <- NULL
   feature <- feature %>%
-    dplyr::rename_with(~ "locations",
-                       .cols = dplyr::all_of(locAndTypeIndex)) %>%
+    stats::setNames(make.unique(names(.))) %>%
+    dplyr::rename(locations = {{ type }}) %>%
     dplyr::mutate(type = type)
+
+  # combine duplicate qualifiers of same name
+  feature <- combineDupQuals(feature, colNames, type)
+
+  return(feature)
+}
+
+combineDupQuals <- function(feature, colNames, type) {
+  dupQualifiers <- colNames[duplicated(colNames)]
+
+  # if the feature type is the same name as a feature
+  # qualification, we needs to "promote" the column qualification
+  # column to not have the ".1" suffix
+  if (type %in% dupQualifiers) {
+    feature <- feature %>%
+      dplyr::rename_with(~type, dplyr::matches(paste0(type, ".1")))
+  }
+  
+  dupQualifiers <- dupQualifiers[dupQualifiers != type]
+  if (length(dupQualifiers) == 0) {
+    return(feature)
+  }
+  
+  # combine into single string the columns that had the same name before
+  # setNames() was applied
+  for (qualifier in dupQualifiers) {
+    uniteMatch <- paste0("^", qualifier, "$", 
+                         "|",
+                         "^", qualifier, "\\.")
+    uniteCols <- grep(uniteMatch, names(feature), value = TRUE)
+    feature <- feature %>%
+      tidyr::unite("uniteCol", dplyr::all_of(uniteCols), sep = "; ") %>%
+      dplyr::select(-dplyr::matches(uniteMatch)) %>%
+      dplyr::rename_with(~qualifier, dplyr::matches("uniteCol"))
+  }
   return(feature)
 }
 
