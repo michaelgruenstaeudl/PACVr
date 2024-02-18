@@ -205,12 +205,40 @@ writeVerboseTable <- function(df, sample_name, dir, fileName) {
 getCovSummaries <- function(covData) {
   regions_name <- covData$regions_name
 
+  covData <- updateCovData(covData)
   covSummaries <- getCovDepths(covData, regions_name)
   regions_evenness <- getCovEvenness(covData$ir_regions, regions_name)
-  covSummaries$regions_summary <- dplyr::full_join(covSummaries$regions_summary,
-                                                   regions_evenness,
-                                                   regions_name)
+  genome_summary <- getGenomeSummary(covData$ir_regions, regions_name)
+  covSummaries$regions_summary <- covSummaries$regions_summary %>%
+    dplyr::full_join(regions_evenness, regions_name) %>%
+    dplyr::bind_rows(genome_summary)
   return(covSummaries)
+}
+
+updateCovData <- function(covData, removeSmall = FALSE) {
+  covData$ir_regions <- updateCovDataField(covData$ir_regions, removeSmall)
+  covData$ir_genes <- updateCovDataField(covData$ir_genes, removeSmall)
+  covData$ir_noncoding <- updateCovDataField(covData$ir_noncoding, removeSmall)
+
+  return(covData)
+}
+
+updateCovDataField <- function(covDataField, removeSmall = FALSE) {
+  length <-
+    chromEnd <-
+    chromStart <-
+    NULL
+
+  if (removeSmall) {
+    sizeThreshold <- 250
+  } else {
+    sizeThreshold <- 0
+  }
+
+  covDataField <- covDataField %>%
+    dplyr::mutate(length = chromEnd - chromStart) %>%
+    dplyr::filter(length >= sizeThreshold)
+  return(covDataField)
 }
 
 getCovDepths <- function(covData, regions_name) {
@@ -226,44 +254,65 @@ getCovDepths <- function(covData, regions_name) {
   return(covDepths)
 }
 
-getCovDepth <- function(covDataField, regions_name, removeSmall = FALSE) {
+getCovDepth <- function(covDataField, regions_name = NULL) {
+  if (!is.null(regions_name)) {
+    covDataField <- covDataField %>%
+      groupByRegionsName(regions_name)
+  }
+  covDepth <- covDataField %>%
+    calcCovDepth()
+  return(covDepth)
+}
+
+calcCovDepth <- function(df) {
   lowCoverage <-
     lowCovWin_abs <-
-    lowCovWin_relToRegionLen <-
     length <-
     regionLen <-
-    chromEnd <-
-    chromStart <-
     NULL
 
-  if (removeSmall) {
-    sizeThreshold <- 250
-  } else {
-    sizeThreshold <- 0
-  }
-
-  covDepth <- covDataField %>%
-    dplyr::mutate(length = chromEnd - chromStart) %>%
-    dplyr::filter(length >= sizeThreshold) %>%
-    groupByRegionsName(regions_name) %>%
+  return(
+    df %>%
     dplyr::summarise(
       lowCovWin_abs = sum(lowCoverage == "*", na.rm = TRUE),
       regionLen = sum(length, na.rm = TRUE),
       .groups = "drop") %>%
-    dplyr::mutate(lowCovWin_relToRegionLen = lowCovWin_abs / regionLen)
-  return(covDepth)
+    addLowCovWin_relToRegionLen()
+  )
 }
 
-getCovEvenness <- function(covDataField, regions_name) {
+addLowCovWin_relToRegionLen <- function(df) {
+  lowCovWin_abs <-
+    lowCovWin_relToRegionLen <-
+    regionLen <-
+    NULL
+
+  return (
+    df %>%
+    dplyr::mutate(lowCovWin_relToRegionLen = lowCovWin_abs / regionLen)
+  )
+}
+
+getCovEvenness <- function(covDataField, regions_name = NULL) {
+  if (!is.null(regions_name)) {
+    covDataField <- covDataField %>%
+      groupByRegionsName(regions_name)
+  }
+  covEvenness <- covDataField %>%
+    calcCovEvenness()
+  return(covEvenness)
+}
+
+calcCovEvenness <- function(df) {
   coverage <- NULL
 
-  covEvenness <- covDataField %>%
-    groupByRegionsName(regions_name) %>%
+  return(
+    df %>%
     dplyr::summarise(
       evenness = evennessScore(coverage),
       .groups = "drop"
     )
-  return(covEvenness)
+  )
 }
 
 groupByRegionsName <- function(df, regions_name) {
@@ -277,6 +326,16 @@ evennessScore <- function(coverage) {
   D2 <- coverage[coverage <= coverage_mean]
   E <- 1 - (length(D2) - sum(D2) / coverage_mean) / length(coverage)
   return(E)
+}
+
+getGenomeSummary <- function(covDataField, regions_name) {
+  genome_depth <- getCovDepth(covDataField)
+  genome_evenness <- getCovEvenness(covDataField)
+
+  genome_summary <- genome_depth %>%
+    dplyr::bind_cols(genome_evenness)
+  genome_summary[regions_name] <- "Complete_genome"
+  return(genome_summary)
 }
 
 writeCovSumTables <- function(covSummaries, sample_name, dir) {
