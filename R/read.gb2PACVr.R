@@ -77,13 +77,13 @@ combineDupQuals <- function(feature, colNames, type) {
   if (length(dupQualifiers) == 0) {
     return(feature)
   }
-  
+
   # combine into single string the columns that had the same name before
   # setNames() was applied
   for (qualifier in dupQualifiers) {
     uniteMatch <- paste0("^", qualifier, "$", 
                          "|",
-                         "^", qualifier, "\\.")
+                         "^", qualifier, "\\.\\d+$")
     uniteCols <- grep(uniteMatch, names(feature), value = TRUE)
     feature <- feature %>%
       tidyr::unite("uniteCol", dplyr::all_of(uniteCols), sep = "; ") %>%
