@@ -181,7 +181,10 @@ getFeatureTags <- function() {
 }
 
 getGbkRaw <- function(gbkFile) {
-  if (grepl("\\.gb$", gbkFile) && file.exists(gbkFile)) {
+  if (!is.character(gbkFile)) {
+    logger::log_error("Parameter `gbkFile` is not a character string")
+    gbkChar <- NULL
+  } else if (grepl("\\.gb$", gbkFile) && file.exists(gbkFile)) {
     logger::log_info('Reading GenBank flatfile `{gbkFile}`')
     gbkChar <- tryCatch({
       suppressWarnings(readChar(gbkFile, 
