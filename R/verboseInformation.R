@@ -236,28 +236,45 @@ updateRegionsSummary <- function(covSummaries,
 }
 
 updateCovData <- function(covData, removeSmall = FALSE) {
-  covData$ir_regions <- updateCovDataField(covData$ir_regions, removeSmall)
-  covData$ir_genes <- updateCovDataField(covData$ir_genes, removeSmall)
-  covData$ir_noncoding <- updateCovDataField(covData$ir_noncoding, removeSmall)
+  regions_name <- covData$regions_name
+  regions_start <- covData$regions_start
+  regions_end <- covData$regions_end
 
+  covData$ir_regions <- updateCovDataField(covData$ir_regions,
+                                           regions_name,
+                                           regions_start,
+                                           regions_end,
+                                           removeSmall)
+  covData$ir_genes <- updateCovDataField(covData$ir_genes,
+                                         regions_name,
+                                         regions_start,
+                                         regions_end,
+                                         removeSmall)
+  covData$ir_noncoding <- updateCovDataField(covData$ir_noncoding,
+                                             regions_name,
+                                             regions_start,
+                                             regions_end,
+                                             removeSmall)
   return(covData)
 }
 
-updateCovDataField <- function(covDataField, removeSmall = FALSE) {
-  length <-
-    chromEnd <-
-    chromStart <-
-    NULL
-
+updateCovDataField <- function(covDataField,
+                               regions_name,
+                               regions_start,
+                               regions_end,
+                               removeSmall = FALSE) {
+  # label length of sequence and filter if desired
   if (removeSmall) {
     sizeThreshold <- 250
   } else {
     sizeThreshold <- 0
   }
+  covDataField["length"] <- covDataField[regions_end] - covDataField[regions_start]
+  covDataField <- covDataField[covDataField$length >= sizeThreshold, ]
 
-  covDataField <- covDataField %>%
-    dplyr::mutate(length = chromEnd - chromStart) %>%
-    dplyr::filter(length >= sizeThreshold)
+  # update junction naming
+  covDataField[[regions_name]] <- gsub("^(\\w+),\\s+", "Junction_\\1_", covDataField[[regions_name]])
+  covDataField[[regions_name]] <- gsub("(\\w+),\\s+", "\\1_", covDataField[[regions_name]])
   return(covDataField)
 }
 
