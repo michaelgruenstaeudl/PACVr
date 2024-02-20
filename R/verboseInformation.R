@@ -3,10 +3,11 @@
 #email="m_gruenstaeudl@fhsu.edu"
 #version="2024.02.08.2300"
 
-getVerbosePath <- function(sampleName, output) {
+getVerbosePath <- function(sampleName,
+                           plotSpecs) {
   # Step 1. Check ...
-  if (!is.na(output)) {
-    outDir <- dirname(output)
+  if (plotSpecs$isOutput) {
+    outDir <- dirname(plotSpecs$output)
     tmpDir <- file.path(outDir,
                         paste(sampleName["sample_name"],
                               ".tmp",

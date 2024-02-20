@@ -15,9 +15,10 @@ PACVr.read.gb <- function(gbkFile) {
 PACVr.verboseInformation <- function(gbkData,
                                      bamFile,
                                      analysisSpecs,
-                                     output) {
+                                     plotSpecs) {
   sampleName <- gbkData$sampleName
-  verbosePath <- getVerbosePath(sampleName, output)
+  verbosePath <- getVerbosePath(sampleName,
+                                plotSpecs)
   printCovStats(bamFile,
                 gbkData$genes,
                 gbkData$quadripRegions,
@@ -154,7 +155,7 @@ PACVr.complete <- function(gbkFile,
     PACVr.verboseInformation(gbkData,
                              bamFile,
                              analysisSpecs,
-                             output)
+                             plotSpecs)
   }
   
   ###################################
