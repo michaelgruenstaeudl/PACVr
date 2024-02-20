@@ -181,7 +181,7 @@ getFeatureTags <- function() {
 }
 
 getGbkRaw <- function(gbkFile) {
-  if (grepl("\\.gb$", gbkFile) || file.exists(gbkFile)) {
+  if (grepl("\\.gb$", gbkFile) && file.exists(gbkFile)) {
     logger::log_info('Reading GenBank flatfile `{gbkFile}`')
     gbkChar <- tryCatch({
       suppressWarnings(readChar(gbkFile, 
