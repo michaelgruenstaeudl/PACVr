@@ -74,16 +74,6 @@ parseFeature <- function(feature) {
 
 combineDupQuals <- function(feature, colNames, type) {
   dupQualifiers <- colNames[duplicated(colNames)]
-
-  # if the feature type is the same name as a feature
-  # qualification, we needs to "promote" the column qualification
-  # column to not have the ".1" suffix
-  if (type %in% dupQualifiers) {
-    feature <- feature %>%
-      dplyr::rename_with(~type, dplyr::matches(paste0(type, ".1")))
-  }
-  
-  dupQualifiers <- dupQualifiers[dupQualifiers != type]
   if (length(dupQualifiers) == 0) {
     return(feature)
   }
