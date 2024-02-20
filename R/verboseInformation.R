@@ -206,12 +206,32 @@ getCovSummaries <- function(covData) {
   regions_name <- covData$regions_name
 
   covData <- updateCovData(covData)
-  covSummaries <- getCovDepths(covData, regions_name)
-  regions_evenness <- getCovEvenness(covData$ir_regions, regions_name)
-  genome_summary <- getGenomeSummary(covData$ir_regions, regions_name)
-  covSummaries$regions_summary <- covSummaries$regions_summary %>%
-    dplyr::full_join(regions_evenness, regions_name) %>%
-    dplyr::bind_rows(genome_summary)
+  covSummaries <- getCovDepths(covData,
+                               regions_name)
+  covSummaries <- updateRegionsSummary(covSummaries,
+                                       covData$ir_regions,
+                                       regions_name)
+  return(covSummaries)
+}
+
+updateRegionsSummary <- function(covSummaries,
+                                 covDataRegions,
+                                 regions_name) {
+  covSumRegions <- covSummaries$regions_summary
+  regions_evenness <- getCovEvenness(covDataRegions,
+                                     regions_name)
+  covSumRegions <- dplyr::full_join(covSumRegions,
+                                    regions_evenness,
+                                    regions_name)
+
+  if (regions_name != "Source") {
+    genome_summary <- getGenomeSummary(covDataRegions,
+                                       regions_name)
+    covSumRegions <- dplyr::bind_rows(covSumRegions,
+                                      genome_summary)
+  }
+
+  covSummaries$regions_summary <- covSumRegions
   return(covSummaries)
 }
 
