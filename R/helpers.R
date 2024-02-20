@@ -54,6 +54,22 @@ getAnalysisSpecs <- function(IRCheck,
   return(analysisSpecs)
 }
 
+getPlotSpecs <- function(logScale,
+                         threshold,
+                         relative,
+                         textSize,
+                         output) {
+  plotSpecs <- list(
+    logScale = filterLogical(logScale),
+    threshold = filterPosNumeric(threshold),
+    relative = filterLogical(relative),
+    textSize = filterPosNumeric(textSize),
+    output = getOutput(output)
+  )
+  plotSpecs$isOutput <- !is.null(plotSpecs$output)
+  return(plotSpecs)
+}
+
 filterByType <- function(x, typeFun) {
   if (typeFun(x)) {
     return(x)
@@ -65,5 +81,17 @@ filterByType <- function(x, typeFun) {
 filterPosNumeric <- function(x) {
   return (
     filterByType(x, is.pos.numeric)
+  )
+}
+
+filterLogical <- function(x) {
+  return (
+    filterByType(x, is.logical)
+  )
+}
+
+is.pos.numeric <- function(x) {
+  return (
+    is.numeric(x) && (x > 0)
   )
 }
