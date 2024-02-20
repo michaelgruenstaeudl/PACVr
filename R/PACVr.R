@@ -127,7 +127,8 @@ PACVr.complete <- function(gbkFile,
                            output=NA) {
   ######################################################################
   read.gbData <- PACVr.read.gb(gbkFile)
-  analysisSpecs <- getAnalysisSpecs(IRCheck)
+  analysisSpecs <- getAnalysisSpecs(IRCheck,
+                                    windowSize)
   gbkData <- PACVr.gbkData(read.gbData,
                            analysisSpecs)
   rm(read.gbData)

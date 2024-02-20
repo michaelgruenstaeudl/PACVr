@@ -43,11 +43,27 @@ validateColors <- function(colorsToValidate) {
   }
 }
 
-getAnalysisSpecs <- function(IRCheck) {
+getAnalysisSpecs <- function(IRCheck,
+                             windowSize) {
   analysisSpecs <- list(
     syntenyLineType = getSyntenyLineType(IRCheck),
-    isIRCheck = getIsIRCheck(IRCheck)
+    isIRCheck = getIsIRCheck(IRCheck),
+    windowSize = filterPosNumeric(windowSize)
   )
   analysisSpecs$isSyntenyLine <- !is.null(analysisSpecs$syntenyLineType)
   return(analysisSpecs)
+}
+
+filterByType <- function(x, typeFun) {
+  if (typeFun(x)) {
+    return(x)
+  } else {
+    return(NULL)
+  }
+}
+
+filterPosNumeric <- function(x) {
+  return (
+    filterByType(x, is.pos.numeric)
+  )
 }
