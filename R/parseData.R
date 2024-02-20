@@ -83,12 +83,12 @@ PACVr.parseQuadripRegions <- function (gbkLengths, gbkDataDF) {
   return(quadripRegions)
 }
 
-PACVr.calcCoverage <- function (coverageRaw,
+PACVr.calcCoverage <- function (bamFile,
                                 windowSize=250,
                                 logScale) {
   logger::log_info('Calculating the sequencing coverage')
-  coverage <- CovCalc(coverageRaw, windowSize)
-  if (logScale == TRUE) {
+  coverage <- CovCalc(bamFile, windowSize)
+  if (logScale) {
     coverage$coverage <- log(cov$coverage)
     #coverage$coverage <- log(coverage$coverage)
   }
