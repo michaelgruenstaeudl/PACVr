@@ -36,17 +36,12 @@ PACVr.verboseInformation <- function(gbkData,
 
 PACVr.visualizeWithRCircos <- function(gbkData,
                                        coverage,
-                                       windowSize,
-                                       logScale,
-                                       threshold,
-                                       relative,
                                        analysisSpecs,
-                                       textSize,
-                                       output) {
-  if (!is.na(output)) {
+                                       plotSpecs) {
+  if (plotSpecs$isOutput) {
     logger::log_info('Generating a visualization of the sequencing coverage')
     vizDoneSub <- "(including coverage)"
-    pdf(output, width=10, height=10)
+    pdf(plotSpecs$output, width=10, height=10)
   } else {
     logger::log_info('No coverage data inferred; generating empty visualization')
     vizDoneSub <- "(excluding coverage)"
@@ -54,15 +49,11 @@ PACVr.visualizeWithRCircos <- function(gbkData,
   visualizeWithRCircos(
     gbkData,
     coverage,
-    windowSize,
-    logScale,
-    threshold,
-    relative,
     analysisSpecs,
-    textSize
+    plotSpecs
   )
   dev.off()
-  logger::log_info('Visualization {vizDoneSub} saved as `{output}`')
+  logger::log_info('Visualization {vizDoneSub} saved as `{plotSpecs$output}`')
 }
 
 #' @title Execute the complete pipeline of \pkg{PACVr}
@@ -161,13 +152,8 @@ PACVr.complete <- function(gbkFile,
   ###################################
   PACVr.visualizeWithRCircos(gbkData,
                              coverage,
-                             windowSize,
-                             logScale,
-                             threshold,
-                             relative,
                              analysisSpecs,
-                             textSize,
-                             output)
+                             plotSpecs)
 
   ######################################################################
   logger::log_success('Done.')

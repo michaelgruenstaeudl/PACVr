@@ -5,12 +5,8 @@
 
 visualizeWithRCircos <- function(gbkData,
                                  coverage,
-                                 windowSize,
-                                 logScale,
-                                 threshold,
-                                 relative,
                                  analysisSpecs,
-                                 textSize) {
+                                 plotSpecs) {
   regions <- gbkData$quadripRegions
   genes <- gbkData$genes
 
@@ -18,8 +14,10 @@ visualizeWithRCircos <- function(gbkData,
   RCircosInit(regions)
   
   # STEP 2. SET PARAMETER FOR IDEOGRAM
-  setPlotParams(genes, regions, coverage, logScale, 
-                threshold, relative, textSize)
+  setPlotParams(genes,
+                regions,
+                coverage,
+                plotSpecs)
 
   # STEP 3. GRAPHIC DEVICE INITIALIZATION
   RCircos::RCircos.Set.Plot.Area()
@@ -27,23 +25,30 @@ visualizeWithRCircos <- function(gbkData,
 
   # STEP 4. GENERATE PLOT
   logger::log_info('  Generating RCircos plot')
-  positions <- plotMain(genes, coverage)
+  positions <- plotMain(genes,
+                        coverage)
   
   # STEP 5. OPTIONAL PLOTS
   averageLines <- NULL
   if (analysisSpecs$isIRCheck) {
     plotRegionNames(regions)
-    averageLines <- plotAverageLines(regions, coverage, windowSize, positions)
+    averageLines <- plotAverageLines(regions,
+                                     coverage,
+                                     analysisSpecs$windowSize,
+                                     positions)
   }
 
   if (analysisSpecs$isSyntenyLine) {
-    plotIRLinks(gbkData$linkData, analysisSpecs$syntenyLineType)
+    plotIRLinks(gbkData$linkData,
+                analysisSpecs$syntenyLineType)
   }
   
   # STEP 6. GENERATE TITLE AND LEGEND
   logger::log_info('  Generating title and legend for visualization')
   graphics::title(paste(gbkData$plotTitle), line = -4.5, cex.main = 0.8)
-  addLegend(relative, coverage, threshold, averageLines)
+  addLegend(coverage,
+            averageLines,
+            plotSpecs)
   
 }
 
@@ -61,10 +66,9 @@ RCircosInit <- function(regions) {
 setPlotParams <- function(genes,
                           regions,
                           coverage,
-                          logScale,
-                          threshold,
-                          relative,
-                          textSize) {
+                          plotSpecs) {
+  textSize <- plotSpecs$textSize
+
   RCircosEnvironment.params <- RCircos::RCircos.Get.Plot.Parameters()
   RCircosEnvironment.params$base.per.unit <- 1
   RCircosEnvironment.params$chrom.paddings <- 1
@@ -75,7 +79,10 @@ setPlotParams <- function(genes,
   RCircosEnvironment.params$char.width <-
     6000000 * (max(regions$chromEnd) / (52669 + 310 * (nrow(genes)))) / textSize
 
-  RCircosEnvironment.params$hist.colors <- HistCol(coverage, threshold, relative, logScale)
+  RCircosEnvironment.params$hist.colors <- HistCol(coverage,
+                                                   plotSpecs$threshold,
+                                                   plotSpecs$relative,
+                                                   plotSpecs$logScale)
   RCircosEnvironment.params$line.color <- "yellow3"
   RCircosEnvironment.params$chrom.width <- 0.05
   RCircosEnvironment.params$track.in.start <- 1.08
@@ -125,9 +132,12 @@ plotMain <- function(genes, coverage) {
   return(positions)
 }
 
-addLegend <- function(relative, coverage, threshold, averageLines) {
-  legendParams <- getLegendParams(relative, coverage, threshold, averageLines)
-  
+addLegend <- function(coverage,
+                      averageLines,
+                      plotSpecs) {
+  legendParams <- getLegendParams(coverage,
+                                  averageLines,
+                                  plotSpecs)
   graphics::legend(
     x = legendParams$x,
     y = legendParams$y,
@@ -141,9 +151,12 @@ addLegend <- function(relative, coverage, threshold, averageLines) {
   )
 }
 
-getLegendParams <- function(relative, coverage, threshold, averageLines) {
+getLegendParams <- function(coverage,
+                            averageLines,
+                            plotSpecs) {
   meanCoverage <- mean(coverage[, 4])
-  if (relative == TRUE) {
+  threshold <- plotSpecs$threshold
+  if (plotSpecs$relative == TRUE) {
     absolute <- trunc(meanCoverage * threshold)
     perc <- threshold * 100
     
