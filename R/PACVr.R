@@ -146,8 +146,8 @@ PACVr.complete <- function(gbkFile,
 
   ###################################
   coverage <- PACVr.calcCoverage(bamFile,
-                                 windowSize,
-                                 logScale)
+                                 analysisSpecs$windowSize,
+                                 plotSpecs$logScale)
 
   ###################################
   if (verbose) {
