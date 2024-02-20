@@ -67,12 +67,12 @@ parseFeature <- function(feature) {
     dplyr::mutate(type = type)
 
   # combine duplicate qualifiers of same name
-  feature <- combineDupQuals(feature, colNames, type)
+  feature <- combineDupQuals(feature, colNames)
 
   return(feature)
 }
 
-combineDupQuals <- function(feature, colNames, type) {
+combineDupQuals <- function(feature, colNames) {
   dupQualifiers <- colNames[duplicated(colNames)]
   if (length(dupQualifiers) == 0) {
     return(feature)
