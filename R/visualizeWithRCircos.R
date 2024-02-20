@@ -208,3 +208,11 @@ getLegendParams <- function(coverage,
   
   return(legendParams)
 }
+
+getOutput <- function(output) {
+  if (is.character(output) && grepl("\\.pdf$", output, ignore.case = TRUE)) {
+    return(output)
+  } else {
+    return(NULL)
+  }
+}
