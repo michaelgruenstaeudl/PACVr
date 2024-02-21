@@ -128,6 +128,7 @@ PACVr.complete <- function(gbkFile,
   rm(read.gbData)
   gc()
   if (is.null(gbkData)) {
+    logger::log_fatal('Unsuccessful.')
     return(-1)
   }
 
