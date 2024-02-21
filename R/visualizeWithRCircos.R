@@ -42,7 +42,7 @@ visualizeWithRCircos <- function(gbkData,
     plotIRLinks(gbkData$linkData,
                 analysisSpecs$syntenyLineType)
   }
-  
+
   # STEP 6. GENERATE TITLE AND LEGEND
   logger::log_info('  Generating title and legend for visualization')
   graphics::title(paste(gbkData$plotTitle), line = -4.5, cex.main = 0.8)
@@ -209,10 +209,47 @@ getLegendParams <- function(coverage,
   return(legendParams)
 }
 
-getOutput <- function(output) {
-  if (is.character(output) && grepl("\\.pdf$", output, ignore.case = TRUE)) {
-    return(output)
+getOutputFields <- function(output) {
+  outputTypes <- paste(getOutputTypes(), collapse = "|")
+  outputPattern <- sprintf("^(?:.+\\.)(%s)$", outputTypes)
+  outputMatch <- regexec(outputPattern, output, ignore.case = TRUE)
+  outputVec <- regmatches(output, outputMatch)[[1]]
+
+  if (length(outputVec) == 0) {
+    output <- NULL
+    outputType <- NULL
+    isOutput <- FALSE
   } else {
-    return(NULL)
+    output <- outputVec[1]
+    outputType <- tolower(outputVec[2])
+    isOutput <- TRUE
   }
+
+  outputFields <- list(
+    output = output,
+    outputType = outputType,
+    isOutput = isOutput
+  )
+  return(outputFields)
+}
+
+createVizFile <- function(plotSpecs) {
+  output <- plotSpecs$output
+  outputType <- plotSpecs$outputType
+
+  if (outputType == "pdf") {
+    pdf(output,
+        width=10,
+        height=10)
+  } else if (outputType == "png") {
+    png(output,
+        width=480,
+        height=480)
+  }
+}
+
+getOutputTypes <- function() {
+  outputTypes <- c("pdf",
+                   "png")
+  return(outputTypes)
 }

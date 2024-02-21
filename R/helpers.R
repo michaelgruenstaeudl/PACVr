@@ -59,14 +59,16 @@ getPlotSpecs <- function(logScale,
                          relative,
                          textSize,
                          output) {
+  outputFields <- getOutputFields(output)
   plotSpecs <- list(
     logScale = filterLogical(logScale),
     threshold = filterPosNumeric(threshold),
     relative = filterLogical(relative),
     textSize = filterPosNumeric(textSize),
-    output = getOutput(output)
+    output = outputFields$output,
+    outputType = outputFields$outputType,
+    isOutput = outputFields$isOutput
   )
-  plotSpecs$isOutput <- !is.null(plotSpecs$output)
   return(plotSpecs)
 }
 

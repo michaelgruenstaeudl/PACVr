@@ -38,22 +38,24 @@ PACVr.visualizeWithRCircos <- function(gbkData,
                                        coverage,
                                        analysisSpecs,
                                        plotSpecs) {
-  if (plotSpecs$isOutput) {
-    logger::log_info('Generating a visualization of the sequencing coverage')
-    vizDoneSub <- "(including coverage)"
-    pdf(plotSpecs$output, width=10, height=10)
-  } else {
-    logger::log_info('No coverage data inferred; generating empty visualization')
-    vizDoneSub <- "(excluding coverage)"
+  logger::log_info('Generating a visualization of the sequencing coverage')
+  isOutput <- plotSpecs$isOutput
+
+  if (isOutput) {
+    createVizFile(plotSpecs)
   }
+
   visualizeWithRCircos(
     gbkData,
     coverage,
     analysisSpecs,
     plotSpecs
   )
-  dev.off()
-  logger::log_info('Visualization {vizDoneSub} saved as `{plotSpecs$output}`')
+
+  if (isOutput) {
+    dev.off()
+    logger::log_info('Visualization saved as `{plotSpecs$output}`')
+  }
 }
 
 #' @title Execute the complete pipeline of \pkg{PACVr}
