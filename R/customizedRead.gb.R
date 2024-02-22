@@ -5,7 +5,9 @@
 
 read.gbWithHandling <- function(gbkRaw, count=0) {
   gbkData <- tryCatch({
-    read.gb::read.gb(gbkRaw$char, DNA=TRUE, Type="full", Source="Char")
+    suppressMessages(
+      read.gb::read.gb(gbkRaw$char, DNA=TRUE, Type="full", Source="Char")
+    )
   },
     error = function(e) {
       if (conditionMessage(e) == "dim(X) must have a positive length") {
