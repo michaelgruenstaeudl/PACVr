@@ -79,7 +79,11 @@ PACVr.quadripRegions <- function(gbkLengths,
 
 PACVr.parseQuadripRegions <- function (gbkLengths, gbkDataDF) {
   raw_quadripRegions <- ParseQuadripartiteStructure(gbkDataDF)
-  quadripRegions <- fillDataFrame(gbkLengths, raw_quadripRegions)
+  if (is.null(raw_quadripRegions)) {
+    quadripRegions <- PACVr.parseSource(gbkDataDF)
+  } else {
+    quadripRegions <- fillDataFrame(gbkLengths, raw_quadripRegions)
+  }
   return(quadripRegions)
 }
 
@@ -123,6 +127,8 @@ PACVr.linkData <- function(genes,
 }
 
 PACVr.parseSource <- function(gbkDataDF) {
+  logger::log_info("Using source as regions")
+
   type <-
     Band <-
     Stain <-

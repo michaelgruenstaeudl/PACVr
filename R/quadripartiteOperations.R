@@ -9,7 +9,7 @@ FilterByKeywords <- function(allRegions, where) {
   #   ...
   # RETURNS:
   #   ...
-  out = subset(
+  out <- subset(
     allRegions,
     grepl(
       "^IR|repeat|invert|^LSC|^SSC|[large,long]\\ssingle\\scopy|[short,small]\\ssingle\\scopy",
@@ -17,9 +17,6 @@ FilterByKeywords <- function(allRegions, where) {
       ignore.case=TRUE
     )
   )
-  if (nrow(out) < 1) {
-    warning(paste("Inverted repeat info not found for qualifier ", where, ".", sep = ""))
-  }
   return(out)
 }
 
@@ -39,6 +36,10 @@ ParseQuadripartiteStructure <- function(gbkDataDF) {
     filterWhere <- "note"
   }
   quadripRegions <- FilterByKeywords(allRegions, filterWhere)
+  if (nrow(quadripRegions) < 1) {
+    logger::log_warn(paste("Inverted repeat info not found for qualifier `", filterWhere, "`.", sep = ""))
+    return(NULL)
+  }
   quadripRegions <- quadripRegions[, c("start", "end", "note")]
   colnames(quadripRegions) <- c("chromStart", "chromEnd", "Band")
 
