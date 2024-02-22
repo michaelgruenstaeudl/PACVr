@@ -13,13 +13,13 @@ PACVr.read.gb <- function(gbkFile) {
 }
 
 PACVr.verboseInformation <- function(gbkData,
-                                     bamFile,
+                                     coverageRaw,
                                      analysisSpecs,
                                      plotSpecs) {
   sampleName <- gbkData$sampleName
   verbosePath <- getVerbosePath(sampleName,
                                 plotSpecs)
-  printCovStats(bamFile,
+  printCovStats(coverageRaw,
                 gbkData$genes,
                 gbkData$quadripRegions,
                 sampleName,
@@ -147,14 +147,14 @@ PACVr.complete <- function(gbkFile,
   ###################################
   if (verbose) {
     PACVr.verboseInformation(gbkData,
-                             bamFile,
+                             coverage$raw,
                              analysisSpecs,
                              plotSpecs)
   }
   
   ###################################
   PACVr.visualizeWithRCircos(gbkData,
-                             coverage,
+                             coverage$plot,
                              analysisSpecs,
                              plotSpecs)
 

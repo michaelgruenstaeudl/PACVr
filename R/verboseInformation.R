@@ -25,17 +25,23 @@ getVerbosePath <- function(sampleName,
   return(tmpDir)
 }
 
-printCovStats <- function(bamFile,
+printCovStats <- function(coverageRaw,
                           genes,
                           quadripRegions,
                           sampleName,
                           analysisSpecs,
                           dir) {
+  seqnames <- unname(sampleName[sampleName %in% names(coverageRaw)])
+  if (length(seqnames) == 0) {
+    logger::log_error("Neither `ACCESSION` nor `VERSION` matches BAM sample name")
+    return(-1)
+  }
+
   logger::log_info('Generating statistical information on the sequencing coverage')
   covData <- getCovData(quadripRegions, genes, analysisSpecs)
-  covData <- update.ir_genes(quadripRegions, bamFile, sampleName, covData)
-  covData <- update.ir_noncoding(quadripRegions, bamFile, sampleName, covData)
-  covData <- update.ir_regions(bamFile, sampleName, covData)
+  covData <- update.ir_genes(quadripRegions, coverageRaw, seqnames, covData)
+  covData <- update.ir_noncoding(quadripRegions, coverageRaw, seqnames, covData)
+  covData <- update.ir_regions(coverageRaw, seqnames, covData)
   covData <- setLowCoverage(covData)
 
   # Writing values to output table
@@ -109,9 +115,9 @@ getCovData <- function(regions, genes, analysisSpecs) {
   return(covData)
 }
 
-update.ir_genes <- function(regions, bamFile, sample_name, covData) {
-  ir_genes <- GenomicRanges::GRanges(seqnames = sample_name["genome_name"], covData$ir_genes)
-  ir_genes <- GenomicRanges::binnedAverage(ir_genes, GenomicAlignments::coverage(bamFile), "coverage")
+update.ir_genes <- function(regions, coverageRaw, seqnames, covData) {
+  ir_genes <- GenomicRanges::GRanges(seqnames = seqnames, covData$ir_genes)
+  ir_genes <- GenomicRanges::binnedAverage(ir_genes, coverageRaw, "coverage")
   ir_genes <- as.data.frame(ir_genes)[c("seqnames", "start", "end", "coverage")]
   regions_name <- covData$regions_name
   colnames(ir_genes) <- c(regions_name, covData$regions_start, covData$regions_end, "coverage")
@@ -123,9 +129,9 @@ update.ir_genes <- function(regions, bamFile, sample_name, covData) {
   return(covData)
 }
 
-update.ir_noncoding <- function(regions, bamFile, sample_name, covData) {
-  ir_noncoding <- GenomicRanges::GRanges(seqnames = sample_name["genome_name"], covData$ir_noncoding)
-  ir_noncoding <- GenomicRanges::binnedAverage(ir_noncoding, GenomicAlignments::coverage(bamFile), "coverage")
+update.ir_noncoding <- function(regions, coverageRaw, seqnames, covData) {
+  ir_noncoding <- GenomicRanges::GRanges(seqnames = seqnames, covData$ir_noncoding)
+  ir_noncoding <- GenomicRanges::binnedAverage(ir_noncoding, coverageRaw, "coverage")
   ir_noncoding <- as.data.frame(ir_noncoding)[c("seqnames", "start", "end", "coverage")]
   regions_name <- covData$regions_name
   colnames(ir_noncoding) <- c(regions_name, covData$regions_start, covData$regions_end, "coverage")
@@ -137,10 +143,10 @@ update.ir_noncoding <- function(regions, bamFile, sample_name, covData) {
   return(covData)
 }
 
-update.ir_regions <- function(bamFile, sample_name, covData) {
+update.ir_regions <- function(coverageRaw, seqnames, covData) {
   ir_regions <- unlist(IRanges::slidingWindows(covData$ir_regions, width = 250L, step = 250L))
-  ir_regions <- GenomicRanges::GRanges(seqnames = sample_name["genome_name"], ir_regions)
-  ir_regions <- GenomicRanges::binnedAverage(ir_regions, GenomicAlignments::coverage(bamFile), "coverage")
+  ir_regions <- GenomicRanges::GRanges(seqnames = seqnames, ir_regions)
+  ir_regions <- GenomicRanges::binnedAverage(ir_regions, coverageRaw, "coverage")
   chr <- ir_regions@ranges@NAMES
   ir_regions <- as.data.frame(ir_regions, row.names = NULL)[c("seqnames", "start", "end", "coverage")]
   ir_regions["seqnames"] <- chr

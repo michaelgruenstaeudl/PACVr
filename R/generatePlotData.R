@@ -3,29 +3,34 @@
 #email="m_gruenstaeudl@fhsu.edu"
 #version="2024.02.01.1736"
 
-CovCalc <- function(bamFile, windowSize = 250) {
+CovCalc <- function(coverageRaw,
+                    windowSize = 250,
+                    logScale) {
   # Calculates coverage of a given bam file and stores data in data.frame format
   # ARGS:
-  #     bamFile: bam file to calculate coverage
+  #     coverageRaw: coverage data from `GenomicAlignments::coverage()` on bam file
   #     windowSize: numeric value to specify the coverage calculation window
-  #     output: name and directory of output file
   # RETURNS:
   #     data.frame with region names, chromosome start, chromosome end and coverage calcucation
-  logger::log_info('  Coverage calculation for `{bamFile}`')
   if (!is.numeric(windowSize) | windowSize < 0) {
     warning("User-selected window size must be >= 1.")
     stop()
   }
-  cov <- GenomicAlignments::coverage(bamFile)
   bins <- GenomicRanges::tileGenome(
-      sum(IRanges::runLength(cov)), 
+      sum(IRanges::runLength(coverageRaw)),
       tilewidth = windowSize,
       cut.last.tile.in.chrom = TRUE
     )
-  cov <- GenomicRanges::binnedAverage(bins, cov, "coverage")
+  cov <- GenomicRanges::binnedAverage(bins, coverageRaw, "coverage")
   cov <- as.data.frame(cov)[c("seqnames", "start", "end", "coverage")]
   colnames(cov) <- c("Chromosome", "chromStart", "chromEnd", "coverage")
   cov$coverage <- ceiling(as.numeric(cov$coverage))
+
+  if (logScale) {
+    cov$coverage <- log(cov$coverage)
+  }
+  cov$Chromosome <- ""
+
   return(cov)
 }
 

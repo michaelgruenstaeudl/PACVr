@@ -86,13 +86,15 @@ PACVr.parseQuadripRegions <- function (gbkLengths, gbkDataDF) {
 PACVr.calcCoverage <- function (bamFile,
                                 windowSize=250,
                                 logScale) {
-  logger::log_info('Calculating the sequencing coverage')
-  coverage <- CovCalc(bamFile, windowSize)
-  if (logScale) {
-    coverage$coverage <- log(cov$coverage)
-    #coverage$coverage <- log(coverage$coverage)
-  }
-  coverage$Chromosome <- ""
+  logger::log_info('Calculating the sequencing coverage for `{bamFile}`')
+  coverageRaw <- GenomicAlignments::coverage(bamFile)
+  coveragePlot <- CovCalc(coverageRaw,
+                          windowSize,
+                          logScale)
+  coverage <- list(
+    raw = coverageRaw,
+    plot = coveragePlot
+  )
   return(coverage)
 }
 
