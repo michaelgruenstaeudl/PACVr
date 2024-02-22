@@ -210,9 +210,12 @@ normalizeLocation <- function(locationsStr) {
 }
 
 getSubsetCols <- function(analysisSpecs) {
-  subsetCols <- c("gene", "note", "type")
+  subsetCols <- c("gene",
+                  "type")
   if (analysisSpecs$isIRCheck) {
-    subsetCols <- c(subsetCols, "standard_name")
+    subsetCols <- c(subsetCols,
+                    "note",
+                    "standard_name")
   }
   return(subsetCols)
 }
