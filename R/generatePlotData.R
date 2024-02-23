@@ -1,7 +1,7 @@
 #!/usr/bin/env RScript
 #contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2024.02.22.2236"
+#version="2024.02.23.0220"
 
 CovCalc <- function(coverageRaw,
                     windowSize = 250,
