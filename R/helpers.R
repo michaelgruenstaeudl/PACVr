@@ -1,7 +1,7 @@
 #!/usr/bin/env RScript
 #contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2024.02.01.1736"
+#version="2024.02.22.2236"
 
 HistCol <- function(cov, threshold, relative, logScale) {
   # Function to generate color vector for histogram data
@@ -43,10 +43,57 @@ validateColors <- function(colorsToValidate) {
   }
 }
 
-getAnalysisSpecs <- function(IRCheck) {
+getAnalysisSpecs <- function(IRCheck,
+                             windowSize) {
   analysisSpecs <- list(
     syntenyLineType = getSyntenyLineType(IRCheck),
-    isIRCheck = getIsIRCheck(IRCheck)
+    isIRCheck = getIsIRCheck(IRCheck),
+    windowSize = filterPosNumeric(windowSize)
   )
+  analysisSpecs$isSyntenyLine <- !is.null(analysisSpecs$syntenyLineType)
   return(analysisSpecs)
+}
+
+getPlotSpecs <- function(logScale,
+                         threshold,
+                         relative,
+                         textSize,
+                         output) {
+  outputFields <- getOutputFields(output)
+  plotSpecs <- list(
+    logScale = filterLogical(logScale),
+    threshold = filterPosNumeric(threshold),
+    relative = filterLogical(relative),
+    textSize = filterPosNumeric(textSize),
+    output = outputFields$output,
+    outputType = outputFields$outputType,
+    isOutput = outputFields$isOutput
+  )
+  return(plotSpecs)
+}
+
+filterByType <- function(x, typeFun) {
+  if (typeFun(x)) {
+    return(x)
+  } else {
+    return(NULL)
+  }
+}
+
+filterPosNumeric <- function(x) {
+  return (
+    filterByType(x, is.pos.numeric)
+  )
+}
+
+filterLogical <- function(x) {
+  return (
+    filterByType(x, is.logical)
+  )
+}
+
+is.pos.numeric <- function(x) {
+  return (
+    is.numeric(x) && (x > 0)
+  )
 }

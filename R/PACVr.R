@@ -1,7 +1,7 @@
 #!/usr/bin/env RScript
 #contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2024.02.01.1736"
+#version="2024.02.22.2236"
 
 PACVr.read.gb <- function(gbkFile) {
   gbkRaw <- getGbkRaw(gbkFile)
@@ -12,62 +12,22 @@ PACVr.read.gb <- function(gbkFile) {
   return(gbkData)
 }
 
-PACVr.parseName <- function (gbkData) {
-  return(read.gbSampleName(gbkData))
-}
-
-PACVr.parseQuadripRegions <- function (gbkData, gbkDataDF) {
-  raw_quadripRegions <- ParseQuadripartiteStructure(gbkDataDF)
-  quadripRegions <- fillDataFrame(gbkData, raw_quadripRegions)
-  return(quadripRegions)
-}
-
-PACVr.parseSource <- function(gbkDataDF) {
-  return(parseSource(gbkDataDF))
-}
-
-PACVr.parseGenes <- function (gbkDataDF) {
-  # This function parses the genes of a GenBank file
-  logger::log_info('Parsing the different genes')
-  genes <- ExtractAllGenes(gbkDataDF)
-  return(genes)
-}
-
-PACVr.calcCoverage <-
-  function (bamFile, windowSize=250) {
-    logger::log_info('Calculating the sequencing coverage')
-    coverage <- CovCalc(bamFile, windowSize)
-    return(coverage)
-  }
-
-PACVr.generateIRGeneData <- function(genes, quadripRegions,
-                                     syntenyLineType) {
-  # Parse GenBank file
-  if ("IRb" %in% quadripRegions[, 4] &&
-      "IRa" %in% quadripRegions[, 4]) {
-    linkData <- GenerateIRSynteny(genes, syntenyLineType)
-    return(linkData)
-  }
-  return(-1)
-}
-
 PACVr.verboseInformation <- function(gbkData,
-                                     bamFile,
-                                     genes,
-                                     quadripRegions,
+                                     coverageRaw,
                                      analysisSpecs,
-                                     output) {
-  sampleName <- PACVr.parseName(gbkData)
-  verbosePath <- getVerbosePath(sampleName, output)
-  printCovStats(bamFile,
-                genes,
-                quadripRegions,
+                                     plotSpecs) {
+  sampleName <- gbkData$sampleName
+  verbosePath <- getVerbosePath(sampleName,
+                                plotSpecs)
+  printCovStats(coverageRaw,
+                gbkData$genes,
+                gbkData$quadripRegions,
                 sampleName,
                 analysisSpecs,
                 verbosePath)
-  if (!is.null(analysisSpecs$syntenyLineType)) {
-    checkIREquality(gbkData,
-                    quadripRegions,
+  if (analysisSpecs$isSyntenyLine) {
+    checkIREquality(gbkData$seq,
+                    gbkData$quadripRegions,
                     verbosePath,
                     sampleName)
   }
@@ -75,58 +35,27 @@ PACVr.verboseInformation <- function(gbkData,
 }
 
 PACVr.visualizeWithRCircos <- function(gbkData,
-                                       genes,
-                                       quadripRegions,
                                        coverage,
-                                       windowSize,
-                                       logScale,
-                                       threshold,
-                                       relative,
-                                       linkData,
-                                       syntenyLineType,
-                                       textSize) {
-  # Step 1. Generate plot title
-  plotTitle <- read.gbPlotTitle(gbkData)
-  # Step 2. Visualize
+                                       analysisSpecs,
+                                       plotSpecs) {
+  logger::log_info('Generating a visualization of the sequencing coverage')
+  isOutput <- plotSpecs$isOutput
+
+  if (isOutput) {
+    createVizFile(plotSpecs)
+  }
+
   visualizeWithRCircos(
-    plotTitle,
-    genes,
-    quadripRegions,
+    gbkData,
     coverage,
-    windowSize,
-    threshold,
-    logScale,
-    relative,
-    linkData,
-    syntenyLineType,
-    textSize
+    analysisSpecs,
+    plotSpecs
   )
-}
 
-PACVr.quadripRegions <- function(gbkData,
-                                 gbkDataDF,
-                                 isIRCheck) {
-  if (isIRCheck) {
-    logger::log_info('Parsing the quadripartite genome structure')
-    quadripRegions <- PACVr.parseQuadripRegions(gbkData,
-                                                gbkDataDF)
-  } else {
-    quadripRegions <- PACVr.parseSource(gbkDataDF)
+  if (isOutput) {
+    dev.off()
+    logger::log_info('Visualization saved as `{plotSpecs$output}`')
   }
-  return(quadripRegions)
-}
-
-PACVr.linkData <- function(genes,
-                           quadripRegions,
-                           syntenyLineType) {
-  linkData <- NULL
-  if (!is.null(syntenyLineType)) {
-    logger::log_info('Inferring the IR regions and the genes within the IRs')
-    linkData <- PACVr.generateIRGeneData(genes,
-                                         quadripRegions,
-                                         syntenyLineType)
-  }
-  return(linkData)
 }
 
 #' @title Execute the complete pipeline of \pkg{PACVr}
@@ -191,79 +120,44 @@ PACVr.complete <- function(gbkFile,
                            verbose=FALSE,
                            output=NA) {
   ######################################################################
-  gbkData <- PACVr.read.gb(gbkFile)
-  analysisSpecs <- getAnalysisSpecs(IRCheck)
-  gbkDataDF <- read.gb2DF(gbkData,
-                          analysisSpecs)
-  if (is.null(gbkDataDF)) {
-    logger::log_error(paste("No usable data to perform specified analysis"))
-    return(NULL)
+  read.gbData <- PACVr.read.gb(gbkFile)
+  analysisSpecs <- getAnalysisSpecs(IRCheck,
+                                    windowSize)
+  gbkData <- PACVr.gbkData(read.gbData,
+                           analysisSpecs)
+  rm(read.gbData)
+  gc()
+  if (is.null(gbkData)) {
+    logger::log_fatal('Unsuccessful.')
+    return(-1)
   }
-  
-  ###################################
-  quadripRegions <- PACVr.quadripRegions(gbkData,
-                                         gbkDataDF,
-                                         analysisSpecs$isIRCheck)
 
   ###################################
-  genes <- PACVr.parseGenes(gbkDataDF)
+  plotSpecs <- getPlotSpecs(logScale,
+                            threshold,
+                            relative,
+                            textSize,
+                            output)
 
   ###################################
   coverage <- PACVr.calcCoverage(bamFile,
-                                 windowSize)
-
-  ###################################
-  linkData <- PACVr.linkData(genes,
-                             quadripRegions,
-                             analysisSpecs$syntenyLineType)
+                                 analysisSpecs$windowSize,
+                                 plotSpecs$logScale)
 
   ###################################
   if (verbose) {
     PACVr.verboseInformation(gbkData,
-                             bamFile,
-                             genes,
-                             quadripRegions,
+                             coverage$raw,
                              analysisSpecs,
-                             output)
+                             plotSpecs)
   }
   
   ###################################
-  if (!is.na(output)) {
-    logger::log_info('Generating a visualization of the sequencing coverage')
-    pdf(output, width=10, height=10)
-    PACVr.visualizeWithRCircos(
-      gbkData,
-      genes,
-      quadripRegions,
-      coverage,
-      windowSize,
-      threshold,
-      logScale,
-      relative,
-      linkData,
-      IRCheck,
-      textSize
-    )
-    dev.off()
-    logger::log_info('Visualization (including coverage) saved as `{output}`')
-  } else {
-    logger::log_info('No coverage data inferred; generating empty visualization')
-    PACVr.visualizeWithRCircos(
-      gbkData,
-      genes,
-      quadripRegions,
-      coverage,
-      windowSize,
-      threshold,
-      logScale,
-      relative,
-      linkData,
-      IRCheck,
-      textSize
-    )
-    dev.off()
-    logger::log_info('Visualization (excluding coverage) saved as `{output}`')
-  }
+  PACVr.visualizeWithRCircos(gbkData,
+                             coverage$plot,
+                             analysisSpecs,
+                             plotSpecs)
+
   ######################################################################
   logger::log_success('Done.')
   ######################################################################

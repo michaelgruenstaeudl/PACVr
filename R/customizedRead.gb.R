@@ -1,11 +1,13 @@
 #!/usr/bin/env RScript
 #contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2024.02.01.1736"
+#version="2024.02.22.2236"
 
 read.gbWithHandling <- function(gbkRaw, count=0) {
   gbkData <- tryCatch({
-    read.gb::read.gb(gbkRaw$char, DNA=TRUE, Type="full", Source="Char")
+    suppressMessages(
+      read.gb::read.gb(gbkRaw$char, DNA=TRUE, Type="full", Source="Char")
+    )
   },
     error = function(e) {
       if (conditionMessage(e) == "dim(X) must have a positive length") {
@@ -181,7 +183,10 @@ getFeatureTags <- function() {
 }
 
 getGbkRaw <- function(gbkFile) {
-  if (grepl("\\.gb$", gbkFile) || file.exists(gbkFile)) {
+  if (!is.character(gbkFile)) {
+    logger::log_error("Parameter `gbkFile` is not a character string")
+    gbkChar <- NULL
+  } else if (grepl("\\.gb$", gbkFile) && file.exists(gbkFile)) {
     logger::log_info('Reading GenBank flatfile `{gbkFile}`')
     gbkChar <- tryCatch({
       suppressWarnings(readChar(gbkFile, 

@@ -1,7 +1,7 @@
 #!/usr/bin/env RScript
 #contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2024.02.01.1736"
+#version="2024.02.22.2236"
 
 FilterByKeywords <- function(allRegions, where) {
   # Function to filter list based on genomic keywords
@@ -9,7 +9,7 @@ FilterByKeywords <- function(allRegions, where) {
   #   ...
   # RETURNS:
   #   ...
-  out = subset(
+  out <- subset(
     allRegions,
     grepl(
       "^IR|repeat|invert|^LSC|^SSC|[large,long]\\ssingle\\scopy|[short,small]\\ssingle\\scopy",
@@ -17,9 +17,6 @@ FilterByKeywords <- function(allRegions, where) {
       ignore.case=TRUE
     )
   )
-  if (nrow(out) < 1) {
-    warning(paste("Inverted repeat info not found for qualifier ", where, ".", sep = ""))
-  }
   return(out)
 }
 
@@ -39,6 +36,10 @@ ParseQuadripartiteStructure <- function(gbkDataDF) {
     filterWhere <- "note"
   }
   quadripRegions <- FilterByKeywords(allRegions, filterWhere)
+  if (nrow(quadripRegions) < 1) {
+    logger::log_warn(paste("Inverted repeat info not found for qualifier `", filterWhere, "`.", sep = ""))
+    return(NULL)
+  }
   quadripRegions <- quadripRegions[, c("start", "end", "note")]
   colnames(quadripRegions) <- c("chromStart", "chromEnd", "Band")
 
@@ -58,7 +59,7 @@ ParseQuadripartiteStructure <- function(gbkDataDF) {
   return(quadripRegions)
 }
 
-fillDataFrame <- function(gbkData, quadripRegions) {
+fillDataFrame <- function(gbkLengths, quadripRegions) {
   # Function to annotate plastid genome with quadripartite regions 
   # based on their position within the genome
   # ARGS:
@@ -66,7 +67,7 @@ fillDataFrame <- function(gbkData, quadripRegions) {
   # RETURNS:
   #   ...
   logger::log_info('  Annotating plastid genome with quadripartite regions')
-  seqLength <- read.gbLengths(gbkData)
+  seqLength <- gbkLengths
   if ((nrow(quadripRegions) == 0) || (quadripRegions[1, 2] == -1)) {
     quadripRegions[1,] <- c("", as.numeric(1), as.numeric(seqLength), "NA", "gpos100")
     quadripRegions[, 2] <- as.numeric(quadripRegions[, 2])
@@ -166,10 +167,6 @@ plotRegionNames <- function(quadripRegions) {
     correction = 0.2,
     add.text.size = 0.2
   )
-}
-
-isRealRegions <- function(quadripRegions) {
-  return(nrow(quadripRegions) > 1)
 }
 
 getIsIRCheck <- function(IRCheck) {

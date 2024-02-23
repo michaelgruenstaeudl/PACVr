@@ -1,7 +1,7 @@
 #!/usr/bin/env RScript
 #contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2024.02.08.2330"
+#version="2024.02.22.2236"
 
 read.gb2DF <- function(gbkData, analysisSpecs) {
   fileDF <- data.frame()
@@ -54,15 +54,42 @@ parseFeature <- function(feature) {
   # transform source data frame making sure final result
   # is still data frame
   feature <- as.data.frame(t(feature))
-  colNames <- feature[1,]
+  colNames <- sub("^/", "", feature[1,])
   feature <- as.data.frame(feature[-1,])
   colnames(feature) <- colNames
+  colNames <- names(feature)
 
   # fix sequence location(s) and feature type
+  . <- NULL
   feature <- feature %>%
-    dplyr::rename_with(~ "locations",
-                       .cols = dplyr::all_of(locAndTypeIndex)) %>%
+    stats::setNames(make.unique(names(.))) %>%
+    dplyr::rename(locations = {{ type }}) %>%
     dplyr::mutate(type = type)
+
+  # combine duplicate qualifiers of same name
+  feature <- combineDupQuals(feature, colNames)
+
+  return(feature)
+}
+
+combineDupQuals <- function(feature, colNames) {
+  dupQualifiers <- colNames[duplicated(colNames)]
+  if (length(dupQualifiers) == 0) {
+    return(feature)
+  }
+
+  # combine into single string the columns that had the same name before
+  # setNames() was applied
+  for (qualifier in dupQualifiers) {
+    uniteMatch <- paste0("^", qualifier, "$", 
+                         "|",
+                         "^", qualifier, "\\.\\d+$")
+    uniteCols <- grep(uniteMatch, names(feature), value = TRUE)
+    feature <- feature %>%
+      tidyr::unite("uniteCol", dplyr::all_of(uniteCols), sep = "; ") %>%
+      dplyr::select(-dplyr::matches(uniteMatch)) %>%
+      dplyr::rename_with(~qualifier, dplyr::matches("uniteCol"))
+  }
   return(feature)
 }
 
@@ -183,9 +210,12 @@ normalizeLocation <- function(locationsStr) {
 }
 
 getSubsetCols <- function(analysisSpecs) {
-  subsetCols <- c("gene", "note", "type")
+  subsetCols <- c("gene",
+                  "type")
   if (analysisSpecs$isIRCheck) {
-    subsetCols <- c(subsetCols, "standard_name")
+    subsetCols <- c(subsetCols,
+                    "note",
+                    "standard_name")
   }
   return(subsetCols)
 }
@@ -237,11 +267,8 @@ read.gbOther <- function(gbkDataDF) {
   return(regions)
 }
 
-read.gbLengths <- function(gbkData) {
-  sampleLengths <- c()
-  for (sample in gbkData) {
-    sampleLengths <- c(sampleLengths, nchar(sample$ORIGIN))
-  }
+read.gbLengths <- function(gbSeqs) {
+  sampleLengths <- Biostrings::width(gbSeqs)
   return(sampleLengths)
 }
 
