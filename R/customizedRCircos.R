@@ -1,7 +1,7 @@
 #!/usr/bin/env RScript
 #contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2024.02.22.2150"
+#version="2024.02.23.0220"
 
 
 # The following R functions were taken from the R package RCircos and then modified.
