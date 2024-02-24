@@ -106,7 +106,10 @@ jobs:
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Set up dos2unix
         run: sudo apt-get install dos2unix
@@ -138,7 +141,10 @@ jobs:
     outputs:
       version: ${{ steps.extract-version.outputs.version }}
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Extract release version from first level 4 heading
         id: extract-version
