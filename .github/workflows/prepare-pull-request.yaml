@@ -130,6 +130,10 @@ jobs:
           git pull --ff-only
           git push origin
 
+      - name: Debug changed files
+        run: |
+          echo "Changed files: ${{ github.event.pull_request.changed_files }}"
+
   document-version:
     runs-on: ubuntu-latest
     needs: line-break-fix
