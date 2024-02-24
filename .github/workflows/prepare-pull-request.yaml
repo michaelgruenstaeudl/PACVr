@@ -128,7 +128,7 @@ jobs:
   document-version:
     runs-on: ubuntu-latest
     needs: line-break-fix
-    if: contains(github.event.pull_request.changed_files, "CHANGELOG.md")
+    if: contains(github.event.pull_request.changed_files, 'CHANGELOG.md')
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       CHANGELOG: "CHANGELOG.md"
