@@ -132,7 +132,12 @@ jobs:
 
       - name: Debug changed files
         run: |
-          echo "Changed files: ${{ github.event.pull_request.changed_files }}"
+          echo "Changed files count: ${{ github.event.pull_request.changed_files }}"
+          echo "Changed files:"
+          IFS=',' read -ra files <<< "${{ github.event.pull_request.changed_files }}"
+          for file in "${files[@]}"; do
+          echo "- $file"
+          done
 
   document-version:
     runs-on: ubuntu-latest
