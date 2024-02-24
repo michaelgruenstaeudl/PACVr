@@ -1,0 +1,67 @@
+# Workflow derived from https://github.com/r-lib/actions/tree/v2/examples
+# Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
+on:
+  push:
+    paths: ["CHANGELOG.md"]
+
+name: document-version
+
+jobs:
+  document-version:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      CHANGELOG: "CHANGELOG.md"
+      DESCRIPTION: "DESCRIPTION"
+    outputs:
+      version: ${{ steps.extract-version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Extract release version from first level 4 heading
+        id: extract-version
+        run: |
+          version=$(grep -oP '####[^0-9]*\K\d+\.\d+\.\d+' -m 1 $CHANGELOG)
+          echo "version=$version" >> $GITHUB_ENV
+          echo "version=$version" >> $GITHUB_OUTPUT
+          echo "Version: $version"
+
+      - name: Get current UTC timestamp
+        id: get-timestamp
+        run: |
+          timestamp=$(date -u +"%Y.%m.%d.%H%M")
+          echo "timestamp=$timestamp" >> $GITHUB_ENV
+          echo "Timestamp: $timestamp"
+
+      - name: Standardize first level 4 heading
+        id: update-change-header
+        run: |
+          timestamp=$(echo "${{ env.timestamp }}" | awk -F'.' '{print $1"."$2"."$3}')
+          sed -i "0,/^####.*$/s/^####.*$/#### Version ${{ env.version }} \($timestamp\)/" $CHANGELOG
+          echo "CHANGELOG Timestamp: $timestamp"
+
+      - name: Update DESCRIPTION `Version` and `Date`
+        id: update-description
+        run: |
+          timestamp=$(echo "${{ env.timestamp }}" | awk -F'.' '{print $1"-"$2"-"$3}')
+          sed -i "s|^Date:.*$|Date: $timestamp|" $DESCRIPTION
+          sed -i "s|^Version:.*$|Version: ${{ env.version }}|" $DESCRIPTION
+          echo "DESCRIPTION Timestamp: $timestamp"
+
+      - name: Update `version` comments on R files
+        id: update-r-version-comment
+        run: |
+          cd .github/scripts
+          chmod +x update_version_tag.py
+          python update_version_tag.py ${{ env.timestamp }}
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.name "$GITHUB_ACTOR"
+          git config --local user.email "$GITHUB_ACTOR@users.noreply.github.com"
+          git add ./R/*.R
+          git add DESCRIPTION
+          git add CHANGELOG.md
+          git commit -m "Updated documentation for version" || echo "No changes to commit"
+          git pull --ff-only
+          git push origin
