@@ -1,7 +1,7 @@
 #!/usr/bin/env RScript
 #contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2024.02.24.0314"
+#version="2024.02.24.0322"
 
 getVerbosePath <- function(sampleName,
                            plotSpecs) {
@@ -48,7 +48,8 @@ printCovStats <- function(coverageRaw,
   writeCovTables(covData, sampleName, dir)
 
   # Getting and writing summarized coverage data, grouped by `quadripRegions`
-  covSummaries <- getCovSummaries(covData)
+  covSummaries <- getCovSummaries(covData,
+                                  analysisSpecs)
   writeCovSumTables(covSummaries, sampleName, dir)
 }
 
@@ -209,10 +210,12 @@ writeVerboseTable <- function(df, sample_name, dir, fileName) {
 }
 
 # adapted from `nilsj9/PlastidSequenceCoverage`
-getCovSummaries <- function(covData) {
+getCovSummaries <- function(covData,
+                            analysisSpecs) {
   regions_name <- covData$regions_name
 
-  covData <- updateCovData(covData)
+  covData <- updateCovData(covData,
+                           analysisSpecs)
   covSummaries <- getCovDepths(covData,
                                regions_name)
   covSummaries <- updateRegionsSummary(covSummaries,
@@ -242,26 +245,28 @@ updateRegionsSummary <- function(covSummaries,
   return(covSummaries)
 }
 
-updateCovData <- function(covData, removeSmall = FALSE) {
+updateCovData <- function(covData,
+                          analysisSpecs) {
   regions_name <- covData$regions_name
   regions_start <- covData$regions_start
   regions_end <- covData$regions_end
+  windowSize <- analysisSpecs$windowSize
 
   covData$ir_regions <- updateCovDataField(covData$ir_regions,
                                            regions_name,
                                            regions_start,
                                            regions_end,
-                                           removeSmall)
+                                           windowSize)
   covData$ir_genes <- updateCovDataField(covData$ir_genes,
                                          regions_name,
                                          regions_start,
                                          regions_end,
-                                         removeSmall)
+                                         windowSize)
   covData$ir_noncoding <- updateCovDataField(covData$ir_noncoding,
                                              regions_name,
                                              regions_start,
                                              regions_end,
-                                             removeSmall)
+                                             windowSize)
   return(covData)
 }
 
@@ -269,13 +274,8 @@ updateCovDataField <- function(covDataField,
                                regions_name,
                                regions_start,
                                regions_end,
-                               removeSmall = FALSE) {
-  # label length of sequence and filter if desired
-  if (removeSmall) {
-    sizeThreshold <- 250
-  } else {
-    sizeThreshold <- 0
-  }
+                               windowSize) {
+  sizeThreshold <- windowSize - 1
   covDataField["length"] <- covDataField[regions_end] - covDataField[regions_start]
   covDataField <- covDataField[covDataField$length >= sizeThreshold, ]
 
