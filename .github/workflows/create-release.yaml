@@ -84,6 +84,10 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Print Git Log
+        run: |
+          git log --oneline --max-count=5
+
       - uses: r-lib/actions/setup-tinytex@v2
       - run: |
           tlmgr --version
