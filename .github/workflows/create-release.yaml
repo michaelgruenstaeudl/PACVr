@@ -9,7 +9,7 @@ on:
 name: create-release
 
 jobs:
-  release-documentation:
+  create-release:
     runs-on: ubuntu-latest
     if: github.event.pull_request.merged == true
     env:
