@@ -13,7 +13,6 @@ name: create-release
 jobs:
   create-release:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       CHANGELOG: "CHANGELOG.md"
