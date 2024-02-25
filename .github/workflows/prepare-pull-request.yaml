@@ -129,12 +129,3 @@ jobs:
           git commit -m "Conversion of R files from CRLF to LF" || echo "No changes to commit"
           git pull --ff-only
           git push origin
-
-      - name: Debug changed files
-        run: |
-          echo "Changed files count: ${{ github.event.pull_request.changed_files }}"
-          echo "Changed files:"
-          IFS=',' read -ra files <<< "${{ github.event.pull_request.changed_files }}"
-          for file in "${files[@]}"; do
-          echo "- $file"
-          done
