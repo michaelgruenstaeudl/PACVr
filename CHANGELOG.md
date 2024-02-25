@@ -7,7 +7,7 @@ CHANGELOG
 * Support for PNG `output`
 * Samples without `note` can be used for standard coverage analysis
 * Sample name in BAM file can match either `VERSION` or `ACCESSION` of GenBank file for `verbose` analysis
-* Analysis continues without regions when IR presence test unsuccessful 
+* Analysis continues without regions when IR presence test unsuccessful
 
 #### Version 1.0.7 (2024.02.01)
 * More robust parsing of feature sequence locations using INSDC standards
