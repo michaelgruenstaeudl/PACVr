@@ -1,7 +1,7 @@
 #!/usr/bin/env RScript
 #contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2024.02.28.0231"
+#version="2024.02.28.1802"
 
 checkIREquality <- function(gbkSeq, regions, dir, sample_name) {
   if ("IRb" %in% regions[, 4] && "IRa" %in% regions[, 4]) {
