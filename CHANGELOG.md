@@ -1,7 +1,9 @@
 CHANGELOG
 ---------
+
 #### Version 1.0.9 (2024.02.29)
 * Improving variable and file names
+* Correcting output plot specifications
 
 #### Version 1.0.8 (2024.02.28)
 * Handling of GenBank features with multiple qualifiers of the same name

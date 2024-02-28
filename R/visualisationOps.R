@@ -209,31 +209,6 @@ getLegendParams <- function(coverage,
   return(legendParams)
 }
 
-getOutputFields <- function(output) {
-  outputTypes <- paste(getOutputTypes(), collapse = "|")
-  outputPattern <- sprintf("^(?:.+\\.)(%s)$", outputTypes)
-  outputMatch <- regexec(outputPattern, output, ignore.case = TRUE)
-  outputVec <- regmatches(output, outputMatch)
-
-  # non-char `output` or non-match for char `output`
-  if ((length(outputVec) == 0) || (length(outputVec[[1]]) == 0)) {
-    output <- NULL
-    outputType <- NULL
-    isOutput <- FALSE
-  } else {
-    output <- outputVec[[1]][1]
-    outputType <- tolower(outputVec[[1]][2])
-    isOutput <- TRUE
-  }
-
-  outputFields <- list(
-    output = output,
-    outputType = outputType,
-    isOutput = isOutput
-  )
-  return(outputFields)
-}
-
 createVizFile <- function(plotSpecs) {
   output <- plotSpecs$output
   outputType <- plotSpecs$outputType
@@ -241,21 +216,17 @@ createVizFile <- function(plotSpecs) {
   if (outputType == "pdf") {
     pdf(output,
         width=10,
-        height=10)
+        height=10,
+        units="cm",
+        res=600)
   } else if (outputType == "png") {
     png(output,
-        width=480,
-        height=480)
+        width=10,
+        height=10,
+        units="cm",
+        res=600)
   }
 }
-
-getOutputTypes <- function() {
-  outputTypes <- c("pdf",
-                   "png")
-  return(outputTypes)
-}
-
-
 
 GenerateHistogramData <- function(region, coverage, windowSize, lastOne) {
     # Function to generate line data for RCircos.Line.Plot
