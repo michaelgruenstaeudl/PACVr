@@ -2,28 +2,32 @@
 # Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
 on:
   push:
-    paths: ["CHANGELOG.md"]
+    branches:
+      - master
+      - main
+    paths:
+      - 'CHANGELOG.md'
 
 name: create-release
 
 jobs:
-  release-documentation:
+  create-release:
     runs-on: ubuntu-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       CHANGELOG: "CHANGELOG.md"
       DESCRIPTION: "DESCRIPTION"
-    outputs:
-      version: ${{ steps.extract-version.outputs.version }}
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Extract release version from first level 4 heading
         id: extract-version
         run: |
           version=$(grep -oP '####[^0-9]*\K\d+\.\d+\.\d+' -m 1 $CHANGELOG)
           echo "version=$version" >> $GITHUB_ENV
-          echo "version=$version" >> $GITHUB_OUTPUT
           echo "Version: $version"
 
       - name: Get current UTC timestamp
@@ -62,18 +66,9 @@ jobs:
           git add ./R/*.R
           git add DESCRIPTION
           git add CHANGELOG.md
-          git commit -m "Updated documentation for release" || echo "No changes to commit"
+          git commit -m "Update documentation for version" || echo "No changes to commit"
           git pull --ff-only
           git push origin
-
-  release-build:
-    runs-on: ubuntu-latest
-    needs: release-documentation
-    env:
-      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-      CHANGELOG: "CHANGELOG.md"
-    steps:
-      - uses: actions/checkout@v3
 
       - uses: r-lib/actions/setup-tinytex@v2
       - run: |
@@ -117,8 +112,7 @@ jobs:
       - name: Make release properties
         id: release-fields
         run: |
-          version="${{ needs.release-documentation.outputs.version }}"
-          echo "version=$version" >> $GITHUB_ENV
+          version="${{ env.version }}"
           echo "Version: $version"
           tag="v${version}"
           echo "tag=$tag" >> $GITHUB_ENV
