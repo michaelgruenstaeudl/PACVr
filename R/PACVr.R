@@ -12,32 +12,32 @@ PACVr.read.gb <- function(gbkFile) {
   return(gbkData)
 }
 
-PACVr.verboseInformation <- function(gbkData,
-                                     coverageRaw,
-                                     analysisSpecs,
-                                     plotSpecs) {
+PACVr.compileCovStats <- function(gbkData,
+                                  coverageRaw,
+                                  analysisSpecs,
+                                  plotSpecs) {
   sampleName <- gbkData$sampleName
-  verbosePath <- getVerbosePath(sampleName,
-                                plotSpecs)
+  StatsFilePath <- getStatsFilePath(sampleName,
+                                    plotSpecs)
   printCovStats(coverageRaw,
                 gbkData$genes,
                 gbkData$quadripRegions,
                 sampleName,
                 analysisSpecs,
-                verbosePath)
+                StatsFilePath)
   if (analysisSpecs$isSyntenyLine) {
     checkIREquality(gbkData$seq,
                     gbkData$quadripRegions,
-                    verbosePath,
+                    StatsFilePath,
                     sampleName)
   }
-  logger::log_info('Verbose output saved in `{verbosePath}`')
+  logger::log_info('Coverage statistics saved to `{StatsFilePath}`')
 }
 
-PACVr.visualizeWithRCircos <- function(gbkData,
-                                       coverage,
-                                       analysisSpecs,
-                                       plotSpecs) {
+PACVr.vizWithRCircos <- function(gbkData,
+                                 coverage,
+                                 analysisSpecs,
+                                 plotSpecs) {
   logger::log_info('Generating a visualization of the sequencing coverage')
   isOutput <- plotSpecs$isOutput
 
@@ -45,7 +45,7 @@ PACVr.visualizeWithRCircos <- function(gbkData,
     createVizFile(plotSpecs)
   }
 
-  visualizeWithRCircos(
+  vizWithRCircos(
     gbkData,
     coverage,
     analysisSpecs,
@@ -128,7 +128,7 @@ PACVr.complete <- function(gbkFile,
   rm(read.gbData)
   gc()
   if (is.null(gbkData)) {
-    logger::log_fatal('Unsuccessful.')
+    logger::log_fatal('Parsing of any sequence features unsuccessful.')
     return(-1)
   }
 
@@ -146,17 +146,17 @@ PACVr.complete <- function(gbkFile,
 
   ###################################
   if (verbose) {
-    PACVr.verboseInformation(gbkData,
-                             coverage$raw,
-                             analysisSpecs,
-                             plotSpecs)
+    PACVr.compileCovStats(gbkData,
+                          coverage$raw,
+                          analysisSpecs,
+                          plotSpecs)
   }
   
   ###################################
-  PACVr.visualizeWithRCircos(gbkData,
-                             coverage$plot,
-                             analysisSpecs,
-                             plotSpecs)
+  PACVr.vizWithRCircos(gbkData,
+                       coverage$plot,
+                       analysisSpecs,
+                       plotSpecs)
 
   ######################################################################
   logger::log_success('Done.')
