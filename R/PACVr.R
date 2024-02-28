@@ -132,7 +132,7 @@ PACVr.complete <- function(gbkFile,
     return(-1)
   }
   ###################################
-  logger <- logger::layout_glue_generator(format='{time} {gbkData$sampleName} -- {level}: {msg}')
+  logger <- logger::layout_glue_generator(format='{time} {fn} {level}: {msg}')
   logger::log_layout(logger)
   ###################################
   plotSpecs <- getPlotSpecs(logScale,
