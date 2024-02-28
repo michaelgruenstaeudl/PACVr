@@ -1,6 +1,6 @@
 CHANGELOG
 ---------
-#### Version 1.0.8 (2024.02.25)
+#### Version 1.0.8 (2024.02.28)
 * Handling of GenBank features with multiple qualifiers of the same name
 * Coverage summaries added to `verbose` output files
 * Parameters `syntenyLineType` and `regionsCheck` for `PACVr.complete()` have been combined into `IRCheck`
