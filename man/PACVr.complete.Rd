@@ -13,7 +13,7 @@ PACVr.complete(
   IRCheck = NA,
   relative = TRUE,
   textSize = 0.5,
-  verbose = FALSE,
+  tabularCovStats = FALSE,
   output = NA
 )
 }
@@ -47,7 +47,7 @@ value of the average coverage instead of an absolute value}
 \item{textSize}{a numeric value that specifies the relative font size of the 
 text element in the visualization}
 
-\item{verbose}{a boolean, that when TRUE, generates additional files with
+\item{tabularCovStats}{a boolean, that when TRUE, generates additional files with
 detailed genomic region information}
 
 \item{output}{a character string that specifies the name of, and path to, 
@@ -69,7 +69,7 @@ bamFile <- system.file("extdata", "NC_045072/NC_045072_subsampled.bam", package=
 outFile <- paste(tempdir(), "/NC_045072__all_reads.pdf", sep="")
 PACVr.complete(gbkFile=gbkFile, bamFile=bamFile, windowSize=250, logScale=FALSE,
                threshold=0.5, IRCheck=1, relative=TRUE, textSize=0.5,
-               verbose=FALSE, output=outFile)
+               tabularCovStats=FALSE, output=outFile)
 }
 \dontrun{
 gbkFile <- system.file("extdata", "MG936619/MG936619.gb", package="PACVr")
@@ -77,6 +77,6 @@ bamFile <- system.file("extdata", "MG936619/MG936619_subsampled.bam", package="P
 outFile <- paste(tempdir(), "/MG936619_CoverageViz.pdf", sep="")
 PACVr.complete(gbkFile=gbkFile, bamFile=bamFile, windowSize=50, logScale=FALSE,
                threshold=0.5, IRCheck=NA, relative=TRUE, textSize=0.5,
-               verbose=FALSE, output=outFile)
+               tabularCovStats=FALSE, output=outFile)
 }
 }

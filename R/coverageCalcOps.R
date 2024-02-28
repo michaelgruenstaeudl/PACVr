@@ -13,8 +13,8 @@ CovCalc <- function(coverageRaw,
   # RETURNS:
   #     data.frame with region names, chromosome start, chromosome end and coverage calcucation
   if (!is.numeric(windowSize) | windowSize < 0) {
-    warning("User-selected window size must be >= 1.")
-    stop()
+    logger::log_error("User-selected window size must be >= 1.")
+    stop() # Should 'stop()' be replaced with 'return(NULL)' ?
   }
   bins <- GenomicRanges::tileGenome(
       sum(IRanges::runLength(coverageRaw)),
