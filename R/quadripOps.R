@@ -20,15 +20,15 @@ FilterByKeywords <- function(allRegions, where) {
   return(out)
 }
 
-ParseQuadripartiteStructure <- function(gbkDataDF) {
+ParseQuadripartiteStructure <- function(gbkSeqFeatures) {
   # Function to extract the quadripartite region information from 
   # Genbank flatfile data
   # ARGS:
-  #   gbkDataDF (resulting data frame from parsing read.gb object)
+  #   gbkSeqFeatures (resulting data frame from parsing read.gb object)
   # RETURNS:
   #   regions in data frame format
   logger::log_info('  Extracting information on genomic regions')
-  allRegions <- read.gbOther(gbkDataDF)
+  allRegions <- read.gbOther(gbkSeqFeatures)
   colNames <- colnames(allRegions)
   if ("standard_name" %in% colNames) {
     filterWhere <- "standard_name"
@@ -98,12 +98,12 @@ fillDataFrame <- function(gbkLengths, quadripRegions) {
       quadripRegions[which(quadripRegions[, 6] == max(quadripRegions[, 6])), 4] <- "LSC"
       quadripRegions[which(quadripRegions[, 4] != "NA"), 6] <- 0
       quadripRegions[which(quadripRegions[, 6] == max(quadripRegions[, 6])), 4] <- "SSC"
-      message("Annotation for LSC and SSC were automatically added")
+      logger::log_info('  Annotations for LSC and SSC were automatically added')
     } else if (regionAvail == 7) {
       # only IRa, SSC and IRb
       quadripRegions[which(quadripRegions[, 4] != "NA"), 6] <- 0
       quadripRegions[which(quadripRegions[, 6] == max(quadripRegions[, 6])), 4] <- "LSC"
-      message("Annotation for LSC was automatically added")
+      logger::log_info('  Annotation for LSC was automatically added')
     } else if (regionAvail == 10) {
       # only LSC and SSC
       IRs <- data.frame(table(quadripRegions[which(quadripRegions[, 4] == "NA"), 6]), stringsAsFactors=FALSE)
@@ -111,21 +111,21 @@ fillDataFrame <- function(gbkLengths, quadripRegions) {
       if (length(IRs) >= 1) {
         IRs <- max(as.numeric(as.character(IRs)))
         quadripRegions[which(quadripRegions[, 6] == IRs), 4] <- c("IRb", "IRa")
-        message("Annotation for IRb and IRa were automatically added")
+        logger::log_info('  Annotations for IRb and IRa were automatically added')
       }
     } else if (regionAvail == 11) {
       # only LSC, SSC and IRa
       quadripRegions[which(quadripRegions[, 4] == "NA" & quadripRegions[, 6] == quadripRegions[which(quadripRegions[, 4] == "IRa"), 6]), 4] <- "IRb"
-      message("Annotation for IRb was automatically added")
+      logger::log_info('  Annotation for IRb was automatically added')
     } else if (regionAvail == 13) {
       # only LSC, IRb and IRa
       quadripRegions[which(quadripRegions[, 4] != "NA"), 6] <- 0
       quadripRegions[which(quadripRegions[, 6] == max(quadripRegions[, 6])), 4] <- "SSC"
-      message("Annotation for SSC was automatically added")
+      logger::log_info('  Annotation for SSC was automatically added')
     } else if (regionAvail == 14) {
       # only LSC, IRb and SSC
       quadripRegions[which(quadripRegions[, 4] == "NA" & quadripRegions[, 6] == quadripRegions[which(quadripRegions[, 4] == "IRb"), 6]), 4] <- "IRa"
-      message("Annotation for IRa was automatically added")
+      logger::log_info('  Annotation for IRa was automatically added')
     }
     quadripRegions <- quadripRegions[-6]
     quadripRegions$Stain[which(quadripRegions$Band == "LSC")] <- "gpos75"

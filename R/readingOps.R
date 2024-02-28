@@ -3,7 +3,7 @@
 #email="m_gruenstaeudl@fhsu.edu"
 #version="2024.02.28.0051"
 
-read.gb2DF <- function(gbkData, analysisSpecs) {
+read.gbSeqFeatures <- function(gbkData, analysisSpecs) {
   fileDF <- data.frame()
   for (sample in gbkData) {
     sampleDF <- parseFeatures(sample$FEATURES, analysisSpecs)
@@ -240,7 +240,7 @@ isIgnoredFeature <- function(featureName) {
   return(featureName %in% ignoredFeatures)
 }
 
-read.gbSeq <- function(gbkData) {
+read.gbSequence <- function(gbkData) {
   sampleSequences <- c()
   for (sample in gbkData) {
     sampleSequences <- c(sampleSequences, sample$ORIGIN)
@@ -248,19 +248,19 @@ read.gbSeq <- function(gbkData) {
   return(Biostrings::DNAStringSet(sampleSequences))
 }
 
-read.gbGenes <- function(gbkDataDF) {
+read.gbGenes <- function(gbkSeqFeatures) {
   type <- NULL
   subsetCols <- c("seqnames", "start", "end", "gene")
-  gene_L <- gbkDataDF %>%
+  gene_L <- gbkSeqFeatures %>%
     dplyr::filter(type=="gene") %>%
     dplyr::select(dplyr::all_of(subsetCols))
   rownames(gene_L) <- NULL
   return(gene_L)
 }
 
-read.gbOther <- function(gbkDataDF) {
+read.gbOther <- function(gbkSeqFeatures) {
   type <- NULL
-  regions <- gbkDataDF %>%
+  regions <- gbkSeqFeatures %>%
     dplyr::filter(!type %in% c("gene", "exon", "transcript",
                                "CDS", "variant"))
   rownames(regions) <- NULL

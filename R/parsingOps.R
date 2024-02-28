@@ -3,14 +3,14 @@
 #email="m_gruenstaeudl@fhsu.edu"
 #version="2024.02.28.0051"
 
-ExtractAllGenes <- function(gbkDataDF) {
+ExtractAllGenes <- function(gbkSeqFeatures) {
   # Function to extract gene information from Genbank flatfile data
   # ARGS:
   #   gbkData (resulting data frame from parsing read.gb object)
   # RETURNS:
   #   genes in data frame format
   logger::log_info('  Extracting information on genes')
-  gene_L <- read.gbGenes(gbkDataDF)
+  gene_L <- read.gbGenes(gbkSeqFeatures)
   gene_L <- gene_L[, c(1:3, which(colnames(gene_L) == "gene"))]
   colnames(gene_L) <- c("Chromosome", "chromStart", "chromEnd", "gene")
   gene_L$Chromosome <- ""
@@ -20,29 +20,29 @@ ExtractAllGenes <- function(gbkDataDF) {
 }
 
 PACVr.gbkData <- function(read.gbData, analysisSpecs) {
-  gbkDataDF <- read.gb2DF(read.gbData, analysisSpecs)
-  if (is.null(gbkDataDF)) {
-    logger::log_error(paste("No usable data to perform specified analysis"))
+  gbkSeqFeatures <- read.gbSeqFeatures(read.gbData, analysisSpecs)
+  if (is.null(gbkSeqFeatures)) {
+    logger::log_error(paste("No usable sequence features detected to perform specified analysis"))
     return(NULL)
   }
 
   # derived from gbkData
-  gbkSeq <- read.gbSeq(read.gbData)
+  gbkSeq <- read.gbSequence(read.gbData)
   lengths <- read.gbLengths(gbkSeq)
   sampleName <- read.gbSampleName(read.gbData)
   plotTitle <- read.gbPlotTitle(read.gbData)
   rm(read.gbData)
   gc()
 
-  # primarily derived from gbkDataDF
+  # primarily derived from gbkSeqFeatures
   quadripRegions <- PACVr.quadripRegions(lengths,
-                                         gbkDataDF,
+                                         gbkSeqFeatures,
                                          analysisSpecs$isIRCheck)
-  genes <- PACVr.parseGenes(gbkDataDF)
+  genes <- PACVr.parseGenes(gbkSeqFeatures)
   linkData <- PACVr.linkData(genes,
                              quadripRegions,
                              analysisSpecs$syntenyLineType)
-  rm(gbkDataDF)
+  rm(gbkSeqFeatures)
   gc()
 
   gbkData <- list(
@@ -57,30 +57,30 @@ PACVr.gbkData <- function(read.gbData, analysisSpecs) {
   return(gbkData)
 }
 
-PACVr.parseGenes <- function (gbkDataDF) {
+PACVr.parseGenes <- function (gbkSeqFeatures) {
   # This function parses the genes of a GenBank file
   logger::log_info('Parsing the different genes')
-  genes <- ExtractAllGenes(gbkDataDF)
+  genes <- ExtractAllGenes(gbkSeqFeatures)
   return(genes)
 }
 
 PACVr.quadripRegions <- function(gbkLengths,
-                                 gbkDataDF,
+                                 gbkSeqFeatures,
                                  isIRCheck) {
   if (isIRCheck) {
     logger::log_info('Parsing the quadripartite genome structure')
     quadripRegions <- PACVr.parseQuadripRegions(gbkLengths,
-                                                gbkDataDF)
+                                                gbkSeqFeatures)
   } else {
-    quadripRegions <- PACVr.parseSource(gbkDataDF)
+    quadripRegions <- PACVr.parseSource(gbkSeqFeatures)
   }
   return(quadripRegions)
 }
 
-PACVr.parseQuadripRegions <- function (gbkLengths, gbkDataDF) {
-  raw_quadripRegions <- ParseQuadripartiteStructure(gbkDataDF)
+PACVr.parseQuadripRegions <- function (gbkLengths, gbkSeqFeatures) {
+  raw_quadripRegions <- ParseQuadripartiteStructure(gbkSeqFeatures)
   if (is.null(raw_quadripRegions)) {
-    quadripRegions <- PACVr.parseSource(gbkDataDF)
+    quadripRegions <- PACVr.parseSource(gbkSeqFeatures)
   } else {
     quadripRegions <- fillDataFrame(gbkLengths, raw_quadripRegions)
   }
@@ -126,8 +126,8 @@ PACVr.linkData <- function(genes,
   return(linkData)
 }
 
-PACVr.parseSource <- function(gbkDataDF) {
-  logger::log_info("Using source as regions")
+PACVr.parseSource <- function(gbkSeqFeatures) {
+  logger::log_info("No regions identified; using full genome instead.")
 
   type <-
     Band <-
@@ -137,7 +137,7 @@ PACVr.parseSource <- function(gbkDataDF) {
     end <-
     seqnames <-
     NULL
-  source <- gbkDataDF %>%
+  source <- gbkSeqFeatures %>%
     dplyr::filter(type=="source") %>%
     dplyr::rename(chromStart = start,
                   chromEnd = end,

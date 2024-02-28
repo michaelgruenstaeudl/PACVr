@@ -3,7 +3,7 @@
 #email="m_gruenstaeudl@fhsu.edu"
 #version="2024.02.28.0051"
 
-visualizeWithRCircos <- function(gbkData,
+vizWithRCircos <- function(gbkData,
                                  coverage,
                                  analysisSpecs,
                                  plotSpecs) {
@@ -254,3 +254,22 @@ getOutputTypes <- function() {
                    "png")
   return(outputTypes)
 }
+
+
+
+GenerateHistogramData <- function(region, coverage, windowSize, lastOne) {
+    # Function to generate line data for RCircos.Line.Plot
+    # ARGS:
+    #   coverage: data.frame of coverage
+    # RETURNS:
+    #   data.frame with region means to plot over histogram data
+    # Error handling
+    logger::log_info('  Generating histogram data for region `{region[4]}`')
+    if (lastOne) {
+      coverage <- coverage[(floor(region[1, 2] / windowSize) + 1):ceiling(region[1, 3] / windowSize),]
+    } else {
+      coverage <- coverage[(floor(region[1, 2] / windowSize) + 1):floor(region[1, 3] / windowSize) + 1,]
+    }
+    coverage[, 4] <- mean(coverage[, 4])
+    return(coverage)
+  }
