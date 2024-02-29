@@ -25,29 +25,29 @@ run_PACVr <- function(f) {
   gbkFile <- paste0(inFileDir, basename(f))
   bamFile <- paste0(inFileDir, accNum, "_mapping_OneMoreLocations.sorted.bam")
   
-  tmpName <- paste0(inFileDir, accNum, "_CoverageViz_IRCheckFALSE")
-  #sink(paste0(tmpName, ".log"))
-  outFile <- paste0(tmpName, ".png")
-  PACVr.complete(gbkFile, bamFile, windowSize=250, logScale=FALSE, 
-                 threshold=0.5, relative=TRUE, textSize=0.5, 
-                 output=outFile)
-  #sink()
+#  tmpName <- paste0(inFileDir, accNum, "_CoverageViz_IRCheckFALSE")
+#  outFile <- paste0(tmpName, ".png")
+#  PACVr.complete(gbkFile, bamFile, windowSize=250, logScale=FALSE, 
+#                 threshold=0.5, relative=TRUE, textSize=0.5, 
+#                 output=outFile)
   
 #  tmpName <- paste0(inFileDir, accNum, "_CoverageViz_IRCheck0")
-#  sink(paste0(tmpName, ".log"))
 #  outFile <- paste0(tmpName, ".png")
 #  PACVr.complete(gbkFile, bamFile, windowSize=250, logScale=FALSE, 
 #                 threshold=0.5, relative=TRUE, textSize=0.5, 
 #                 IRCheck=0, output=outFile)
-#  sink()
   
-#  tmpName <- paste0(inFileDir, accNum, "_CoverageViz_IRCheck1")
-#  sink(paste0(tmpName, ".log"))
+  tmpName <- paste0(inFileDir, accNum, "_CoverageViz_IRCheck1")
+  outFile <- paste0(tmpName, ".png")
+  PACVr.complete(gbkFile, bamFile, windowSize=250, logScale=FALSE, 
+                 threshold=0.5, relative=TRUE, textSize=0.5, 
+                 IRCheck=1, output=outFile)
+
+#  tmpName <- paste0(inFileDir, accNum, "_CoverageViz_IRCheck1_withStats")
 #  outFile <- paste0(tmpName, ".png")
 #  PACVr.complete(gbkFile, bamFile, windowSize=250, logScale=FALSE, 
 #                 threshold=0.5, relative=TRUE, textSize=0.5, 
-#                 IRCheck=1, output=outFile)
-#  sink()
+#                 IRCheck=1, tabularCovStats=TRUE, output=outFile)
 }
 
 foreach(i=1:length(inFiles), .packages=c("PACVr")) %dopar% {

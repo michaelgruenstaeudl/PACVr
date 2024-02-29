@@ -72,7 +72,7 @@ outFile <- paste(tempdir(), "/NC_045072_CoverageViz.pdf", sep="")
 PACVr.complete(gbkFile, bamFile, windowSize=250, 
            logScale=FALSE, threshold=0.5, syntenyLineType=1,
            relative=TRUE, textSize=0.5, regionsCheck=FALSE,
-           verbose=FALSE, output=outFile)
+           tabularCovStats=FALSE, output=outFile)
 \end{BGVerbatim}
 
 \subsection{Via Unix shell}

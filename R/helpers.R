@@ -12,8 +12,8 @@ HistCol <- function(cov, threshold, relative, logScale) {
   #   color vector
   # Error handling
   if (!is.numeric(threshold) | threshold < 0) {
-    warning("User-defined coverage depth threshold must be >=1.")
-    stop()
+    logger::log_error("User-defined coverage depth threshold must be >=1.")
+    stop() # Should 'stop()' be replaced with 'return(NULL)' ?
   }
   if (relative == TRUE & logScale) {
     threshold <- mean(cov[, 4]) + log(threshold)

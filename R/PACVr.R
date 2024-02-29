@@ -83,7 +83,7 @@ PACVr.vizWithRCircos <- function(gbkData,
 #' value of the average coverage instead of an absolute value
 #' @param textSize a numeric value that specifies the relative font size of the 
 #' text element in the visualization
-#' @param verbose a boolean, that when TRUE, generates additional files with
+#' @param tabularCovStats a boolean, that when TRUE, generates additional files with
 #' detailed genomic region information
 #' @param output a character string that specifies the name of, and path to, 
 #' the output file
@@ -98,7 +98,7 @@ PACVr.vizWithRCircos <- function(gbkData,
 #' outFile <- paste(tempdir(), "/NC_045072__all_reads.pdf", sep="")
 #' PACVr.complete(gbkFile=gbkFile, bamFile=bamFile, windowSize=250, logScale=FALSE,
 #'                threshold=0.5, IRCheck=1, relative=TRUE, textSize=0.5,
-#'                verbose=FALSE, output=outFile)
+#'                tabularCovStats=FALSE, output=outFile)
 #' }
 #' \dontrun{
 #' gbkFile <- system.file("extdata", "MG936619/MG936619.gb", package="PACVr")
@@ -106,7 +106,7 @@ PACVr.vizWithRCircos <- function(gbkData,
 #' outFile <- paste(tempdir(), "/MG936619_CoverageViz.pdf", sep="")
 #' PACVr.complete(gbkFile=gbkFile, bamFile=bamFile, windowSize=50, logScale=FALSE,
 #'                threshold=0.5, IRCheck=NA, relative=TRUE, textSize=0.5,
-#'                verbose=FALSE, output=outFile)
+#'                tabularCovStats=FALSE, output=outFile)
 #' }
 	
 PACVr.complete <- function(gbkFile,
@@ -117,7 +117,7 @@ PACVr.complete <- function(gbkFile,
                            IRCheck=NA,
                            relative=TRUE,
                            textSize=0.5,
-                           verbose=FALSE,
+                           tabularCovStats=FALSE,
                            output=NA) {
   ######################################################################
   read.gbData <- PACVr.read.gb(gbkFile)
@@ -131,7 +131,6 @@ PACVr.complete <- function(gbkFile,
     logger::log_fatal('Parsing of any sequence features unsuccessful.')
     return(-1)
   }
-
   ###################################
   plotSpecs <- getPlotSpecs(logScale,
                             threshold,
@@ -145,7 +144,7 @@ PACVr.complete <- function(gbkFile,
                                  plotSpecs$logScale)
 
   ###################################
-  if (verbose) {
+  if (tabularCovStats) {
     PACVr.compileCovStats(gbkData,
                           coverage$raw,
                           analysisSpecs,

@@ -216,15 +216,13 @@ createVizFile <- function(plotSpecs) {
   if (outputType == "pdf") {
     pdf(output,
         width=10,
-        height=10,
-        units="cm",
-        res=600)
+        height=10)
   } else if (outputType == "png") {
     png(output,
         width=10,
         height=10,
-        units="cm",
-        res=600)
+        units="in",
+        res=300)
   }
 }
 
