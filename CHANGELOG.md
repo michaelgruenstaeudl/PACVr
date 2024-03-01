@@ -1,7 +1,7 @@
 CHANGELOG
 ---------
 
-#### Version 1.0.9 (2024.02.29)
+#### Version 1.0.9 (2024.03.01)
 * Improving variable and file names
 * Correcting output plot specifications
 * Increase logger use, improve logger format
