@@ -157,10 +157,3 @@ plotIRLinks <- function(linkData, syntenyLineType) {
   }
 }
 
-getSyntenyLineType <- function(IRCheck) {
-  syntenyLineTypes <- c(1, 2)
-  if (IRCheck %in% syntenyLineTypes) {
-    return(IRCheck)
-  }
-  return(NULL)
-}

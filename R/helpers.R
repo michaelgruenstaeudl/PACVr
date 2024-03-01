@@ -43,17 +43,6 @@ validateColors <- function(colorsToValidate) {
   }
 }
 
-getAnalysisSpecs <- function(IRCheck,
-                             windowSize) {
-  analysisSpecs <- list(
-    syntenyLineType = getSyntenyLineType(IRCheck),
-    isIRCheck = getIsIRCheck(IRCheck),
-    windowSize = filterPosNumeric(windowSize)
-  )
-  analysisSpecs$isSyntenyLine <- !is.null(analysisSpecs$syntenyLineType)
-  return(analysisSpecs)
-}
-
 getPlotSpecs <- function(logScale,
                          threshold,
                          relative,
