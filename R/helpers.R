@@ -43,55 +43,6 @@ validateColors <- function(colorsToValidate) {
   }
 }
 
-getPlotSpecs <- function(logScale,
-                         threshold,
-                         relative,
-                         textSize,
-                         output) {
-  outputFields <- getOutputFields(output)
-  plotSpecs <- list(
-    logScale = filterLogical(logScale),
-    threshold = filterPosNumeric(threshold),
-    relative = filterLogical(relative),
-    textSize = filterPosNumeric(textSize),
-    output = outputFields$output,
-    outputType = outputFields$outputType,
-    isOutput = outputFields$isOutput
-  )
-  return(plotSpecs)
-}
-
-getOutputFields <- function(output) {
-  outputTypes <- paste(getOutputTypes(), collapse = "|")
-  outputPattern <- sprintf("^(?:.+\\.)(%s)$", outputTypes)
-  outputMatch <- regexec(outputPattern, output, ignore.case = TRUE)
-  outputVec <- regmatches(output, outputMatch)
-
-  # non-char `output` or non-match for char `output`
-  if ((length(outputVec) == 0) || (length(outputVec[[1]]) == 0)) {
-    output <- NULL
-    outputType <- NULL
-    isOutput <- FALSE
-  } else {
-    output <- outputVec[[1]][1]
-    outputType <- tolower(outputVec[[1]][2])
-    isOutput <- TRUE
-  }
-
-  outputFields <- list(
-    output = output,
-    outputType = outputType,
-    isOutput = isOutput
-  )
-  return(outputFields)
-}
-
-getOutputTypes <- function() {
-  outputTypes <- c("pdf",
-                   "png")
-  return(outputTypes)
-}
-
 filterByType <- function(x, typeFun) {
   if (typeFun(x)) {
     return(x)
