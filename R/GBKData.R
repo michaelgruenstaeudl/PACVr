@@ -42,6 +42,7 @@ GBKData <- R6::R6Class("GBKData",
       # `features` derivatives
       private$setQuadripRegions()
       private$setGenes()
+      private$setIsSyntenyLine()
       private$setLinkData()
 
       # `features` no longer needed
@@ -105,6 +106,16 @@ GBKData <- R6::R6Class("GBKData",
       gene_L <- gene_L[order(gene_L$chromStart),]
       row.names(gene_L) <- 1:nrow(gene_L)
       self$genes <- gene_L
+    },
+
+    # precondition: `quadripRegions` is set
+    setIsSyntenyLine = function() {
+      if (self$analysisSpecs$isSyntenyLine &&
+          (!("IRb" %in% self$quadripRegions[, 4]) ||
+           !("IRa" %in% self$quadripRegions[, 4]) )) {
+        logger::log_warn("Unable to find synteny: missing `IRa` or `IRb`")
+        self$analysisSpecs$setIRCheckFields(0)
+      }
     },
 
     # precondition: `genes`, `quadripRegions`, and `analysisSpecs` are set

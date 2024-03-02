@@ -14,9 +14,14 @@ AnalysisSpecs <- R6::R6Class("AnalysisSpecs",
     # constructor
     initialize = function(IRCheck,
                           windowSize) {
+      self$setIRCheckFields(IRCheck)
+      private$setWindowSize(windowSize)
+    },
+
+    # public setter
+    setIRCheckFields = function(IRCheck) {
       private$setSyntenyLineType(IRCheck)
       private$setIsIRCheck(IRCheck)
-      private$setWindowSize(windowSize)
       private$setIsSyntenyLine()
     }
   ),
