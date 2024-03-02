@@ -109,10 +109,14 @@ GBKData <- R6::R6Class("GBKData",
 
     # precondition: `quadripRegions` is set
     setIRCheckFields = function() {
-      if (self$analysisSpecs$isSyntenyLine &&
-          (!("IRb" %in% self$quadripRegions[, 4]) ||
-           !("IRa" %in% self$quadripRegions[, 4]) )) {
-        logger::log_warn("Unable to find synteny: missing `IRa` or `IRb`")
+      IRBandRequirements <- getIRBandRequirements()
+      missingBands <- IRBandRequirements[!(IRBandRequirements %in% self$quadripRegions$Band)]
+      isSyntenyLine <- ifelse(length(missingBands) == 0, TRUE, FALSE)
+      if (self$analysisSpecs$isSyntenyLine && !isSyntenyLine) {
+        logger::log_warn(paste0("Unable to find synteny: missing IR band(s): ",
+                                "`",
+                                paste0(missingBands, collapse = "`, `"),
+                                "`"))
         self$analysisSpecs$setIRCheckFields(0)
       }
     },
@@ -128,3 +132,9 @@ GBKData <- R6::R6Class("GBKData",
     }
   )
 )
+
+# "static" "fields" and "methods" used for the class
+getIRBandRequirements <- function() {
+  IRBandRequirements <- c("IRa", "IRb")
+  return(IRBandRequirements)
+}

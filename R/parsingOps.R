@@ -100,26 +100,13 @@ PACVr.calcCoverage <- function (bamFile,
   return(coverage)
 }
 
-PACVr.generateIRGeneData <- function(genes, quadripRegions,
-                                     syntenyLineType) {
+PACVr.generateIRGeneData <- function(genes,
+                                     analysisSpecs) {
   # Parse GenBank file
-  if ("IRb" %in% quadripRegions[, 4] &&
-    "IRa" %in% quadripRegions[, 4]) {
-    linkData <- GenerateIRSynteny(genes, syntenyLineType)
-    return(linkData)
-  }
-  return(-1)
-}
-
-PACVr.linkData <- function(genes,
-                           quadripRegions,
-                           syntenyLineType) {
   linkData <- NULL
-  if (!is.null(syntenyLineType)) {
-    logger::log_info('Inferring the IR regions and the genes within the IRs')
-    linkData <- PACVr.generateIRGeneData(genes,
-                                         quadripRegions,
-                                         syntenyLineType)
+  if (analysisSpecs$isSyntenyLine) {
+    linkData <- GenerateIRSynteny(genes,
+                                  analysisSpecs$syntenyLineType)
   }
   return(linkData)
 }
