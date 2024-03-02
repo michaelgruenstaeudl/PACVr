@@ -17,12 +17,13 @@ GBKData <- R6::R6Class("GBKData",
     
     # constructor
     initialize = function(gbkFile,
-                          analysisSpecs) {
+                          analysisSpecs = NULL) {
       read.gbData <- PACVr.read.gb(gbkFile)
-      self$analysisSpecs <- analysisSpecs
+      private$setAnalysisSpecs(analysisSpecs)
 
       # main derivative of `read.gb` data
-      gbkSeqFeatures <- read.gbSeqFeaturesAdapt(read.gbData, analysisSpecs)
+      gbkSeqFeatures <- read.gbSeqFeaturesAdapt(read.gbData,
+                                                self$analysisSpecs)
       if (is.null(gbkSeqFeatures)) {
         logger::log_fatal('Parsing of any sequence features unsuccessful.')
         return(NULL)
@@ -52,6 +53,14 @@ GBKData <- R6::R6Class("GBKData",
 
   # private setters for constructor
   private = list(
+    setAnalysisSpecs = function(analysisSpecs) {
+      if(is.null(analysisSpecs)) {
+        self$analysisSpecs <- AnalysisSpecs$new()
+      } else {
+        self$analysisSpecs <- analysisSpecs
+      }
+    },
+
     setSequences = function(read.gbData) {
       self$sequences <- read.gbSequence(read.gbData)
     },

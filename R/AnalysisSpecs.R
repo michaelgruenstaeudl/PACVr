@@ -12,8 +12,8 @@ AnalysisSpecs <- R6::R6Class("AnalysisSpecs",
     isSyntenyLine = FALSE,
     
     # constructor
-    initialize = function(IRCheck,
-                          windowSize) {
+    initialize = function(IRCheck = NA,
+                          windowSize = 250) {
       self$setIRCheckFields(IRCheck)
       private$setWindowSize(windowSize)
     },
