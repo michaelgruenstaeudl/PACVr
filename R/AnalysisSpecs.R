@@ -32,6 +32,8 @@ AnalysisSpecs <- R6::R6Class("AnalysisSpecs",
       syntenyLineTypes <- getSyntenyLineTypes()
       if (IRCheck %in% syntenyLineTypes) {
         self$syntenyLineType <- IRCheck
+      } else {
+        self$syntenyLineType <- NULL
       }
     },
 
