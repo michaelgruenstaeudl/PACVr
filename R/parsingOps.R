@@ -3,44 +3,6 @@
 #email="m_gruenstaeudl@fhsu.edu"
 #version="2024.03.01.1956"
 
-PACVr.gbkData <- function(read.gbData, analysisSpecs) {
-  gbkSeqFeatures <- read.gbSeqFeatures(read.gbData, analysisSpecs)
-  if (is.null(gbkSeqFeatures)) {
-    logger::log_error(paste("No usable sequence features detected to perform specified analysis"))
-    return(NULL)
-  }
-
-  # derived from gbkData
-  gbkSeq <- read.gbSequence(read.gbData)
-  lengths <- read.gbLengths(gbkSeq)
-  sampleName <- read.gbSampleName(read.gbData)
-  plotTitle <- read.gbPlotTitle(read.gbData)
-  rm(read.gbData)
-  gc()
-
-  # primarily derived from gbkSeqFeatures
-  quadripRegions <- PACVr.quadripRegions(lengths,
-                                         gbkSeqFeatures,
-                                         analysisSpecs)
-  genes <- PACVr.parseGenes(gbkSeqFeatures)
-  linkData <- PACVr.linkData(genes,
-                             quadripRegions,
-                             analysisSpecs$syntenyLineType)
-  rm(gbkSeqFeatures)
-  gc()
-
-  gbkData <- list(
-    genes = genes,
-    seq = gbkSeq,
-    lengths = lengths,
-    sampleName = sampleName,
-    plotTitle = plotTitle,
-    quadripRegions = quadripRegions,
-    linkData = linkData
-  )
-  return(gbkData)
-}
-
 PACVr.parseGenes <- function (gbkSeqFeatures) {
   # Function to extract gene information from Genbank flatfile data
   # ARGS:
