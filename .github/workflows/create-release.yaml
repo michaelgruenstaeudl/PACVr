@@ -119,7 +119,7 @@ jobs:
           name="Version ${version}"
           echo "name=$name" >> $GITHUB_ENV
           echo "Name: $name"
-          body="$(awk '/^\*.*$/{print; next} /^####/{count++; if(count==2) exit}' $CHANGELOG)"
+          body="$(awk '/^[[:space:]]*\*.*$/{print; next} /^####/{count++; if(count==2) exit}' $CHANGELOG)"
           echo "body<<EOF" >> "$GITHUB_ENV"
           echo "$body" >> "$GITHUB_ENV"
           echo "EOF" >> "$GITHUB_ENV"
