@@ -30,7 +30,8 @@ AnalysisSpecs <- R6::R6Class("AnalysisSpecs",
   private = list(
     setSyntenyLineType = function(IRCheck) {
       syntenyLineTypes <- getSyntenyLineTypes()
-      if (IRCheck %in% syntenyLineTypes) {
+      if (is.numeric(IRCheck) &&
+          IRCheck %in% syntenyLineTypes) {
         self$syntenyLineType <- IRCheck
       } else {
         self$syntenyLineType <- NULL
