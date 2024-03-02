@@ -120,15 +120,11 @@ PACVr.complete <- function(gbkFile,
                            tabularCovStats=FALSE,
                            output=NA) {
   ######################################################################
-  read.gbData <- PACVr.read.gb(gbkFile)
   analysisSpecs <- AnalysisSpecs$new(IRCheck,
                                      windowSize)
-  gbkData <- PACVr.gbkData(read.gbData,
-                           analysisSpecs)
-  rm(read.gbData)
-  gc()
+  gbkData <- GBKData$new(gbkFile,
+                         analysisSpecs)
   if (is.null(gbkData)) {
-    logger::log_fatal('Parsing of any sequence features unsuccessful.')
     return(-1)
   }
   ###################################
