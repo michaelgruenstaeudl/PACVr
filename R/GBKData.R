@@ -53,58 +53,31 @@ GBKData <- R6::R6Class("GBKData",
   # private setters for constructor
   private = list(
     setSequences = function(read.gbData) {
-      sampleSequences <- NULL
-      for (sample in read.gbData) {
-        sampleSequences <- c(sampleSequences, sample$ORIGIN)
-      }
-      self$sequences <- Biostrings::DNAStringSet(sampleSequences)
+      self$sequences <- read.gbSequence(read.gbData)
     },
 
-    # precondition: `seq` is set
+    # precondition: `sequences` is set
     setLengths = function() {
-      self$lengths <- Biostrings::width(self$sequences)
+      self$lengths <- read.gbLengths(self$sequences)
     },
 
     setSampleName = function(read.gbData) {
-      sampleNames <- NULL
-      for (sample in read.gbData) {
-        sampleNames <- c(sampleNames,
-                         c(sample_name = sample$VERSION,
-                           genome_name = sample$ACCESSION))
-      }
-      self$sampleName <- sampleNames
+      self$sampleName <- read.gbSampleName(read.gbData)
     },
 
     setPlotTitle = function(read.gbData) {
-      plotTitles <- NULL
-      for (sample in read.gbData) {
-        plotTitles <- c(plotTitles, paste(sample$DEFINITION, sample$ACCESSION))
-      }
-      self$plotTitle <- plotTitles
+      self$plotTitle <- read.gbPlotTitle(read.gbData)
     },
 
     # precondition: `analysisSpecs` is set
     setQuadripRegions = function(gbkSeqFeatures) {
-      if (self$analysisSpecs$isIRCheck) {
-        logger::log_info('Parsing the quadripartite genome structure')
-        quadripRegions <- PACVr.parseQuadripRegions(self$lengths,
-                                                    gbkSeqFeatures,
-                                                    self$analysisSpecs)
-      } else {
-        quadripRegions <- PACVr.parseSource(gbkSeqFeatures)
-      }
-      self$quadripRegions <- quadripRegions
+      self$quadripRegions <- PACVr.quadripRegions(self$lengths,
+                                                  gbkSeqFeatures,
+                                                  self$analysisSpecs)
     },
 
     setGenes = function(gbkSeqFeatures) {
-      logger::log_info('  Extracting information on genes')
-      gene_L <- read.gbGenes(gbkSeqFeatures)
-      gene_L <- gene_L[, c(1:3, which(colnames(gene_L) == "gene"))]
-      colnames(gene_L) <- c("Chromosome", "chromStart", "chromEnd", "gene")
-      gene_L$Chromosome <- ""
-      gene_L <- gene_L[order(gene_L$chromStart),]
-      row.names(gene_L) <- 1:nrow(gene_L)
-      self$genes <- gene_L
+      self$genes <- PACVr.parseGenes(gbkSeqFeatures)
     },
 
     # precondition: `quadripRegions` is set
@@ -121,14 +94,10 @@ GBKData <- R6::R6Class("GBKData",
       }
     },
 
-    # precondition: `genes`, `quadripRegions`, and `analysisSpecs` are set
+    # precondition: `genes` and `analysisSpecs` are set
     setLinkData = function() {
-      if (self$analysisSpecs$isSyntenyLine) {
-        logger::log_info('Inferring the IR regions and the genes within the IRs')
-        self$linkData <- PACVr.generateIRGeneData(self$genes,
-                                                  self$quadripRegions,
-                                                  self$analysisSpecs$syntenyLineType)
-      }
+      self$linkData <- PACVr.generateIRGeneData(self$genes,
+                                                self$analysisSpecs)
     }
   )
 )
