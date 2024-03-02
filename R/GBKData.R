@@ -7,7 +7,6 @@ GBKData <- R6::R6Class("GBKData",
   public = list(
     # fields
     analysisSpecs = NULL,
-    features = NULL,
     genes = NULL,
     sequences = NULL,
     lengths = NULL,
@@ -39,14 +38,14 @@ GBKData <- R6::R6Class("GBKData",
       rm(read.gbData)
       gc()
 
-      # `features` derivatives
-      private$setQuadripRegions()
-      private$setGenes()
+      # `gbkSeqFeatures` derivatives
+      private$setQuadripRegions(gbkSeqFeatures)
+      private$setGenes(gbkSeqFeatures)
       private$setIsSyntenyLine()
       private$setLinkData()
 
-      # `features` no longer needed
-      self$features <- NULL
+      # `gbkSeqFeatures` no longer needed
+      rm(gbkSeqFeatures)
       gc()
     }
   ),
@@ -84,23 +83,22 @@ GBKData <- R6::R6Class("GBKData",
       self$plotTitle <- plotTitles
     },
 
-    # precondition: `features` and `analysisSpecs` are set
-    setQuadripRegions = function() {
+    # precondition: `analysisSpecs` is set
+    setQuadripRegions = function(gbkSeqFeatures) {
       if (self$analysisSpecs$isIRCheck) {
         logger::log_info('Parsing the quadripartite genome structure')
         quadripRegions <- PACVr.parseQuadripRegions(self$lengths,
-                                                    self$features,
+                                                    gbkSeqFeatures,
                                                     self$analysisSpecs)
       } else {
-        quadripRegions <- PACVr.parseSource(self$features)
+        quadripRegions <- PACVr.parseSource(gbkSeqFeatures)
       }
       self$quadripRegions <- quadripRegions
     },
 
-    # precondition: `features` is set
-    setGenes = function() {
+    setGenes = function(gbkSeqFeatures) {
       logger::log_info('  Extracting information on genes')
-      gene_L <- read.gbGenes(self$features)
+      gene_L <- read.gbGenes(gbkSeqFeatures)
       gene_L <- gene_L[, c(1:3, which(colnames(gene_L) == "gene"))]
       colnames(gene_L) <- c("Chromosome", "chromStart", "chromEnd", "gene")
       gene_L$Chromosome <- ""
