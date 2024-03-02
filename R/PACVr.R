@@ -26,7 +26,7 @@ PACVr.compileCovStats <- function(gbkData,
                 analysisSpecs,
                 StatsFilePath)
   if (analysisSpecs$isSyntenyLine) {
-    checkIREquality(gbkData$seq,
+    checkIREquality(gbkData$sequences,
                     gbkData$quadripRegions,
                     StatsFilePath,
                     sampleName)
