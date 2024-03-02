@@ -41,7 +41,7 @@ GBKData <- R6::R6Class("GBKData",
       # `gbkSeqFeatures` derivatives
       private$setQuadripRegions(gbkSeqFeatures)
       private$setGenes(gbkSeqFeatures)
-      private$setIsSyntenyLine()
+      private$setIRCheckFields()
       private$setLinkData()
 
       # `gbkSeqFeatures` no longer needed
@@ -108,7 +108,7 @@ GBKData <- R6::R6Class("GBKData",
     },
 
     # precondition: `quadripRegions` is set
-    setIsSyntenyLine = function() {
+    setIRCheckFields = function() {
       if (self$analysisSpecs$isSyntenyLine &&
           (!("IRb" %in% self$quadripRegions[, 4]) ||
            !("IRa" %in% self$quadripRegions[, 4]) )) {
