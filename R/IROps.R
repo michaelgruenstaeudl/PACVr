@@ -11,9 +11,9 @@ checkIREquality <- function(gbkSeq, regions, dir, sample_name) {
     IR_diff_SNPS <- c()
     IR_diff_gaps <- c()
     if (repeatB[2] - repeatB[1] != repeatA[2] - repeatA[1]) {
-      message("WARNING: Inverted repeats differ in sequence length")
-      message(paste("The IRb has a total lengths of: ", repeatB[2] - repeatB[1], " bp", sep = ""))
-      message(paste("The IRa has a total lengths of: ", repeatA[2] - repeatA[1], " bp", sep = ""))
+      logger::log_warn("Inverted repeats differ in sequence length")
+      logger::log_info(paste("The IRb has a total lengths of: ", repeatB[2] - repeatB[1], " bp", sep = ""))
+      logger::log_info(paste("The IRa has a total lengths of: ", repeatA[2] - repeatA[1], " bp", sep = ""))
     }
     if (gbkSeq[[1]][repeatB[1]:repeatB[2]] != Biostrings::reverseComplement(gbkSeq[[1]][repeatA[1]:repeatA[2]])) {
       IRa_seq <- Biostrings::DNAString(gbkSeq[[1]][repeatB[1]:repeatB[2]])
@@ -46,9 +46,9 @@ checkIREquality <- function(gbkSeq, regions, dir, sample_name) {
             Biostrings::compareStrings(globalAlign), ""
           )[[1]] == "-"))
       }
-      message("WARNING: Inverted repeats differ in sequence")
+      logger::log_warn("Inverted repeats differ in sequence")
       if (length(IR_diff_SNPS) > 0) {
-        message(
+        logger::log_info(
           paste(
             "When aligned, the IRs differ through a total of ",
             length(IR_diff_SNPS),
@@ -59,7 +59,7 @@ checkIREquality <- function(gbkSeq, regions, dir, sample_name) {
         )
       }
       if (length(IR_diff_gaps) > 0) {
-        message(
+        logger::log_info(
           paste(
             "When aligned, the IRs differ through a total of ",
             length(IR_diff_gaps),
@@ -69,7 +69,7 @@ checkIREquality <- function(gbkSeq, regions, dir, sample_name) {
           )
         )
       }
-      message(
+      logger::log_warn(
         "Proceeding with coverage depth visualization, but without quadripartite genome structure ..."
       )
     }

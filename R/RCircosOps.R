@@ -510,15 +510,14 @@ PACVr.Reset.Plot.Parameters <- function (new.params = NULL)
     padding.const <- RCircos::RCircos.Get.Padding.Constant()
     total.units <- genome.len / new.params$base.per.unit
     new.padding <- round(padding.const * total.units, digits = 0)
-    
+
     if (new.padding != new.params$base.per.unit) {
-      message(
+      logger::log_info(
         paste(
-          "\nNote: chrom.padding",
+          "`chrom.padding` value",
           new.params$chrom.paddings,
           " was reset to",
-          new.padding,
-          "\n"
+          new.padding
         )
       )
       new.params$chrom.paddings <- new.padding
