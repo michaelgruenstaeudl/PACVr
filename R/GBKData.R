@@ -89,7 +89,8 @@ GBKData <- R6::R6Class("GBKData",
       if (self$analysisSpecs$isIRCheck) {
         logger::log_info('Parsing the quadripartite genome structure')
         quadripRegions <- PACVr.parseQuadripRegions(self$lengths,
-                                                    self$features)
+                                                    self$features,
+                                                    self$analysisSpecs)
       } else {
         quadripRegions <- PACVr.parseSource(self$features)
       }

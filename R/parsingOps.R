@@ -37,7 +37,7 @@ PACVr.gbkData <- function(read.gbData, analysisSpecs) {
   # primarily derived from gbkSeqFeatures
   quadripRegions <- PACVr.quadripRegions(lengths,
                                          gbkSeqFeatures,
-                                         analysisSpecs$isIRCheck)
+                                         analysisSpecs)
   genes <- PACVr.parseGenes(gbkSeqFeatures)
   linkData <- PACVr.linkData(genes,
                              quadripRegions,
@@ -66,20 +66,25 @@ PACVr.parseGenes <- function (gbkSeqFeatures) {
 
 PACVr.quadripRegions <- function(gbkLengths,
                                  gbkSeqFeatures,
-                                 isIRCheck) {
-  if (isIRCheck) {
+                                 analysisSpecs) {
+  if (analysisSpecs$isIRCheck) {
     logger::log_info('Parsing the quadripartite genome structure')
     quadripRegions <- PACVr.parseQuadripRegions(gbkLengths,
-                                                gbkSeqFeatures)
+                                                gbkSeqFeatures,
+                                                analysisSpecs)
   } else {
     quadripRegions <- PACVr.parseSource(gbkSeqFeatures)
   }
   return(quadripRegions)
 }
 
-PACVr.parseQuadripRegions <- function (gbkLengths, gbkSeqFeatures) {
+PACVr.parseQuadripRegions <- function (gbkLengths,
+                                       gbkSeqFeatures,
+                                       analysisSpecs) {
   raw_quadripRegions <- ParseQuadripartiteStructure(gbkSeqFeatures)
   if (is.null(raw_quadripRegions)) {
+    logger::log_warn("No regions identified; using full genome instead.")
+    analysisSpecs$setIRCheckFields(NA)
     quadripRegions <- PACVr.parseSource(gbkSeqFeatures)
   } else {
     quadripRegions <- fillDataFrame(gbkLengths, raw_quadripRegions)
@@ -127,8 +132,6 @@ PACVr.linkData <- function(genes,
 }
 
 PACVr.parseSource <- function(gbkSeqFeatures) {
-  logger::log_info("No regions identified; using full genome instead.")
-
   type <-
     Band <-
     Stain <-
