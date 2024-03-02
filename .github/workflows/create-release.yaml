@@ -1,18 +1,17 @@
 # Workflow derived from https://github.com/r-lib/actions/tree/v2/examples
 # Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
 on:
-  push:
-    branches:
-      - master
-      - main
-    paths:
-      - 'CHANGELOG.md'
+  workflow_run:
+    workflows: [prepare-release]
+    types:
+      - completed
 
 name: create-release
 
 jobs:
   create-release:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       CHANGELOG: "CHANGELOG.md"
