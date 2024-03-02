@@ -3,6 +3,19 @@
 #email="m_gruenstaeudl@fhsu.edu"
 #version="2024.03.01.1956"
 
+read.gbSeqFeaturesAdapt <- function(gbkData, analysisSpecs) {
+  gbkSeqFeatures <- read.gbSeqFeatures(gbkData,
+                                       analysisSpecs)
+  if (is.null(gbkSeqFeatures)) {
+    logger::log_warn(paste("No samples match specifications;",
+                           "retrying with basic coverage requirements."))
+    analysisSpecs$setIRCheckFields(NA)
+    gbkSeqFeatures <- read.gbSeqFeatures(gbkData,
+                                         analysisSpecs)
+  }
+  return(gbkSeqFeatures)
+}
+
 read.gbSeqFeatures <- function(gbkData, analysisSpecs) {
   fileDF <- data.frame()
   for (sample in gbkData) {

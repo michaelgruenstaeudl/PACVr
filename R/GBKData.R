@@ -22,7 +22,7 @@ GBKData <- R6::R6Class("GBKData",
       self$analysisSpecs <- analysisSpecs
 
       # main derivative of `read.gb` data
-      gbkSeqFeatures <- read.gbSeqFeatures(read.gbData, analysisSpecs)
+      gbkSeqFeatures <- read.gbSeqFeaturesAdapt(read.gbData, analysisSpecs)
       if (is.null(gbkSeqFeatures)) {
         logger::log_fatal('Parsing of any sequence features unsuccessful.')
         return(NULL)
