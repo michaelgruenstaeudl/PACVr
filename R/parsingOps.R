@@ -68,7 +68,7 @@ PACVr.generateIRGeneData <- function(genes,
   linkData <- NULL
   if (analysisSpecs$isSyntenyLine) {
     linkData <- GenerateIRSynteny(genes,
-                                  analysisSpecs$syntenyLineType)
+                                  analysisSpecs)
   }
   return(linkData)
 }

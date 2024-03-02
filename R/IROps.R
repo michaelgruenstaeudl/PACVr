@@ -95,11 +95,12 @@ checkIREquality <- function(gbkSeq, regions, dir, sample_name) {
   }
 }
 
-GenerateIRSynteny <- function(genes, syntenyLineType) {
+GenerateIRSynteny <- function(genes, analysisSpecs) {
   logger::log_info('  Testing gene synteny in IRs')
   n_occur <- data.frame(table(genes[, 4]), stringsAsFactors = FALSE)
   n_occur <- n_occur[n_occur$Freq == 2,]
-  ir_synteny <- c()
+  syntenyLineType <- analysisSpecs$syntenyLineType
+  ir_synteny <- NULL
   if (syntenyLineType == "1") {
     for (gene in n_occur$Var1) {
       duplicateGene <- genes[which(gene == genes$gene), 1:3]
@@ -127,7 +128,12 @@ GenerateIRSynteny <- function(genes, syntenyLineType) {
         )
     }
   }
-  ir_synteny$PlotColor <- "dodgerblue4"
+  if (is.null(ir_synteny)) {
+    logger::log_info("  No synteny found")
+    analysisSpecs$setIRCheckFields(0)
+  } else {
+    ir_synteny$PlotColor <- "dodgerblue4"
+  }
   return(ir_synteny)
 }
 
