@@ -7,7 +7,6 @@ GBKData <- R6::R6Class("GBKData",
   public = list(
     # fields
     analysisSpecs = NULL,
-    read.gb = NULL,
     features = NULL,
     genes = NULL,
     sequences = NULL,
@@ -20,24 +19,24 @@ GBKData <- R6::R6Class("GBKData",
     # constructor
     initialize = function(gbkFile,
                           analysisSpecs) {
-      self$read.gb <- PACVr.read.gb(gbkFile)
+      read.gbData <- PACVr.read.gb(gbkFile)
       self$analysisSpecs <- analysisSpecs
 
       # main derivative of `read.gb` data
-      private$setFeatures()
-      if (is.null(self$features)) {
+      gbkSeqFeatures <- read.gbSeqFeatures(read.gbData, analysisSpecs)
+      if (is.null(gbkSeqFeatures)) {
         logger::log_fatal('Parsing of any sequence features unsuccessful.')
         return(NULL)
       }
 
       # other derivatives of `read.gb` data
-      private$setSequences()
+      private$setSequences(read.gbData)
       private$setLengths()
-      private$setSampleName()
-      private$setPlotTitle()
+      private$setSampleName(read.gbData)
+      private$setPlotTitle(read.gbData)
 
-      # `read.gb` no longer needed
-      self$read.gb <- NULL
+      # `read.gbData` no longer needed
+      rm(read.gbData)
       gc()
 
       # `features` derivatives
@@ -53,24 +52,9 @@ GBKData <- R6::R6Class("GBKData",
 
   # private setters for constructor
   private = list(
-    # precondition: `read.gb` and `analysisSpecs` are set
-    setFeatures = function() {
-      fileDF <- data.frame()
-      for (sample in self$read.gb) {
-        sampleDF <- parseFeatures(sample$FEATURES, self$analysisSpecs)
-        if (!is.null(sampleDF)) {
-          fileDF <- dplyr::bind_rows(fileDF, sampleDF)
-        }
-      }
-      if (ncol(fileDF) > 0 || nrow(fileDF) > 0) {
-        self$features <- fileDF
-      }
-    },
-
-    # precondition: `read.gb` is set
-    setSequences = function() {
+    setSequences = function(read.gbData) {
       sampleSequences <- NULL
-      for (sample in self$read.gb) {
+      for (sample in read.gbData) {
         sampleSequences <- c(sampleSequences, sample$ORIGIN)
       }
       self$sequences <- Biostrings::DNAStringSet(sampleSequences)
@@ -81,10 +65,9 @@ GBKData <- R6::R6Class("GBKData",
       self$lengths <- Biostrings::width(self$sequences)
     },
 
-    # precondition: `read.gb` is set
-    setSampleName = function() {
+    setSampleName = function(read.gbData) {
       sampleNames <- NULL
-      for (sample in self$read.gb) {
+      for (sample in read.gbData) {
         sampleNames <- c(sampleNames,
                          c(sample_name = sample$VERSION,
                            genome_name = sample$ACCESSION))
@@ -92,10 +75,9 @@ GBKData <- R6::R6Class("GBKData",
       self$sampleName <- sampleNames
     },
 
-    # precondition: `read.gb` is set
-    setPlotTitle = function() {
+    setPlotTitle = function(read.gbData) {
       plotTitles <- NULL
-      for (sample in self$read.gb) {
+      for (sample in read.gbData) {
         plotTitles <- c(plotTitles, paste(sample$DEFINITION, sample$ACCESSION))
       }
       self$plotTitle <- plotTitles
