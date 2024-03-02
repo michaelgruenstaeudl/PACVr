@@ -1,6 +1,12 @@
 CHANGELOG
 ---------
 
+#### Version 1.0.10 (2024.03.02)
+* Dynamic changes to `IRCheck` as `PACVr.complete()` progresses
+  * If no samples from `gbkFile` contain the qualifiers needed for specified analysis, continues with `IRCheck = NA`
+  * If no IR regions are identified, continues with `IRCheck = NA`
+  * If there are missing IR regions needed for synteny visualization, continues with `IRCheck = 0`
+
 #### Version 1.0.9 (2024.03.01)
 * Improving variable and file names
 * Correcting output plot specifications
