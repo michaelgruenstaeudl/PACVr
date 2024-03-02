@@ -1,7 +1,7 @@
 #!/usr/bin/env RScript
 #contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2024.03.01.2330"
+#version="2024.03.02.2155"
 
 PlotSpecs <- R6::R6Class("PlotSpecs",
   public = list(

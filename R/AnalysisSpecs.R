@@ -1,7 +1,7 @@
 #!/usr/bin/env RScript
 #contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2024.03.01.2300"
+#version="2024.03.02.2155"
 
 AnalysisSpecs <- R6::R6Class("AnalysisSpecs",
   public = list(
