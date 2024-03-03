@@ -133,6 +133,6 @@ jobs:
           gh release create "${{ env.tag }}" \
             --repo="$GITHUB_REPOSITORY" \
             --title="${{ env.name }}" \
-            --notes="|${{ env.body }}" \
+            --notes="|\${{ env.body }}" \
             --latest \
             "${{ env.tar_file }}#${{ env.asset_name }}"
