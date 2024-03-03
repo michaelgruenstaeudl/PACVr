@@ -129,7 +129,7 @@ GenerateIRSynteny <- function(genes, analysisSpecs) {
     }
   }
   if (is.null(ir_synteny)) {
-    logger::log_info("  No synteny found")
+    logger::log_warn("  No synteny found")
     analysisSpecs$setIRCheckFields(0)
   } else {
     ir_synteny$PlotColor <- "dodgerblue4"
