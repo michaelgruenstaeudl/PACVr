@@ -1,7 +1,7 @@
 #!/usr/bin/env RScript
 #contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2024.03.03.0405"
+#version="2024.03.03.0433"
 
 read.gbSeqFeaturesAdapt <- function(gbkData, analysisSpecs) {
   gbkSeqFeatures <- read.gbSeqFeatures(gbkData,
