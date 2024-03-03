@@ -3,7 +3,7 @@
 #email="m_gruenstaeudl@fhsu.edu"
 #version="2024.03.03.0218"
 
-PlotSpecs <- R6::R6Class("PlotSpecs",
+PlotSpecs <- R6Class("PlotSpecs",
   public = list(
     # fields
     logScale = FALSE,

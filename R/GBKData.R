@@ -3,7 +3,7 @@
 #email="m_gruenstaeudl@fhsu.edu"
 #version="2024.03.03.0218"
 
-GBKData <- R6::R6Class("GBKData",
+GBKData <- R6Class("GBKData",
   public = list(
     # fields
     analysisSpecs = NULL,

@@ -3,7 +3,7 @@
 #email="m_gruenstaeudl@fhsu.edu"
 #version="2024.03.03.0218"
 
-AnalysisSpecs <- R6::R6Class("AnalysisSpecs",
+AnalysisSpecs <- R6Class("AnalysisSpecs",
   public = list(
     # fields
     syntenyLineType = NULL,

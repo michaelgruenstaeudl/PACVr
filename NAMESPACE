@@ -2,6 +2,7 @@
 
 export(PACVr.complete)
 export(RCircos.Env)
+importFrom(R6,R6Class)
 importFrom(RCircos,RCircos.Env)
 importFrom(dplyr,"%>%")
 importFrom(grDevices,colors)
