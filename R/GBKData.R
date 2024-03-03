@@ -95,7 +95,7 @@ GBKData <- R6::R6Class("GBKData",
       missingBands <- IRBandRequirements[!(IRBandRequirements %in% self$quadripRegions$Band)]
       isSyntenyLine <- ifelse(length(missingBands) == 0, TRUE, FALSE)
       if (self$analysisSpecs$isSyntenyLine && !isSyntenyLine) {
-        logger::log_warn(paste0("Unable to find synteny: missing IR band(s): ",
+        logger::log_warn(paste0("Unable to test synteny; missing IR band(s): ",
                                 "`",
                                 paste0(missingBands, collapse = "`, `"),
                                 "`"))
