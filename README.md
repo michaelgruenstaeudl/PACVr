@@ -1,7 +1,7 @@
 *PACVr*
 =======
 <!-- badges: start -->
-[![R-CMD-check](../../actions/workflows/prepare-release.yaml/badge.svg)](../../actions/workflows/prepare-release.yaml)
+[![prepare-release](../../actions/workflows/prepare-release.yaml/badge.svg)](../../actions/workflows/prepare-release.yaml)
 <!-- badges: end -->
 
 Plastome Assembly Coverage Visualization in R
