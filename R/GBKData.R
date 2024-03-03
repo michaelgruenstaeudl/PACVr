@@ -1,7 +1,7 @@
 #!/usr/bin/env RScript
 #contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2024.03.03.0136"
+#version="2024.03.03.0204"
 
 GBKData <- R6::R6Class("GBKData",
   public = list(
