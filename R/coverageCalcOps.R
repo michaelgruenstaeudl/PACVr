@@ -340,7 +340,7 @@ calcCovEvenness <- function(df) {
   return(
     df %>%
     dplyr::summarise(
-      evenness = evennessScore(coverage),
+      E_score = evennessScore(coverage),
       .groups = "drop"
     )
   )
