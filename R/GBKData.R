@@ -13,6 +13,7 @@ GBKData <- R6Class("GBKData",
     sampleName = NULL,
     plotTitle = NULL,
     quadripRegions = NULL,
+    sourceRegion = NULL,
     linkData = NULL,
     
     # constructor
@@ -40,6 +41,7 @@ GBKData <- R6Class("GBKData",
       gc()
 
       # `gbkSeqFeatures` derivatives
+      private$setSourceRegion(gbkSeqFeatures)
       private$setQuadripRegions(gbkSeqFeatures)
       private$setGenes(gbkSeqFeatures)
       private$setIRCheckFields()
@@ -76,6 +78,10 @@ GBKData <- R6Class("GBKData",
 
     setPlotTitle = function(read.gbData) {
       self$plotTitle <- read.gbPlotTitle(read.gbData)
+    },
+
+    setSourceRegion = function(gbkSeqFeatures) {
+      self$sourceRegion <- PACVr.parseSource(gbkSeqFeatures)
     },
 
     # precondition: `analysisSpecs` is set

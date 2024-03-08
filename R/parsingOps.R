@@ -19,20 +19,6 @@ PACVr.parseGenes <- function (gbkSeqFeatures) {
   return(gene_L)
 }
 
-PACVr.quadripRegions <- function(gbkLengths,
-                                 gbkSeqFeatures,
-                                 analysisSpecs) {
-  if (analysisSpecs$isIRCheck) {
-    logger::log_info('Parsing the quadripartite genome structure')
-    quadripRegions <- PACVr.parseQuadripRegions(gbkLengths,
-                                                gbkSeqFeatures,
-                                                analysisSpecs)
-  } else {
-    quadripRegions <- PACVr.parseSource(gbkSeqFeatures)
-  }
-  return(quadripRegions)
-}
-
 PACVr.parseQuadripRegions <- function (gbkLengths,
                                        gbkSeqFeatures,
                                        analysisSpecs) {
