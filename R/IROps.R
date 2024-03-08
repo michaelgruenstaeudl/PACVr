@@ -4,7 +4,7 @@
 #version="2024.03.03.0509"
 
 checkIREquality <- function(gbkData,
-                            outputSpecs) {
+                            analysisSpecs) {
   regions <- gbkData$quadripRegions
   repeatB <- as.numeric(regions[which(regions[, 4] == "IRb"), 2:3])
   repeatA <-
@@ -77,18 +77,11 @@ checkIREquality <- function(gbkData,
     )
   }
 
-  write.csv(
-    data.frame(
-      Number_N = unname(Biostrings::alphabetFrequency(gbkSeq)[, "N"]),
-      Mismatches = length(IR_diff_SNPS) + length(IR_diff_gaps)
-    ),
-    paste0(outputSpecs$statsFilePath,
-           .Platform$file.sep,
-           gbkData$sampleName["sample_name"],
-           "_IR_quality.csv"),
-    row.names = FALSE,
-    quote = FALSE
+  IR_mismatches <- data.frame(
+    IR_mismatches = length(IR_diff_SNPS) + length(IR_diff_gaps)
   )
+  IR_mismatches[analysisSpecs$regions_name] <- "Complete_genome"
+  return(IR_mismatches)
 }
 
 GenerateIRSynteny <- function(genes, analysisSpecs) {

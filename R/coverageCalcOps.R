@@ -34,7 +34,7 @@ CovCalc <- function(coverageRaw,
   return(cov)
 }
 
-getCovData <- function(regions, genes, analysisSpecs) {
+getCovData <- function(regions, genes) {
   ir_regions <- IRanges::IRanges(
     start = regions$chromStart,
     end = regions$chromEnd,
@@ -74,35 +74,22 @@ getCovData <- function(regions, genes, analysisSpecs) {
     select = "all"
   )
 
-  if (analysisSpecs$isIRCheck) {
-    regions_name <- "Chromosome"
-    regions_start <- "chromStart"
-    regions_end <- "chromEnd"
-  } else {
-    regions_name <- "Source"
-    regions_start <- "srcStart"
-    regions_end <- "srcEnd"
-  }
-
   covData <- list(
     ir_regions = ir_regions,
     ir_genes = ir_genes,
     ir_noncoding = ir_noncoding,
     overlaps_genes = overlaps_genes,
-    overlaps_noncoding = overlaps_noncoding,
-    regions_name = regions_name,
-    regions_start = regions_start,
-    regions_end = regions_end
+    overlaps_noncoding = overlaps_noncoding
   )
   return(covData)
 }
 
-filter_IR_genes <- function(regions, coverageRaw, seqnames, covData) {
+filter_IR_genes <- function(regions, coverageRaw, seqnames, covData, analysisSpecs) {
   ir_genes <- GenomicRanges::GRanges(seqnames = seqnames, covData$ir_genes)
   ir_genes <- GenomicRanges::binnedAverage(ir_genes, coverageRaw, "coverage")
   ir_genes <- as.data.frame(ir_genes)[c("seqnames", "start", "end", "coverage")]
-  regions_name <- covData$regions_name
-  colnames(ir_genes) <- c(regions_name, covData$regions_start, covData$regions_end, "coverage")
+  regions_name <- analysisSpecs$regions_name
+  colnames(ir_genes) <- c(regions_name, analysisSpecs$regions_start, analysisSpecs$regions_end, "coverage")
   ir_genes$coverage <- ceiling(as.numeric(ir_genes$coverage))
   ir_genes[[regions_name]] <- sapply(covData$overlaps_genes, function(x) regions$Band[x])
   ir_genes[[regions_name]] <- gsub("^c\\(\"|\"|\"|\"\\)$", "", as.character(ir_genes[[regions_name]]))
@@ -111,12 +98,12 @@ filter_IR_genes <- function(regions, coverageRaw, seqnames, covData) {
   return(covData)
 }
 
-filter_IR_noncoding <- function(regions, coverageRaw, seqnames, covData) {
+filter_IR_noncoding <- function(regions, coverageRaw, seqnames, covData, analysisSpecs) {
   ir_noncoding <- GenomicRanges::GRanges(seqnames = seqnames, covData$ir_noncoding)
   ir_noncoding <- GenomicRanges::binnedAverage(ir_noncoding, coverageRaw, "coverage")
   ir_noncoding <- as.data.frame(ir_noncoding)[c("seqnames", "start", "end", "coverage")]
-  regions_name <- covData$regions_name
-  colnames(ir_noncoding) <- c(regions_name, covData$regions_start, covData$regions_end, "coverage")
+  regions_name <- analysisSpecs$regions_name
+  colnames(ir_noncoding) <- c(regions_name, analysisSpecs$regions_start, analysisSpecs$regions_end, "coverage")
   ir_noncoding$coverage <- ceiling(as.numeric(ir_noncoding$coverage))
   ir_noncoding[[regions_name]] <- sapply(covData$overlaps_noncoding, function(x) regions$Band[x])
   ir_noncoding[[regions_name]] <- gsub("^c\\(\"|\"|\"|\"\\)$", "", as.character(ir_noncoding[[regions_name]]))
@@ -125,24 +112,24 @@ filter_IR_noncoding <- function(regions, coverageRaw, seqnames, covData) {
   return(covData)
 }
 
-filter_IR_regions <- function(coverageRaw, seqnames, covData) {
+filter_IR_regions <- function(coverageRaw, seqnames, covData, analysisSpecs) {
   ir_regions <- unlist(IRanges::slidingWindows(covData$ir_regions, width = 250L, step = 250L))
   ir_regions <- GenomicRanges::GRanges(seqnames = seqnames, ir_regions)
   ir_regions <- GenomicRanges::binnedAverage(ir_regions, coverageRaw, "coverage")
   chr <- ir_regions@ranges@NAMES
   ir_regions <- as.data.frame(ir_regions, row.names = NULL)[c("seqnames", "start", "end", "coverage")]
   ir_regions["seqnames"] <- chr
-  colnames(ir_regions) <- c(covData$regions_name, covData$regions_start, covData$regions_end, "coverage")
+  colnames(ir_regions) <- c(analysisSpecs$regions_name, analysisSpecs$regions_start, analysisSpecs$regions_end, "coverage")
   ir_regions$coverage <- ceiling(as.numeric(ir_regions$coverage))
 
   covData$ir_regions <- ir_regions
   return(covData)
 }
 
-setLowCoverage <- function(covData) {
+setLowCoverage <- function(covData, analysisSpecs) {
   # ir_regions
   ir_regions <- covData$ir_regions
-  regions_name <- covData$regions_name
+  regions_name <- analysisSpecs$regions_name
   aggFormula <- stats::as.formula(paste("coverage ~", regions_name))
   cov_regions <-
     aggregate(
@@ -177,7 +164,7 @@ setLowCoverage <- function(covData) {
 # adapted from `nilsj9/PlastidSequenceCoverage`
 getCovSummaries <- function(covData,
                             analysisSpecs) {
-  regions_name <- covData$regions_name
+  regions_name <- analysisSpecs$regions_name
 
   covData <- filterCovData(covData,
                            analysisSpecs)
@@ -212,9 +199,9 @@ updateRegionsSummary <- function(covSummaries,
 
 filterCovData <- function(covData,
                           analysisSpecs) {
-  regions_name <- covData$regions_name
-  regions_start <- covData$regions_start
-  regions_end <- covData$regions_end
+  regions_name <- analysisSpecs$regions_name
+  regions_start <- analysisSpecs$regions_start
+  regions_end <- analysisSpecs$regions_end
   windowSize <- analysisSpecs$windowSize
 
   covData$ir_regions <- filterCovDataField(covData$ir_regions,

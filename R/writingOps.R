@@ -19,10 +19,21 @@ writeStatsTable <- function(df, sample_name, dir, fileName) {
   )
 }
 
-writeCovSumTables <- function(covSummaries, sample_name, dir) {
-  writeStatsTable(covSummaries$genes_summary, sample_name, dir, "coverage.summary.genes")
-  writeStatsTable(covSummaries$regions_summary, sample_name, dir, "coverage.summary.regions")
-  writeStatsTable(covSummaries$noncoding_summary, sample_name, dir, "coverage.summary.noncoding")
+writeSumTables <- function(summary, sample_name, dir) {
+  sumField2File <- getSumField2File()
+  for (sumField in names(summary)) {
+    sumFile <- sumField2File[[sumField]]
+    writeStatsTable(summary[[sumField]], sample_name, dir, sumFile)
+  }
+}
+
+getSumField2File <- function() {
+  sumField2File <- list(
+    "regions_summary" = "summary.regions",
+    "genes_summary" = "coverage.summary.genes",
+    "noncoding_summary" = "coverage.summary.noncoding"
+  )
+  return(sumField2File)
 }
 
 printCovStats <- function(gbkData,
@@ -33,17 +44,17 @@ printCovStats <- function(gbkData,
   seqnames <- unname(sampleName[sampleName %in% names(coverageRaw)])
   if (length(seqnames) == 0) {
     logger::log_error("Neither `ACCESSION` nor `VERSION` matches BAM sample name")
-    return(-1)
+    return(NULL)
   }
 
   logger::log_info('Generating statistical information on the sequencing coverage')
   quadripRegions <- gbkData$quadripRegions
   genes <- gbkData$genes
-  covData <- getCovData(quadripRegions, genes, analysisSpecs)
-  covData <- filter_IR_genes(quadripRegions, coverageRaw, seqnames, covData)
-  covData <- filter_IR_noncoding(quadripRegions, coverageRaw, seqnames, covData)
-  covData <- filter_IR_regions(coverageRaw, seqnames, covData)
-  covData <- setLowCoverage(covData)
+  covData <- getCovData(quadripRegions, genes)
+  covData <- filter_IR_genes(quadripRegions, coverageRaw, seqnames, covData, analysisSpecs)
+  covData <- filter_IR_noncoding(quadripRegions, coverageRaw, seqnames, covData, analysisSpecs)
+  covData <- filter_IR_regions(coverageRaw, seqnames, covData, analysisSpecs)
+  covData <- setLowCoverage(covData, analysisSpecs)
 
   # Writing values to output table
   statsFilePath <- outputSpecs$statsFilePath
@@ -51,10 +62,5 @@ printCovStats <- function(gbkData,
                  sampleName,
                  statsFilePath)
 
-  # Getting and writing summarized coverage data, grouped by `quadripRegions`
-  covSummaries <- getCovSummaries(covData,
-                                  analysisSpecs)
-  writeCovSumTables(covSummaries,
-                    sampleName,
-                    statsFilePath)
+  return(covData)
 }

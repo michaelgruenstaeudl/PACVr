@@ -12,21 +12,6 @@ PACVr.read.gb <- function(gbkFile) {
   return(gbkData)
 }
 
-PACVr.compileCovStats <- function(gbkData,
-                                  coverageRaw,
-                                  analysisSpecs,
-                                  outputSpecs) {
-  printCovStats(gbkData,
-                coverageRaw,
-                analysisSpecs,
-                outputSpecs)
-  if (analysisSpecs$isSyntenyLine) {
-    checkIREquality(gbkData,
-                    outputSpecs)
-  }
-  logger::log_info('Coverage statistics saved to `{outputSpecs$statsFilePath}`')
-}
-
 PACVr.vizWithRCircos <- function(gbkData,
                                  coverage,
                                  analysisSpecs,
