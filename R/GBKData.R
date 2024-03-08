@@ -86,9 +86,14 @@ GBKData <- R6Class("GBKData",
 
     # precondition: `analysisSpecs` is set
     setQuadripRegions = function(gbkSeqFeatures) {
-      self$quadripRegions <- PACVr.quadripRegions(self$lengths,
-                                                  gbkSeqFeatures,
-                                                  self$analysisSpecs)
+      if (self$analysisSpecs$isIRCheck) {
+        logger::log_info('Parsing the quadripartite genome structure')
+        self$quadripRegions <- PACVr.parseQuadripRegions(self$lengths,
+                                                         gbkSeqFeatures,
+                                                         self$analysisSpecs)
+      } else {
+        self$quadripRegions <- self$sourceRegion
+      }
     },
 
     setGenes = function(gbkSeqFeatures) {
