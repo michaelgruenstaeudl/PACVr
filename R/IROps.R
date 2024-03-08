@@ -20,11 +20,16 @@ checkIREquality <- function(gbkData,
     IR_mismatches <- findIRDifference(gbkSeq,
                                       repeatB,
                                       repeatA)
+  } else {
+    IR_mismatches <- 0
+  }
+
+  if (IR_mismatches > 0) {
     logger::log_warn(
       "Proceeding with coverage depth visualization, but without quadripartite genome structure ..."
     )
-  } else {
-    IR_mismatches <- 0
+    analysisSpecs$setIRCheckFields(NA)
+    gbkData$setQuadripRegions(NULL)
   }
 
   IR_mismatchesDF <- data.frame(
