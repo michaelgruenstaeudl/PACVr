@@ -42,7 +42,7 @@ GBKData <- R6Class("GBKData",
 
       # `gbkSeqFeatures` derivatives
       private$setSourceRegion(gbkSeqFeatures)
-      private$setQuadripRegions(gbkSeqFeatures)
+      self$setQuadripRegions(gbkSeqFeatures)
       private$setGenes(gbkSeqFeatures)
       private$setIRCheckFields()
       private$setLinkData()
@@ -50,6 +50,19 @@ GBKData <- R6Class("GBKData",
       # `gbkSeqFeatures` no longer needed
       rm(gbkSeqFeatures)
       gc()
+    },
+
+    # public setter
+    # precondition: `analysisSpecs` is set
+    setQuadripRegions = function(gbkSeqFeatures) {
+      if (self$analysisSpecs$isIRCheck) {
+        logger::log_info('Parsing the quadripartite genome structure')
+        self$quadripRegions <- PACVr.parseQuadripRegions(self$lengths,
+                                                         gbkSeqFeatures,
+                                                         self$analysisSpecs)
+      } else {
+        self$quadripRegions <- self$sourceRegion
+      }
     }
   ),
 
@@ -82,18 +95,6 @@ GBKData <- R6Class("GBKData",
 
     setSourceRegion = function(gbkSeqFeatures) {
       self$sourceRegion <- PACVr.parseSource(gbkSeqFeatures)
-    },
-
-    # precondition: `analysisSpecs` is set
-    setQuadripRegions = function(gbkSeqFeatures) {
-      if (self$analysisSpecs$isIRCheck) {
-        logger::log_info('Parsing the quadripartite genome structure')
-        self$quadripRegions <- PACVr.parseQuadripRegions(self$lengths,
-                                                         gbkSeqFeatures,
-                                                         self$analysisSpecs)
-      } else {
-        self$quadripRegions <- self$sourceRegion
-      }
     },
 
     setGenes = function(gbkSeqFeatures) {
