@@ -7,10 +7,7 @@ checkIREquality <- function(gbkData,
                             analysisSpecs) {
   regions <- gbkData$quadripRegions
   repeatB <- as.numeric(regions[which(regions[, 4] == "IRb"), 2:3])
-  repeatA <-
-    as.numeric(regions[which(regions[, 4] == "IRa"), 2:3])
-  IR_diff_SNPS <- c()
-  IR_diff_gaps <- c()
+  repeatA <- as.numeric(regions[which(regions[, 4] == "IRa"), 2:3])
   if (repeatB[2] - repeatB[1] != repeatA[2] - repeatA[1]) {
     logger::log_warn("Inverted repeats differ in sequence length")
     logger::log_info(paste("The IRb has a total lengths of: ", repeatB[2] - repeatB[1], " bp", sep = ""))
@@ -19,27 +16,78 @@ checkIREquality <- function(gbkData,
 
   gbkSeq <- gbkData$sequences
   if (gbkSeq[[1]][repeatB[1]:repeatB[2]] != Biostrings::reverseComplement(gbkSeq[[1]][repeatA[1]:repeatA[2]])) {
-    IRa_seq <- Biostrings::DNAString(gbkSeq[[1]][repeatB[1]:repeatB[2]])
-    IRa_seq <- split(IRa_seq, ceiling(seq_along(IRa_seq) / 10000))
-    IRb_seq <- Biostrings::DNAString(Biostrings::reverseComplement(gbkSeq[[1]][repeatA[1]:repeatA[2]]))
-    IRb_seq <- split(IRb_seq, ceiling(seq_along(IRb_seq) / 10000))
+    logger::log_warn("Inverted repeats differ in sequence")
+    IR_mismatches <- findIRDifference(gbkSeq,
+                                      repeatB,
+                                      repeatA)
+    logger::log_warn(
+      "Proceeding with coverage depth visualization, but without quadripartite genome structure ..."
+    )
+  } else {
+    IR_mismatches <- 0
+  }
 
-    for (i in  1:min(length(IRa_seq), length(IRb_seq))) {
-      subst_mat <- Biostrings::nucleotideSubstitutionMatrix(match = 1, mismatch = -3, baseOnly = TRUE)
-      globalAlign <- tryCatch({
-        Biostrings::pairwiseAlignment(
-          IRa_seq[[i]],
-          IRb_seq[[i]],
-          substitutionMatrix = subst_mat,
-          gapOpening = 5,
-          gapExtension = 2
-        )
-      },
+  IR_mismatchesDF <- data.frame(
+    IR_mismatches = IR_mismatches
+  )
+  IR_mismatchesDF[analysisSpecs$regions_name] <- "Complete_genome"
+  return(IR_mismatchesDF)
+}
+
+findIRDifference <- function(gbkSeq, repeatB, repeatA) {
+  IRa_seq <- Biostrings::DNAString(gbkSeq[[1]][repeatB[1]:repeatB[2]])
+  IRa_seq <- split(IRa_seq, ceiling(seq_along(IRa_seq) / 10000))
+  IRb_seq <- Biostrings::DNAString(Biostrings::reverseComplement(gbkSeq[[1]][repeatA[1]:repeatA[2]]))
+  IRb_seq <- split(IRb_seq, ceiling(seq_along(IRb_seq) / 10000))
+
+  IR_diff <- findIRAlignment(IRa_seq, IRb_seq)
+  IR_diff_SNPS <- IR_diff$SNPS
+  IR_diff_gaps <- IR_diff$gaps
+
+  if (length(IR_diff_SNPS) > 0) {
+    logger::log_info(
+      paste(
+        "When aligned, the IRs differ through a total of ",
+        length(IR_diff_SNPS),
+        " SNPS. These SNPS are located at the following nucleotide positions: ",
+        paste(unlist(IR_diff_SNPS), collapse = " "),
+        sep = ""
+      )
+    )
+  }
+  if (length(IR_diff_gaps) > 0) {
+    logger::log_info(
+      paste(
+        "When aligned, the IRs differ through a total of ",
+        length(IR_diff_gaps),
+        " gaps. These gaps are located at the following nucleotide positions: ",
+        paste(unlist(IR_diff_gaps), collapse = " "),
+        sep = ""
+      )
+    )
+  }
+
+  return(length(IR_diff_SNPS) + length(IR_diff_gaps))
+}
+
+findIRAlignment <- function(IRa_seq, IRb_seq) {
+  IR_diff_SNPS <- c()
+  IR_diff_gaps <- c()
+  for (i in 1:min(length(IRa_seq), length(IRb_seq))) {
+    subst_mat <- Biostrings::nucleotideSubstitutionMatrix(match = 1, mismatch = -3, baseOnly = TRUE)
+    globalAlign <- tryCatch({
+      Biostrings::pairwiseAlignment(
+        IRa_seq[[i]],
+        IRb_seq[[i]],
+        substitutionMatrix = subst_mat,
+        gapOpening = 5,
+        gapExtension = 2
+      )
+    },
       error = function(e) {
         return(NULL)
       })
-      if (is.null(globalAlign))
-        break
+    if (!is.null(globalAlign)) {
       IR_diff_SNPS <-
         c(IR_diff_SNPS, which(strsplit(
           Biostrings::compareStrings(globalAlign), ""
@@ -49,39 +97,13 @@ checkIREquality <- function(gbkData,
           Biostrings::compareStrings(globalAlign), ""
         )[[1]] == "-"))
     }
-    logger::log_warn("Inverted repeats differ in sequence")
-    if (length(IR_diff_SNPS) > 0) {
-      logger::log_info(
-        paste(
-          "When aligned, the IRs differ through a total of ",
-          length(IR_diff_SNPS),
-          " SNPS. These SNPS are located at the following nucleotide positions: ",
-          paste(unlist(IR_diff_SNPS), collapse = " "),
-          sep = ""
-        )
-      )
-    }
-    if (length(IR_diff_gaps) > 0) {
-      logger::log_info(
-        paste(
-          "When aligned, the IRs differ through a total of ",
-          length(IR_diff_gaps),
-          " gaps. These gaps are located at the following nucleotide positions: ",
-          paste(unlist(IR_diff_gaps), collapse = " "),
-          sep = ""
-        )
-      )
-    }
-    logger::log_warn(
-      "Proceeding with coverage depth visualization, but without quadripartite genome structure ..."
-    )
   }
 
-  IR_mismatches <- data.frame(
-    IR_mismatches = length(IR_diff_SNPS) + length(IR_diff_gaps)
+  IR_diff <- list(
+    SNPS = IR_diff_SNPS,
+    gaps = IR_diff_gaps
   )
-  IR_mismatches[analysisSpecs$regions_name] <- "Complete_genome"
-  return(IR_mismatches)
+  return(IR_diff)
 }
 
 GenerateIRSynteny <- function(genes, analysisSpecs) {
