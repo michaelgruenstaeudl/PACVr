@@ -3,7 +3,7 @@
 #email="m_gruenstaeudl@fhsu.edu"
 #version="2024.03.03.0509"
 
-PlotSpecs <- R6Class("PlotSpecs",
+OutputSpecs <- R6Class("OutputSpecs",
   public = list(
     # fields
     logScale = FALSE,
@@ -13,18 +13,21 @@ PlotSpecs <- R6Class("PlotSpecs",
     output = NULL,
     outputType = NULL,
     isOutput = FALSE,
+    statsFilePath = NULL,
     
     # constructor
-    initialize = function(logScale,
-                          threshold,
-                          relative,
-                          textSize,
-                          output) {
+    initialize = function(logScale = FALSE,
+                          threshold = 0.5,
+                          relative = TRUE,
+                          textSize = 0.5,
+                          output = NULL,
+                          sampleName = NULL) {
       private$setLogScale(logScale)
       private$setThreshold(threshold)
       private$setRelative(relative)
       private$setTextSize(textSize)
       private$setOutputFields(output)
+      private$setStatsFilePath(sampleName)
     }
   ),
 
@@ -80,6 +83,27 @@ PlotSpecs <- R6Class("PlotSpecs",
         self$outputType <- tolower(outputVec[[1]][2])
         self$isOutput <- TRUE
       }
+    },
+
+    # precondition: `isOutput` and `output` are set
+    setStatsFilePath = function(sampleName) {
+      # Step 1. Check ...
+      if (self$isOutput) {
+        outDir <- file.path(dirname(self$output),
+                            paste(sampleName["sample_name"],
+                                  ".tmp",
+                                  sep=""))
+      } else {
+        outDir <-
+          file.path(".", paste(sampleName["sample_name"],
+                               ".tmp",
+                               sep=""))
+      }
+      # Step 2. Check ...
+      if (!dir.exists(outDir)) {
+        dir.create(outDir)
+      }
+      self$statsFilePath <- outDir
     }
   )
 )

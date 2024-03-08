@@ -25,12 +25,11 @@ writeCovSumTables <- function(covSummaries, sample_name, dir) {
   writeStatsTable(covSummaries$noncoding_summary, sample_name, dir, "coverage.summary.noncoding")
 }
 
-printCovStats <- function(coverageRaw,
-                          genes,
-                          quadripRegions,
-                          sampleName,
+printCovStats <- function(gbkData,
+                          coverageRaw,
                           analysisSpecs,
-                          dir) {
+                          outputSpecs) {
+  sampleName <- gbkData$sampleName
   seqnames <- unname(sampleName[sampleName %in% names(coverageRaw)])
   if (length(seqnames) == 0) {
     logger::log_error("Neither `ACCESSION` nor `VERSION` matches BAM sample name")
@@ -38,6 +37,8 @@ printCovStats <- function(coverageRaw,
   }
 
   logger::log_info('Generating statistical information on the sequencing coverage')
+  quadripRegions <- gbkData$quadripRegions
+  genes <- gbkData$genes
   covData <- getCovData(quadripRegions, genes, analysisSpecs)
   covData <- filter_IR_genes(quadripRegions, coverageRaw, seqnames, covData)
   covData <- filter_IR_noncoding(quadripRegions, coverageRaw, seqnames, covData)
@@ -45,10 +46,15 @@ printCovStats <- function(coverageRaw,
   covData <- setLowCoverage(covData)
 
   # Writing values to output table
-  writeCovTables(covData, sampleName, dir)
+  statsFilePath <- outputSpecs$statsFilePath
+  writeCovTables(covData,
+                 sampleName,
+                 statsFilePath)
 
   # Getting and writing summarized coverage data, grouped by `quadripRegions`
   covSummaries <- getCovSummaries(covData,
                                   analysisSpecs)
-  writeCovSumTables(covSummaries, sampleName, dir)
+  writeCovSumTables(covSummaries,
+                    sampleName,
+                    statsFilePath)
 }

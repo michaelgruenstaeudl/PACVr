@@ -3,7 +3,9 @@
 #email="m_gruenstaeudl@fhsu.edu"
 #version="2024.03.03.0509"
 
-checkIREquality <- function(gbkSeq, regions, dir, sample_name) {
+checkIREquality <- function(gbkData,
+                            outputSpecs) {
+  regions <- gbkData$quadripRegions
   repeatB <- as.numeric(regions[which(regions[, 4] == "IRb"), 2:3])
   repeatA <-
     as.numeric(regions[which(regions[, 4] == "IRa"), 2:3])
@@ -14,6 +16,8 @@ checkIREquality <- function(gbkSeq, regions, dir, sample_name) {
     logger::log_info(paste("The IRb has a total lengths of: ", repeatB[2] - repeatB[1], " bp", sep = ""))
     logger::log_info(paste("The IRa has a total lengths of: ", repeatA[2] - repeatA[1], " bp", sep = ""))
   }
+
+  gbkSeq <- gbkData$sequences
   if (gbkSeq[[1]][repeatB[1]:repeatB[2]] != Biostrings::reverseComplement(gbkSeq[[1]][repeatA[1]:repeatA[2]])) {
     IRa_seq <- Biostrings::DNAString(gbkSeq[[1]][repeatB[1]:repeatB[2]])
     IRa_seq <- split(IRa_seq, ceiling(seq_along(IRa_seq) / 10000))
@@ -78,7 +82,10 @@ checkIREquality <- function(gbkSeq, regions, dir, sample_name) {
       Number_N = unname(Biostrings::alphabetFrequency(gbkSeq)[, "N"]),
       Mismatches = length(IR_diff_SNPS) + length(IR_diff_gaps)
     ),
-    paste0(dir, .Platform$file.sep, sample_name["sample_name"], "_IR_quality.csv"),
+    paste0(outputSpecs$statsFilePath,
+           .Platform$file.sep,
+           gbkData$sampleName["sample_name"],
+           "_IR_quality.csv"),
     row.names = FALSE,
     quote = FALSE
   )

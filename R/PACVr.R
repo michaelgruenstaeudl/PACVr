@@ -15,23 +15,16 @@ PACVr.read.gb <- function(gbkFile) {
 PACVr.compileCovStats <- function(gbkData,
                                   coverageRaw,
                                   analysisSpecs,
-                                  plotSpecs) {
-  sampleName <- gbkData$sampleName
-  StatsFilePath <- getStatsFilePath(sampleName,
-                                    plotSpecs)
-  printCovStats(coverageRaw,
-                gbkData$genes,
-                gbkData$quadripRegions,
-                sampleName,
+                                  outputSpecs) {
+  printCovStats(gbkData,
+                coverageRaw,
                 analysisSpecs,
-                StatsFilePath)
+                outputSpecs)
   if (analysisSpecs$isSyntenyLine) {
-    checkIREquality(gbkData$sequences,
-                    gbkData$quadripRegions,
-                    StatsFilePath,
-                    sampleName)
+    checkIREquality(gbkData,
+                    outputSpecs)
   }
-  logger::log_info('Coverage statistics saved to `{StatsFilePath}`')
+  logger::log_info('Coverage statistics saved to `{outputSpecs$statsFilePath}`')
 }
 
 PACVr.vizWithRCircos <- function(gbkData,
@@ -128,30 +121,31 @@ PACVr.complete <- function(gbkFile,
     return(-1)
   }
   ###################################
-  plotSpecs <- PlotSpecs$new(logScale,
-                             threshold,
-                             relative,
-                             textSize,
-                             output)
+  outputSpecs <- OutputSpecs$new(logScale,
+                                 threshold,
+                                 relative,
+                                 textSize,
+                                 output,
+                                 gbkData$sampleName)
 
   ###################################
   coverage <- PACVr.calcCoverage(bamFile,
                                  analysisSpecs$windowSize,
-                                 plotSpecs$logScale)
+                                 outputSpecs$logScale)
 
   ###################################
   if (tabularCovStats) {
     PACVr.compileCovStats(gbkData,
                           coverage$raw,
                           analysisSpecs,
-                          plotSpecs)
+                          outputSpecs)
   }
   
   ###################################
   PACVr.vizWithRCircos(gbkData,
                        coverage$plot,
                        analysisSpecs,
-                       plotSpecs)
+                       outputSpecs)
 
   ######################################################################
   logger::log_success('Done.')

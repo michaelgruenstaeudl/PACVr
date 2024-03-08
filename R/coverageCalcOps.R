@@ -34,28 +34,6 @@ CovCalc <- function(coverageRaw,
   return(cov)
 }
 
-getStatsFilePath <- function(sampleName,
-                           plotSpecs) {
-  # Step 1. Check ...
-  if (plotSpecs$isOutput) {
-    outDir <- dirname(plotSpecs$output)
-    tmpDir <- file.path(outDir,
-                        paste(sampleName["sample_name"],
-                              ".tmp",
-                              sep=""))
-  } else {
-    tmpDir <-
-      file.path(".", paste(sampleName["sample_name"],
-                           ".tmp",
-                           sep=""))
-  }
-  # Step 2. Check ...
-  if (dir.exists(tmpDir) == FALSE) {
-    dir.create(tmpDir)
-  }
-  return(tmpDir)
-}
-
 getCovData <- function(regions, genes, analysisSpecs) {
   ir_regions <- IRanges::IRanges(
     start = regions$chromStart,
