@@ -48,17 +48,6 @@ PACVr.calcCoverage <- function (bamFile,
   return(coverage)
 }
 
-PACVr.generateIRGeneData <- function(genes,
-                                     analysisSpecs) {
-  # Parse GenBank file
-  linkData <- NULL
-  if (analysisSpecs$isSyntenyLine) {
-    linkData <- GenerateIRSynteny(genes,
-                                  analysisSpecs)
-  }
-  return(linkData)
-}
-
 PACVr.parseSource <- function(gbkSeqFeatures) {
   type <-
     Band <-

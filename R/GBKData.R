@@ -117,8 +117,11 @@ GBKData <- R6Class("GBKData",
 
     # precondition: `genes` and `analysisSpecs` are set
     setLinkData = function() {
-      self$linkData <- PACVr.generateIRGeneData(self$genes,
-                                                self$analysisSpecs)
+      # Parse GenBank file
+      if (self$analysisSpecs$isSyntenyLine) {
+        self$linkData  <- GenerateIRSynteny(self$genes,
+                                            self$analysisSpecs)
+      }
     }
   )
 )
