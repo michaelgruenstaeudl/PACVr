@@ -7,6 +7,8 @@ PACVr.compileCovStats <- function(gbkData,
                                   coverageRaw,
                                   analysisSpecs,
                                   outputSpecs) {
+  outputSpecs$makeStatsFolder()
+
   covData <- printCovStats(gbkData,
                            coverageRaw,
                            analysisSpecs,

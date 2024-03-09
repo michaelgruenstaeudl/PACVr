@@ -28,6 +28,12 @@ OutputSpecs <- R6Class("OutputSpecs",
       private$setTextSize(textSize)
       private$setOutputFields(output)
       private$setStatsFilePath(sampleName)
+    },
+
+    makeStatsFolder = function() {
+      if (!dir.exists(self$statsFilePath)) {
+        dir.create(self$statsFilePath)
+      }
     }
   ),
 
@@ -98,10 +104,6 @@ OutputSpecs <- R6Class("OutputSpecs",
           file.path(".", paste(sampleName["sample_name"],
                                ".tmp",
                                sep=""))
-      }
-      # Step 2. Check ...
-      if (!dir.exists(outDir)) {
-        dir.create(outDir)
       }
       self$statsFilePath <- outDir
     }
