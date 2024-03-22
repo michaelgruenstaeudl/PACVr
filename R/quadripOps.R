@@ -1,7 +1,7 @@
 #!/usr/bin/env RScript
 #contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2024.02.29.2057"
+#version="2024.03.03.0509"
 
 FilterByKeywords <- function(allRegions, where) {
   # Function to filter list based on genomic keywords
@@ -169,12 +169,3 @@ plotRegionNames <- function(quadripRegions) {
   )
 }
 
-getIsIRCheck <- function(IRCheck) {
-  IRCheckTypes <- getIRCheckTypes()
-  return(IRCheck %in% IRCheckTypes)
-}
-
-getIRCheckTypes <- function() {
-  IRCheckTypes <- c(0, 1, 2)
-  return(IRCheckTypes)
-}

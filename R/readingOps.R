@@ -1,7 +1,20 @@
 #!/usr/bin/env RScript
 #contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2024.02.29.2057"
+#version="2024.03.03.0509"
+
+read.gbSeqFeaturesAdapt <- function(gbkData, analysisSpecs) {
+  gbkSeqFeatures <- read.gbSeqFeatures(gbkData,
+                                       analysisSpecs)
+  if (is.null(gbkSeqFeatures)) {
+    logger::log_warn(paste("No samples match specifications;",
+                           "retrying with basic coverage requirements."))
+    analysisSpecs$setIRCheckFields(NA)
+    gbkSeqFeatures <- read.gbSeqFeatures(gbkData,
+                                         analysisSpecs)
+  }
+  return(gbkSeqFeatures)
+}
 
 read.gbSeqFeatures <- function(gbkData, analysisSpecs) {
   fileDF <- data.frame()

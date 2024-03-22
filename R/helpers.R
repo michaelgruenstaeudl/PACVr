@@ -1,7 +1,7 @@
 #!/usr/bin/env RScript
 #contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2024.02.29.2057"
+#version="2024.03.03.0509"
 
 HistCol <- function(cov, threshold, relative, logScale) {
   # Function to generate color vector for histogram data
@@ -41,66 +41,6 @@ validateColors <- function(colorsToValidate) {
   if (length(unsupportedColors) > 0) {
     stop("Unsupported R plot color defined.")
   }
-}
-
-getAnalysisSpecs <- function(IRCheck,
-                             windowSize) {
-  analysisSpecs <- list(
-    syntenyLineType = getSyntenyLineType(IRCheck),
-    isIRCheck = getIsIRCheck(IRCheck),
-    windowSize = filterPosNumeric(windowSize)
-  )
-  analysisSpecs$isSyntenyLine <- !is.null(analysisSpecs$syntenyLineType)
-  return(analysisSpecs)
-}
-
-getPlotSpecs <- function(logScale,
-                         threshold,
-                         relative,
-                         textSize,
-                         output) {
-  outputFields <- getOutputFields(output)
-  plotSpecs <- list(
-    logScale = filterLogical(logScale),
-    threshold = filterPosNumeric(threshold),
-    relative = filterLogical(relative),
-    textSize = filterPosNumeric(textSize),
-    output = outputFields$output,
-    outputType = outputFields$outputType,
-    isOutput = outputFields$isOutput
-  )
-  return(plotSpecs)
-}
-
-getOutputFields <- function(output) {
-  outputTypes <- paste(getOutputTypes(), collapse = "|")
-  outputPattern <- sprintf("^(?:.+\\.)(%s)$", outputTypes)
-  outputMatch <- regexec(outputPattern, output, ignore.case = TRUE)
-  outputVec <- regmatches(output, outputMatch)
-
-  # non-char `output` or non-match for char `output`
-  if ((length(outputVec) == 0) || (length(outputVec[[1]]) == 0)) {
-    output <- NULL
-    outputType <- NULL
-    isOutput <- FALSE
-  } else {
-    output <- outputVec[[1]][1]
-    outputType <- tolower(outputVec[[1]][2])
-    isOutput <- TRUE
-  }
-
-  outputFields <- list(
-    output = output,
-    outputType = outputType,
-    isOutput = isOutput
-  )
-  return(outputFields)
-}
-
-getOutputTypes <- function() {
-  outputTypes <- c("pdf",
-                   "png")
-  return(outputTypes)
 }
 
 filterByType <- function(x, typeFun) {

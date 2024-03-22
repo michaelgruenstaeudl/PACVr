@@ -8,6 +8,7 @@
 #' @importFrom grDevices dev.off
 #' @importFrom grDevices pdf
 #' @importFrom grDevices png
+#' @importFrom R6 R6Class
 #' @importFrom RCircos RCircos.Env
 #' @importFrom stats aggregate
 #' @importFrom stats cov

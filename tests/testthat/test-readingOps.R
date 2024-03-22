@@ -1,3 +1,5 @@
+logger::log_threshold("ERROR")
+
 testData <- file.path(getwd(), "data")
 
 # test location name normalization
@@ -46,7 +48,7 @@ for (index in 1:nrow(testParams)) {
     gbkFileFull <- file.path(extData, gbkFile)
     dfFileFull <- file.path(dfData, dfFile)
     read.gbData <- PACVr.read.gb(gbkFileFull)
-    gbkDataDF <- read.gb2DF(read.gbData, analysisSpecs)
+    gbkDataDF <- read.gbSeqFeatures(read.gbData, analysisSpecs)
     gbkTestDF <- readRDS(dfFileFull)
     expect_identical(gbkDataDF, gbkTestDF)
   })

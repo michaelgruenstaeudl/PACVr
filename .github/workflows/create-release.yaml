@@ -1,25 +1,24 @@
 # Workflow derived from https://github.com/r-lib/actions/tree/v2/examples
 # Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
 on:
-  push:
-    branches:
-      - master
-      - main
-    paths:
-      - 'CHANGELOG.md'
+  workflow_run:
+    workflows: [prepare-release]
+    types:
+      - completed
 
 name: create-release
 
 jobs:
   create-release:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       CHANGELOG: "CHANGELOG.md"
       DESCRIPTION: "DESCRIPTION"
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -120,7 +119,7 @@ jobs:
           name="Version ${version}"
           echo "name=$name" >> $GITHUB_ENV
           echo "Name: $name"
-          body="$(awk '/^\*.*$/{print; next} /^####/{count++; if(count==2) exit}' $CHANGELOG)"
+          body="$(awk '/^[[:space:]]*\*.*$/{print; next} /^####/{count++; if(count==2) exit}' $CHANGELOG)"
           echo "body<<EOF" >> "$GITHUB_ENV"
           echo "$body" >> "$GITHUB_ENV"
           echo "EOF" >> "$GITHUB_ENV"
@@ -128,24 +127,12 @@ jobs:
 
       - name: Create Release
         id: create-release
-        uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ env.tag }}
-          release_name: ${{ env.name }}
-          draft: false
-          prerelease: false
-          body: |
-            ${{ env.body }}
-
-      - name: Upload Release Asset
-        id: upload-release-asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create-release.outputs.upload_url }}
-          asset_path: ${{ env.tar_file }}
-          asset_name: ${{ env.asset_name }}
-          asset_content_type: application/gzip
+        run: |
+          gh release create "${{ env.tag }}" \
+            --repo="$GITHUB_REPOSITORY" \
+            --title="${{ env.name }}" \
+            --notes='${{ env.body }}' \
+            --latest \
+            "${{ env.tar_file }}#${{ env.asset_name }}"

@@ -1,7 +1,7 @@
 #!/usr/bin/env RScript
 #contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2024.02.29.2057"
+#version="2024.03.03.0509"
 
 PACVr.read.gb <- function(gbkFile) {
   gbkRaw <- getGbkRaw(gbkFile)
@@ -10,28 +10,6 @@ PACVr.read.gb <- function(gbkFile) {
   }
   gbkData <- read.gbWithHandling(gbkRaw)
   return(gbkData)
-}
-
-PACVr.compileCovStats <- function(gbkData,
-                                  coverageRaw,
-                                  analysisSpecs,
-                                  plotSpecs) {
-  sampleName <- gbkData$sampleName
-  StatsFilePath <- getStatsFilePath(sampleName,
-                                    plotSpecs)
-  printCovStats(coverageRaw,
-                gbkData$genes,
-                gbkData$quadripRegions,
-                sampleName,
-                analysisSpecs,
-                StatsFilePath)
-  if (analysisSpecs$isSyntenyLine) {
-    checkIREquality(gbkData$seq,
-                    gbkData$quadripRegions,
-                    StatsFilePath,
-                    sampleName)
-  }
-  logger::log_info('Coverage statistics saved to `{StatsFilePath}`')
 }
 
 PACVr.vizWithRCircos <- function(gbkData,
@@ -120,42 +98,39 @@ PACVr.complete <- function(gbkFile,
                            tabularCovStats=FALSE,
                            output=NA) {
   ######################################################################
-  read.gbData <- PACVr.read.gb(gbkFile)
-  analysisSpecs <- getAnalysisSpecs(IRCheck,
-                                    windowSize)
-  gbkData <- PACVr.gbkData(read.gbData,
-                           analysisSpecs)
-  rm(read.gbData)
-  gc()
+  analysisSpecs <- AnalysisSpecs$new(IRCheck,
+                                     windowSize)
+  gbkData <- GBKData$new(gbkFile,
+                         analysisSpecs)
   if (is.null(gbkData)) {
-    logger::log_fatal('Parsing of any sequence features unsuccessful.')
     return(-1)
   }
   ###################################
-  plotSpecs <- getPlotSpecs(logScale,
-                            threshold,
-                            relative,
-                            textSize,
-                            output)
+  outputSpecs <- OutputSpecs$new(logScale,
+                                 threshold,
+                                 relative,
+                                 textSize,
+                                 output,
+                                 gbkData$sampleName)
 
   ###################################
   coverage <- PACVr.calcCoverage(bamFile,
                                  analysisSpecs$windowSize,
-                                 plotSpecs$logScale)
+                                 outputSpecs$logScale)
 
   ###################################
   if (tabularCovStats) {
     PACVr.compileCovStats(gbkData,
                           coverage$raw,
                           analysisSpecs,
-                          plotSpecs)
+                          outputSpecs)
   }
   
   ###################################
   PACVr.vizWithRCircos(gbkData,
                        coverage$plot,
                        analysisSpecs,
-                       plotSpecs)
+                       outputSpecs)
 
   ######################################################################
   logger::log_success('Done.')
