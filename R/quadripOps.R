@@ -75,8 +75,31 @@ fillDataFrame <- function(seqLength, quadripRegions) {
 
   logger::log_info('  Annotating plastid genome with quadripartite regions')
   quadripRegions <- annotateMissingRegions(quadripRegions, seqLength)
-  quadripRegions[, 6] <- quadripRegions[, 3] - quadripRegions[, 2]
+  quadripRegions <- fillMissingRegions(quadripRegions)
+  quadripRegions <- stainRegions(quadripRegions)
+  return(quadripRegions)
+}
 
+annotateMissingRegions <- function(quadripRegions, seqLength) {
+  start <- 1
+  for (i in 1:nrow(quadripRegions)) {
+    if (quadripRegions[i, 2] > start) {
+      quadripRegions[nrow(quadripRegions) + 1,] <- c("", start, as.numeric(quadripRegions[i, 2]) - 1, "NA", "gpos100")
+    }
+    start <- as.numeric(quadripRegions[i, 3]) + 1
+  }
+  if (start - 1 < seqLength) {
+    quadripRegions[nrow(quadripRegions) + 1,] <- c("", start, seqLength, "NA", "gpos100")
+  }
+  quadripRegions <- quadripRegions[order(as.numeric(quadripRegions[, 2]), decreasing=FALSE),]
+  row.names(quadripRegions) <- 1:nrow(quadripRegions)
+  quadripRegions[, 2] <- as.numeric(quadripRegions[, 2])
+  quadripRegions[, 3] <- as.numeric(quadripRegions[, 3])
+  return(quadripRegions)
+}
+
+fillMissingRegions <- function(quadripRegions) {
+  quadripRegions[, 6] <- quadripRegions[, 3] - quadripRegions[, 2]
   regionAvail <- boolToDeci(c("LSC", "IRb", "SSC", "IRa") %in% quadripRegions[, 4])
   if (regionAvail == 5) {
     # only IRa and IRb
@@ -114,28 +137,14 @@ fillDataFrame <- function(seqLength, quadripRegions) {
     logger::log_info('  Annotation for IRa was automatically added')
   }
   quadripRegions <- quadripRegions[-6]
+  return(quadripRegions)
+}
+
+stainRegions <- function(quadripRegions) {
   quadripRegions$Stain[which(quadripRegions$Band == "LSC")] <- "gpos75"
   quadripRegions$Stain[which(quadripRegions$Band == "SSC")] <- "gpos50"
   quadripRegions$Stain[which(quadripRegions$Band == "IRa")] <- "gpos25"
   quadripRegions$Stain[which(quadripRegions$Band == "IRb")] <- "gpos25"
-  return(quadripRegions)
-}
-
-annotateMissingRegions <- function(quadripRegions, seqLength) {
-  start <- 1
-  for (i in 1:nrow(quadripRegions)) {
-    if (quadripRegions[i, 2] > start) {
-      quadripRegions[nrow(quadripRegions) + 1,] <- c("", start, as.numeric(quadripRegions[i, 2]) - 1, "NA", "gpos100")
-    }
-    start <- as.numeric(quadripRegions[i, 3]) + 1
-  }
-  if (start - 1 < seqLength) {
-    quadripRegions[nrow(quadripRegions) + 1,] <- c("", start, seqLength, "NA", "gpos100")
-  }
-  quadripRegions <- quadripRegions[order(as.numeric(quadripRegions[, 2]), decreasing=FALSE),]
-  row.names(quadripRegions) <- 1:nrow(quadripRegions)
-  quadripRegions[, 2] <- as.numeric(quadripRegions[, 2])
-  quadripRegions[, 3] <- as.numeric(quadripRegions[, 3])
   return(quadripRegions)
 }
 
