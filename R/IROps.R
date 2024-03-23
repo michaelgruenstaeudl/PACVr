@@ -24,7 +24,7 @@ checkIREquality <- function(gbkData,
     IR_mismatches <- 0
   }
 
-  if (IR_mismatches > 0) {
+  if (IR_mismatches < 0) {
     logger::log_warn(
       "Proceeding with coverage depth visualization, but without quadripartite genome structure ..."
     )
