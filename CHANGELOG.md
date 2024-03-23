@@ -1,7 +1,7 @@
 CHANGELOG
 ---------
 
-#### Version 1.0.10 (2024.03.22)
+#### Version 1.0.10 (2024.03.23)
 * Dynamic changes to `IRCheck` as `PACVr.complete()` progresses
   * If no samples from `gbkFile` contain the qualifiers needed for specified analysis, continues with `IRCheck = NA`
   * If no IR regions are identified, continues with `IRCheck = NA`
