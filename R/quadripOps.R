@@ -59,15 +59,13 @@ ParseQuadripartiteStructure <- function(gbkSeqFeatures) {
   return(quadripRegions)
 }
 
-fillDataFrame <- function(gbkLengths, quadripRegions) {
+fillDataFrame <- function(seqLength, quadripRegions) {
   # Function to annotate plastid genome with quadripartite regions 
   # based on their position within the genome
   # ARGS:
   #   gbkData (i.e., GenBank flatfile data as parsed by read.gb())
   # RETURNS:
   #   ...
-  logger::log_info('  Annotating plastid genome with quadripartite regions')
-  seqLength <- gbkLengths
   if ((nrow(quadripRegions) == 0) || (quadripRegions[1, 2] == -1)) {
     quadripRegions[1,] <- c("", as.numeric(1), as.numeric(seqLength), "NA", "gpos100")
     quadripRegions[, 2] <- as.numeric(quadripRegions[, 2])
@@ -75,24 +73,11 @@ fillDataFrame <- function(gbkLengths, quadripRegions) {
     return(quadripRegions)
   }
 
-  start <- 1
-  for (i in 1:nrow(quadripRegions)) {
-    if (quadripRegions[i, 2] > start) {
-      quadripRegions[nrow(quadripRegions) + 1,] <- c("", start, as.numeric(quadripRegions[i, 2]) - 1, "NA", "gpos100")
-    }
-    start <- as.numeric(quadripRegions[i, 3]) + 1
-  }
-  if (start - 1 < seqLength) {
-    quadripRegions[nrow(quadripRegions) + 1,] <- c("", start, seqLength, "NA", "gpos100")
-  }
-  quadripRegions <- quadripRegions[order(as.numeric(quadripRegions[, 2]), decreasing=FALSE),]
-  row.names(quadripRegions) <- 1:nrow(quadripRegions)
-  quadripRegions[, 2] <- as.numeric(quadripRegions[, 2])
-  quadripRegions[, 3] <- as.numeric(quadripRegions[, 3])
-
-  regionAvail <- boolToDeci(c("LSC", "IRb", "SSC", "IRa") %in% quadripRegions[, 4])
+  logger::log_info('  Annotating plastid genome with quadripartite regions')
+  quadripRegions <- annotateMissingRegions(quadripRegions, seqLength)
   quadripRegions[, 6] <- quadripRegions[, 3] - quadripRegions[, 2]
 
+  regionAvail <- boolToDeci(c("LSC", "IRb", "SSC", "IRa") %in% quadripRegions[, 4])
   if (regionAvail == 5) {
     # only IRa and IRb
     quadripRegions[which(quadripRegions[, 4] != "NA"), 6] <- 0
@@ -133,6 +118,24 @@ fillDataFrame <- function(gbkLengths, quadripRegions) {
   quadripRegions$Stain[which(quadripRegions$Band == "SSC")] <- "gpos50"
   quadripRegions$Stain[which(quadripRegions$Band == "IRa")] <- "gpos25"
   quadripRegions$Stain[which(quadripRegions$Band == "IRb")] <- "gpos25"
+  return(quadripRegions)
+}
+
+annotateMissingRegions <- function(quadripRegions, seqLength) {
+  start <- 1
+  for (i in 1:nrow(quadripRegions)) {
+    if (quadripRegions[i, 2] > start) {
+      quadripRegions[nrow(quadripRegions) + 1,] <- c("", start, as.numeric(quadripRegions[i, 2]) - 1, "NA", "gpos100")
+    }
+    start <- as.numeric(quadripRegions[i, 3]) + 1
+  }
+  if (start - 1 < seqLength) {
+    quadripRegions[nrow(quadripRegions) + 1,] <- c("", start, seqLength, "NA", "gpos100")
+  }
+  quadripRegions <- quadripRegions[order(as.numeric(quadripRegions[, 2]), decreasing=FALSE),]
+  row.names(quadripRegions) <- 1:nrow(quadripRegions)
+  quadripRegions[, 2] <- as.numeric(quadripRegions[, 2])
+  quadripRegions[, 3] <- as.numeric(quadripRegions[, 3])
   return(quadripRegions)
 }
 
