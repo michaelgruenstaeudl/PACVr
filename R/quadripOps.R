@@ -73,67 +73,67 @@ fillDataFrame <- function(gbkLengths, quadripRegions) {
     quadripRegions[, 2] <- as.numeric(quadripRegions[, 2])
     quadripRegions[, 3] <- as.numeric(quadripRegions[, 3])
     return(quadripRegions)
-  } else {
-    start <- 1
-    for (i in 1:nrow(quadripRegions)) {
-      if (quadripRegions[i, 2] > start) {
-        quadripRegions[nrow(quadripRegions) + 1,] <- c("", start, as.numeric(quadripRegions[i, 2]) - 1, "NA", "gpos100")
-      }
-      start <- as.numeric(quadripRegions[i, 3]) + 1
-    }
-    if (start - 1 < seqLength) {
-      quadripRegions[nrow(quadripRegions) + 1,] <- c("", start, seqLength, "NA", "gpos100")
-    }
-    quadripRegions <- quadripRegions[order(as.numeric(quadripRegions[, 2]), decreasing=FALSE),]
-    row.names(quadripRegions) <- 1:nrow(quadripRegions)
-    quadripRegions[, 2] <- as.numeric(quadripRegions[, 2])
-    quadripRegions[, 3] <- as.numeric(quadripRegions[, 3])
-    
-    regionAvail <- boolToDeci(c("LSC", "IRb", "SSC", "IRa") %in% quadripRegions[, 4])
-    quadripRegions[, 6] <- quadripRegions[, 3] - quadripRegions[, 2]
-    
-    if (regionAvail == 5) {
-      # only IRa and IRb
-      quadripRegions[which(quadripRegions[, 4] != "NA"), 6] <- 0
-      quadripRegions[which(quadripRegions[, 6] == max(quadripRegions[, 6])), 4] <- "LSC"
-      quadripRegions[which(quadripRegions[, 4] != "NA"), 6] <- 0
-      quadripRegions[which(quadripRegions[, 6] == max(quadripRegions[, 6])), 4] <- "SSC"
-      logger::log_info('  Annotations for LSC and SSC were automatically added')
-    } else if (regionAvail == 7) {
-      # only IRa, SSC and IRb
-      quadripRegions[which(quadripRegions[, 4] != "NA"), 6] <- 0
-      quadripRegions[which(quadripRegions[, 6] == max(quadripRegions[, 6])), 4] <- "LSC"
-      logger::log_info('  Annotation for LSC was automatically added')
-    } else if (regionAvail == 10) {
-      # only LSC and SSC
-      IRs <- data.frame(table(quadripRegions[which(quadripRegions[, 4] == "NA"), 6]), stringsAsFactors=FALSE)
-      IRs <- IRs[IRs$Freq == 2, 1]
-      if (length(IRs) >= 1) {
-        IRs <- max(as.numeric(as.character(IRs)))
-        quadripRegions[which(quadripRegions[, 6] == IRs), 4] <- c("IRb", "IRa")
-        logger::log_info('  Annotations for IRb and IRa were automatically added')
-      }
-    } else if (regionAvail == 11) {
-      # only LSC, SSC and IRa
-      quadripRegions[which(quadripRegions[, 4] == "NA" & quadripRegions[, 6] == quadripRegions[which(quadripRegions[, 4] == "IRa"), 6]), 4] <- "IRb"
-      logger::log_info('  Annotation for IRb was automatically added')
-    } else if (regionAvail == 13) {
-      # only LSC, IRb and IRa
-      quadripRegions[which(quadripRegions[, 4] != "NA"), 6] <- 0
-      quadripRegions[which(quadripRegions[, 6] == max(quadripRegions[, 6])), 4] <- "SSC"
-      logger::log_info('  Annotation for SSC was automatically added')
-    } else if (regionAvail == 14) {
-      # only LSC, IRb and SSC
-      quadripRegions[which(quadripRegions[, 4] == "NA" & quadripRegions[, 6] == quadripRegions[which(quadripRegions[, 4] == "IRb"), 6]), 4] <- "IRa"
-      logger::log_info('  Annotation for IRa was automatically added')
-    }
-    quadripRegions <- quadripRegions[-6]
-    quadripRegions$Stain[which(quadripRegions$Band == "LSC")] <- "gpos75"
-    quadripRegions$Stain[which(quadripRegions$Band == "SSC")] <- "gpos50"
-    quadripRegions$Stain[which(quadripRegions$Band == "IRa")] <- "gpos25"
-    quadripRegions$Stain[which(quadripRegions$Band == "IRb")] <- "gpos25"
-    return(quadripRegions)
   }
+
+  start <- 1
+  for (i in 1:nrow(quadripRegions)) {
+    if (quadripRegions[i, 2] > start) {
+      quadripRegions[nrow(quadripRegions) + 1,] <- c("", start, as.numeric(quadripRegions[i, 2]) - 1, "NA", "gpos100")
+    }
+    start <- as.numeric(quadripRegions[i, 3]) + 1
+  }
+  if (start - 1 < seqLength) {
+    quadripRegions[nrow(quadripRegions) + 1,] <- c("", start, seqLength, "NA", "gpos100")
+  }
+  quadripRegions <- quadripRegions[order(as.numeric(quadripRegions[, 2]), decreasing=FALSE),]
+  row.names(quadripRegions) <- 1:nrow(quadripRegions)
+  quadripRegions[, 2] <- as.numeric(quadripRegions[, 2])
+  quadripRegions[, 3] <- as.numeric(quadripRegions[, 3])
+
+  regionAvail <- boolToDeci(c("LSC", "IRb", "SSC", "IRa") %in% quadripRegions[, 4])
+  quadripRegions[, 6] <- quadripRegions[, 3] - quadripRegions[, 2]
+
+  if (regionAvail == 5) {
+    # only IRa and IRb
+    quadripRegions[which(quadripRegions[, 4] != "NA"), 6] <- 0
+    quadripRegions[which(quadripRegions[, 6] == max(quadripRegions[, 6])), 4] <- "LSC"
+    quadripRegions[which(quadripRegions[, 4] != "NA"), 6] <- 0
+    quadripRegions[which(quadripRegions[, 6] == max(quadripRegions[, 6])), 4] <- "SSC"
+    logger::log_info('  Annotations for LSC and SSC were automatically added')
+  } else if (regionAvail == 7) {
+    # only IRa, SSC and IRb
+    quadripRegions[which(quadripRegions[, 4] != "NA"), 6] <- 0
+    quadripRegions[which(quadripRegions[, 6] == max(quadripRegions[, 6])), 4] <- "LSC"
+    logger::log_info('  Annotation for LSC was automatically added')
+  } else if (regionAvail == 10) {
+    # only LSC and SSC
+    IRs <- data.frame(table(quadripRegions[which(quadripRegions[, 4] == "NA"), 6]), stringsAsFactors=FALSE)
+    IRs <- IRs[IRs$Freq == 2, 1]
+    if (length(IRs) >= 1) {
+      IRs <- max(as.numeric(as.character(IRs)))
+      quadripRegions[which(quadripRegions[, 6] == IRs), 4] <- c("IRb", "IRa")
+      logger::log_info('  Annotations for IRb and IRa were automatically added')
+    }
+  } else if (regionAvail == 11) {
+    # only LSC, SSC and IRa
+    quadripRegions[which(quadripRegions[, 4] == "NA" & quadripRegions[, 6] == quadripRegions[which(quadripRegions[, 4] == "IRa"), 6]), 4] <- "IRb"
+    logger::log_info('  Annotation for IRb was automatically added')
+  } else if (regionAvail == 13) {
+    # only LSC, IRb and IRa
+    quadripRegions[which(quadripRegions[, 4] != "NA"), 6] <- 0
+    quadripRegions[which(quadripRegions[, 6] == max(quadripRegions[, 6])), 4] <- "SSC"
+    logger::log_info('  Annotation for SSC was automatically added')
+  } else if (regionAvail == 14) {
+    # only LSC, IRb and SSC
+    quadripRegions[which(quadripRegions[, 4] == "NA" & quadripRegions[, 6] == quadripRegions[which(quadripRegions[, 4] == "IRb"), 6]), 4] <- "IRa"
+    logger::log_info('  Annotation for IRa was automatically added')
+  }
+  quadripRegions <- quadripRegions[-6]
+  quadripRegions$Stain[which(quadripRegions$Band == "LSC")] <- "gpos75"
+  quadripRegions$Stain[which(quadripRegions$Band == "SSC")] <- "gpos50"
+  quadripRegions$Stain[which(quadripRegions$Band == "IRa")] <- "gpos25"
+  quadripRegions$Stain[which(quadripRegions$Band == "IRb")] <- "gpos25"
+  return(quadripRegions)
 }
 
 plotAverageLines <- function(quadripRegions, coverage, windowSize, positions) {
