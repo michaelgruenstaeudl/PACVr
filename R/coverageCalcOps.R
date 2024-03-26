@@ -261,6 +261,9 @@ getCovDepth <- function(covDataField, regions_name = NULL) {
   }
   covDepth <- covDataField %>%
     calcCovDepth()
+  if (!is.null(regions_name) && regions_name == "Source") {
+    covDepth[regions_name] <- "Unpartitioned"
+  }
   return(covDepth)
 }
 
