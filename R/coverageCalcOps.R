@@ -191,6 +191,8 @@ updateRegionsSummary <- function(covSummaries,
                                        regions_name)
     covSumRegions <- dplyr::bind_rows(covSumRegions,
                                       genome_summary)
+  } else {
+    covSumRegions[regions_name] <- "Complete_genome"
   }
 
   covSummaries$regions_summary <- covSumRegions
