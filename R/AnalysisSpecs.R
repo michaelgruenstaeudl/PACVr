@@ -67,6 +67,10 @@ AnalysisSpecs <- R6Class("AnalysisSpecs",
         self$regions_name <- "Chromosome"
         self$regions_start <- "chromStart"
         self$regions_end <- "chromEnd"
+      } else {
+        self$regions_name <- "Source"
+        self$regions_start <- "srcStart"
+        self$regions_end <- "srcEnd"
       }
     }
   )
