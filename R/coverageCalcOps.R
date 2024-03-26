@@ -182,6 +182,10 @@ updateRegionsSummary <- function(covSummaries,
   covSumRegions <- covSummaries$regions_summary
   regions_evenness <- getCovEvenness(covDataRegions,
                                      regions_name)
+  if (regions_name == "Source") {
+    covSumRegions[regions_name] <- "Complete_genome"
+    regions_evenness[regions_name] <- "Complete_genome"
+  }
   covSumRegions <- dplyr::full_join(covSumRegions,
                                     regions_evenness,
                                     regions_name)
@@ -191,8 +195,6 @@ updateRegionsSummary <- function(covSummaries,
                                        regions_name)
     covSumRegions <- dplyr::bind_rows(covSumRegions,
                                       genome_summary)
-  } else {
-    covSumRegions[regions_name] <- "Complete_genome"
   }
 
   covSummaries$regions_summary <- covSumRegions
