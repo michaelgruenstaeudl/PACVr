@@ -54,7 +54,7 @@ printCovStats <- function(gbkData,
   covData <- filter_IR_genes(quadripRegions, coverageRaw, seqnames, covData, analysisSpecs)
   covData <- filter_IR_noncoding(quadripRegions, coverageRaw, seqnames, covData, analysisSpecs)
   covData <- filter_IR_regions(coverageRaw, seqnames, covData, analysisSpecs)
-  covData <- setLowCoverage(covData, analysisSpecs)
+  covData <- setLowCoverages(covData, analysisSpecs)
 
   # Writing values to output table
   statsFilePath <- outputSpecs$statsFilePath
