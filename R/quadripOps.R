@@ -12,7 +12,7 @@ FilterByKeywords <- function(allRegions, where) {
   out <- subset(
     allRegions,
     grepl(
-      "^IR|repeat|invert|^LSC|^SSC|[large,long]\\ssingle\\scopy|[short,small]\\ssingle\\scopy",
+      "^IR[a-z]|repeat|invert|^LSC|^SSC|[large,long]\\ssingle\\scopy|[short,small]\\ssingle\\scopy",
       allRegions[, where],
       ignore.case=TRUE
     )
