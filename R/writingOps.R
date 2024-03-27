@@ -1,7 +1,7 @@
 #!/usr/bin/env RScript
 #contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2024.03.22.1637"
+#version="2024.03.27.0311"
 
 writeCovTables <- function(covData, sample_name, dir) {
   writeStatsTable(covData$ir_genes, sample_name, dir, "coverage.genes")
@@ -54,7 +54,7 @@ printCovStats <- function(gbkData,
   covData <- filter_IR_genes(quadripRegions, coverageRaw, seqnames, covData, analysisSpecs)
   covData <- filter_IR_noncoding(quadripRegions, coverageRaw, seqnames, covData, analysisSpecs)
   covData <- filter_IR_regions(coverageRaw, seqnames, covData, analysisSpecs)
-  covData <- setLowCoverage(covData, analysisSpecs)
+  covData <- setLowCoverages(covData, analysisSpecs)
 
   # Writing values to output table
   statsFilePath <- outputSpecs$statsFilePath
