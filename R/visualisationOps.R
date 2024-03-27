@@ -180,22 +180,8 @@ getLegendParams <- function(coverage,
                absolute)
     )
   }
-  
-  legendParams$legend <- c(
-    paste(
-      "Coverage > ",
-      legendParams$vals[[1]],
-      "X ",
-      "(=",
-      legendParams$vals[[2]],
-      "% of avg. cov.)",
-      sep = ""
-    ),
-    as.expression(bquote(
-      "Coverage" <= .(
-      paste(legendParams$vals[[3]], "X (=", legendParams$vals[[4]], "% of avg. cov.)", sep = "")
-    )))
-  )
+
+  legendParams$legend <- getLegendField(legendParams$vals)
   
   if (is.vector(averageLines)) {
     legendParams$legend <- c(legendParams$legend,
@@ -207,6 +193,37 @@ getLegendParams <- function(coverage,
   }
   
   return(legendParams)
+}
+
+getLegendField <- function(vals) {
+  upper <- paste(
+    "Coverage > ",
+    vals[[1]],
+    "X ",
+    "(=",
+    vals[[2]],
+    "% of avg. cov.)",
+    sep = ""
+  )
+  if (vals[[3]] == 0) {
+    lower <- paste(
+      "Coverage = ",
+      vals[[3]],
+      "X ",
+      "(=",
+      vals[[4]],
+      "% of avg. cov.)",
+      sep = ""
+    )
+  } else {
+    lower <- as.expression(bquote(
+      "Coverage" <= .(
+        paste(vals[[3]], "X (=", vals[[4]], "% of avg. cov.)", sep = "")
+      )))
+  }
+  return(
+    c(upper, lower)
+  )
 }
 
 createVizFile <- function(plotSpecs) {
