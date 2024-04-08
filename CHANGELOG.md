@@ -1,12 +1,22 @@
 CHANGELOG
 ---------
 
-#### Version 1.0.10 (2024.03.22)
+#### Version 1.0.11 (2024.03.27)
+* Minor fixes to tabular statistics file creation
+* A coverage of 0 for a window is always labeled as low coverage
+
+#### Version 1.0.10 (2024.03.23)
 * Dynamic changes to `IRCheck` as `PACVr.complete()` progresses
   * If no samples from `gbkFile` contain the qualifiers needed for specified analysis, continues with `IRCheck = NA`
   * If no IR regions are identified, continues with `IRCheck = NA`
   * If there are missing IR regions needed for synteny test, continues with `IRCheck = 0`
   * If no synteny is found, continues with `IRCheck = 0`
+  * When `tabularCovStats = TRUE`, if IR mismatches are identified, continues with `IRCheck = NA`
+* For `tabularCovStats = TRUE`, summary data corresponding to the complete genome is included in `<sampleName>_summary.regions`
+  * `<sampleName>_coverage.summary.regions` has been renamed `<sampleName>_summary.regions`
+  * The number of ambiguous nucleotides is always counted, named `N_count`
+  * When synteny testing is indicated by `IRCheck` and possible, as detailed above, the number of mismatches between the IRs is counted as `IR_mismatches`
+* The evenness metric for `tabularCovStats` has been renamed `E_score`
 
 #### Version 1.0.9 (2024.03.01)
 * Improving variable and file names

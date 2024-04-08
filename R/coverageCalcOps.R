@@ -1,7 +1,7 @@
 #!/usr/bin/env RScript
 #contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2024.03.22.1637"
+#version="2024.03.27.0311"
 
 CovCalc <- function(coverageRaw,
                     windowSize = 250,
@@ -126,39 +126,34 @@ filter_IR_regions <- function(coverageRaw, seqnames, covData, analysisSpecs) {
   return(covData)
 }
 
-setLowCoverage <- function(covData, analysisSpecs) {
-  # ir_regions
-  ir_regions <- covData$ir_regions
-  regions_name <- analysisSpecs$regions_name
-  aggFormula <- stats::as.formula(paste("coverage ~", regions_name))
-  cov_regions <-
-    aggregate(
-      aggFormula,
-      data = ir_regions,
-      FUN = function(x)
-        ceiling(mean(x) - sd(x))
-    )
-  ir_regions$lowCoverage <- ir_regions$coverage < cov_regions$coverage[match(ir_regions[[regions_name]],
-                                                                             cov_regions[[regions_name]])]
-  ir_regions$lowCoverage[ir_regions$lowCoverage == TRUE] <- "*"
-  ir_regions$lowCoverage[ir_regions$lowCoverage == FALSE] <- ""
-  covData$ir_regions <- ir_regions
-
-  # ir_genes
-  ir_genes <- covData$ir_genes
-  ir_genes$lowCoverage <- ir_genes$coverage < mean(ir_genes$coverage) - sd(ir_genes$coverage)
-  ir_genes$lowCoverage[ir_genes$lowCoverage == TRUE] <- "*"
-  ir_genes$lowCoverage[ir_genes$lowCoverage == FALSE] <- ""
-  covData$ir_genes <- ir_genes
-
-  # ir_noncoding
-  ir_noncoding <- covData$ir_noncoding
-  ir_noncoding$lowCoverage <- ir_noncoding$coverage < mean(ir_noncoding$coverage) - sd(ir_noncoding$coverage)
-  ir_noncoding$lowCoverage[ir_noncoding$lowCoverage == TRUE] <- "*"
-  ir_noncoding$lowCoverage[ir_noncoding$lowCoverage == FALSE] <- ""
-  covData$ir_noncoding <- ir_noncoding
-
+setLowCoverages <- function(covData, analysisSpecs) {
+  covData$ir_regions <- setLowCoverage(covData$ir_regions,
+                                       analysisSpecs$regions_name)
+  covData$ir_genes <- setLowCoverage(covData$ir_genes)
+  covData$ir_noncoding <- setLowCoverage(covData$ir_noncoding)
   return(covData)
+}
+
+setLowCoverage <- function(covDataField, regions_name = NULL) {
+  if (!is.null(regions_name)) {
+    aggFormula <- stats::as.formula(paste("coverage ~", regions_name))
+    cov_regions <-
+      aggregate(
+        aggFormula,
+        data = covDataField,
+        FUN = function(x)
+          ceiling(mean(x) - sd(x))
+      )
+    lowThreshold <- cov_regions$coverage[match(covDataField[[regions_name]],
+                                               cov_regions[[regions_name]])]
+  } else {
+    lowThreshold <- mean(covDataField$coverage) - sd(covDataField$coverage)
+  }
+
+  covDataField$lowCoverage <- (covDataField$coverage < lowThreshold) |
+                                (covDataField$coverage == 0)
+  covDataField$lowCoverage <- ifelse(covDataField$lowCoverage, "*", "")
+  return(covDataField)
 }
 
 # adapted from `nilsj9/PlastidSequenceCoverage`
@@ -182,6 +177,10 @@ updateRegionsSummary <- function(covSummaries,
   covSumRegions <- covSummaries$regions_summary
   regions_evenness <- getCovEvenness(covDataRegions,
                                      regions_name)
+  if (regions_name == "Source") {
+    covSumRegions[regions_name] <- "Complete_genome"
+    regions_evenness[regions_name] <- "Complete_genome"
+  }
   covSumRegions <- dplyr::full_join(covSumRegions,
                                     regions_evenness,
                                     regions_name)
@@ -257,6 +256,9 @@ getCovDepth <- function(covDataField, regions_name = NULL) {
   }
   covDepth <- covDataField %>%
     calcCovDepth()
+  if (!is.null(regions_name) && regions_name == "Source") {
+    covDepth[regions_name] <- "Unpartitioned"
+  }
   return(covDepth)
 }
 

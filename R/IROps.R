@@ -1,7 +1,7 @@
 #!/usr/bin/env RScript
 #contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2024.03.22.1637"
+#version="2024.03.27.0311"
 
 checkIREquality <- function(gbkData,
                             analysisSpecs) {
@@ -24,7 +24,7 @@ checkIREquality <- function(gbkData,
     IR_mismatches <- 0
   }
 
-  if (IR_mismatches > 0) {
+  if (IR_mismatches < 0) {
     logger::log_warn(
       "Proceeding with coverage depth visualization, but without quadripartite genome structure ..."
     )

@@ -1,7 +1,7 @@
 #!/usr/bin/env RScript
 #contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2024.03.22.1637"
+#version="2024.03.27.0311"
 
 AnalysisSpecs <- R6Class("AnalysisSpecs",
   public = list(
@@ -67,6 +67,10 @@ AnalysisSpecs <- R6Class("AnalysisSpecs",
         self$regions_name <- "Chromosome"
         self$regions_start <- "chromStart"
         self$regions_end <- "chromEnd"
+      } else {
+        self$regions_name <- "Source"
+        self$regions_start <- "srcStart"
+        self$regions_end <- "srcEnd"
       }
     }
   )
