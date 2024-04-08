@@ -1,7 +1,7 @@
 #!/usr/bin/env RScript
 #contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2024.03.27.0311"
+#version="2024.04.08.0223"
 
 writeCovTables <- function(covData, sample_name, dir) {
   writeStatsTable(covData$ir_genes, sample_name, dir, "coverage.genes")
