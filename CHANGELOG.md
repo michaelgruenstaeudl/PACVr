@@ -1,7 +1,7 @@
 CHANGELOG
 ---------
 
-#### Version 1.0.11 (2024.04.08)
+#### Version 1.0.11 (2024.05.16)
 * Minor fixes to tabular statistics file creation
 * A coverage of 0 for a window is always labeled as low coverage
 
