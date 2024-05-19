@@ -25,7 +25,7 @@ set_script_dir()
 input_path <- "input/samples_list.csv"
 
 # this directory should correspond to `SAMPLELOC` used for `metadata_extraction.sh`
-w_dir <- "/home/greg/Documents/bioinformatics/plastid_data_set"
+w_dir <- "/PATH/TO/SAMPLES"
 
 ### METADATA ###
 

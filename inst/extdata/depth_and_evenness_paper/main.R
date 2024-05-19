@@ -8,7 +8,7 @@ source("coverage_tables.R")
 source("coverage_figures.R")
 
 main <- function() {
-  # metadata_extraction_all()
+  metadata_extraction_all()
   dir.create("images")
   create_tables()
   create_figures()
