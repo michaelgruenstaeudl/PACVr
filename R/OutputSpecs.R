@@ -96,12 +96,12 @@ OutputSpecs <- R6Class("OutputSpecs",
       # Step 1. Check ...
       if (self$isOutput) {
         outDir <- file.path(dirname(self$output),
-                            paste(sampleName["sample_name"],
+                            paste(sampleName["genome_name"],
                                   ".tmp",
                                   sep=""))
       } else {
         outDir <-
-          file.path(".", paste(sampleName["sample_name"],
+          file.path(".", paste(sampleName["genome_name"],
                                ".tmp",
                                sep=""))
       }
