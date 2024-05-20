@@ -3,12 +3,15 @@
 #email="m_gruenstaeudl@fhsu.edu"
 #version="2024.05.19.1300"
 
+library(tcltk) # For dialog boxes
 library(tidyverse)
 library(ggpubr)
 
-source("metadata_extraction_all.R")
-source("coverage_data_assembly.R")
-source("coverage_data_preparation.R")
+w_dir = tk_choose.dir(caption='Select directory with the .gb and .bam files')
+
+source("PREP_metadata_extraction_all.R")
+source("PREP_coverage_data_assembly.R")
+source("PREP_coverage_data_preparation.R")
 
 # FIGURE 3 - regression plot for evenness explained by assembly quality metrics
 get_asm_qual_figure <- function(df, x_name, x_lab) {

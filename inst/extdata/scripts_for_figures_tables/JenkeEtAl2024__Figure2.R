@@ -3,12 +3,15 @@
 #email="m_gruenstaeudl@fhsu.edu"
 #version="2024.05.19.1300"
 
+library(tcltk) # For dialog boxes
 library(tidyverse)
 library(ggpubr)
 
-source("metadata_extraction_all.R")
-source("coverage_data_assembly.R")
-source("coverage_data_preparation.R")
+w_dir = tk_choose.dir(caption='Select directory with the .gb and .bam files')
+
+source("PREP_metadata_extraction_all.R")
+source("PREP_coverage_data_assembly.R")
+source("PREP_coverage_data_preparation.R")
 
 # FIGURE 2 - E-score and WRSD distributions by groupings
 get_wrsd_figure <- function(df, grouping) {

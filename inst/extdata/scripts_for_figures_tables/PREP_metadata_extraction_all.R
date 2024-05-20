@@ -3,7 +3,7 @@
 #email="m_gruenstaeudl@fhsu.edu"
 #version="2024.05.19.1300"
 
-source("coverage_data_assembly.R")
+source("PREP_coverage_data_assembly.R")
 
 input_path <- "input/samples_list.csv"
 metadata_extraction_all <- function() {
@@ -15,7 +15,7 @@ metadata_extraction_all <- function() {
     sra <- sample["SRA"]
     accession <- sample["Accession"]
     
-    pacvr_cmd <- c("./metadata_extraction.sh", accession, sra)
+    pacvr_cmd <- c("./PREP_metadata_extraction.sh", w_dir, accession, sra)
     system2(command = "bash", args = pacvr_cmd)
   }
 }
