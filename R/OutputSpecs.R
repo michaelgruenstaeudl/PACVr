@@ -1,7 +1,7 @@
 #!/usr/bin/env RScript
 #contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2024.04.08.0223"
+#version="2024.05.16.1704"
 
 OutputSpecs <- R6Class("OutputSpecs",
   public = list(
@@ -96,12 +96,12 @@ OutputSpecs <- R6Class("OutputSpecs",
       # Step 1. Check ...
       if (self$isOutput) {
         outDir <- file.path(dirname(self$output),
-                            paste(sampleName["sample_name"],
+                            paste(sampleName["genome_name"],
                                   ".tmp",
                                   sep=""))
       } else {
         outDir <-
-          file.path(".", paste(sampleName["sample_name"],
+          file.path(".", paste(sampleName["genome_name"],
                                ".tmp",
                                sep=""))
       }
