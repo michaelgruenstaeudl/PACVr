@@ -22,7 +22,7 @@ set_script_dir <- function() {
 }
 
 set_script_dir()
-input_path <- "input/samples_list.csv"
+input_path <- "input/JenkeEtAl2024_samples_list.csv"
 
 ### METADATA ###
 create_metadata_df <- function() {

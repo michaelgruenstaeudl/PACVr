@@ -5,13 +5,13 @@
 
 source("PREP_coverage_data_assembly.R")
 
-input_path <- "input/samples_list.csv"
+input_path <- "input/JenkeEtAl2024_samples_list.csv"
 metadata_extraction_all <- function() {
   set_script_dir()
-  samples_list <- read.csv(input_path, stringsAsFactors = FALSE)
+  JenkeEtAl2024_samples_list <- read.csv(input_path, stringsAsFactors = FALSE)
 
-  for (index in 1:nrow(samples_list)) {
-    sample <- samples_list[index,]
+  for (index in 1:nrow(JenkeEtAl2024_samples_list)) {
+    sample <- JenkeEtAl2024_samples_list[index,]
     sra <- sample["SRA"]
     accession <- sample["Accession"]
     
