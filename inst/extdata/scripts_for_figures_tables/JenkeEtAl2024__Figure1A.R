@@ -3,11 +3,14 @@
 #email="m_gruenstaeudl@fhsu.edu"
 #version="2024.05.19.1300"
 
-library(tcltk) # For dialog boxes
-library(tidyverse)
-library(ggpubr)
+# pacman::p_load loads packages if they have been installed 
+# and installs if they are missing
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(tcltk, tidyverse, ggpubr, optparse)
 
-w_dir = tk_choose.dir(caption='Select directory with the .gb and .bam files')
+# Select input directory and input files
+inDir_data = tk_choose.dir(default="~", caption='Select directory with the .gb and .bam files')
+inFn_sampleList = tk_choose.files(caption='Select samples list file in csv-format (e.g., input/JenkeEtAl2024_samples_list.csv)')
 
 source("PREP_metadata_extraction_all.R")
 source("PREP_coverage_data_assembly.R")

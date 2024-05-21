@@ -3,8 +3,10 @@
 #email="m_gruenstaeudl@fhsu.edu"
 #version="2024.05.19.1300"
 
-library(tidyverse)
-library(rstatix)
+# pacman::p_load loads packages if they have been installed 
+# and installs if they are missing
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(tidyverse, rstatix)
 
 # Is the number of regions with significantly reduced coverage significantly
 # different in coding versus non-coding regions?

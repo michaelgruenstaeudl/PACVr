@@ -37,17 +37,17 @@ run_PACVr <- function(f) {
 #                 threshold=0.5, relative=TRUE, textSize=0.5, 
 #                 IRCheck=0, output=outFile)
   
-  tmpName <- paste0(inFileDir, accNum, "_CoverageViz_IRCheck1")
-  outFile <- paste0(tmpName, ".png")
-  PACVr.complete(gbkFile, bamFile, windowSize=250, logScale=FALSE, 
-                 threshold=0.5, relative=TRUE, textSize=0.5, 
-                 IRCheck=1, output=outFile)
-
-#  tmpName <- paste0(inFileDir, accNum, "_CoverageViz_IRCheck1_withStats")
+#  tmpName <- paste0(inFileDir, accNum, "_CoverageViz_IRCheck1")
 #  outFile <- paste0(tmpName, ".png")
 #  PACVr.complete(gbkFile, bamFile, windowSize=250, logScale=FALSE, 
 #                 threshold=0.5, relative=TRUE, textSize=0.5, 
-#                 IRCheck=1, tabularCovStats=TRUE, output=outFile)
+#                 IRCheck=1, output=outFile)
+
+  tmpName <- paste0(inFileDir, accNum, "_CoverageViz_IRCheck1_withStats")
+  outFile <- paste0(tmpName, ".png")
+  PACVr.complete(gbkFile, bamFile, windowSize=250, logScale=FALSE, 
+                 threshold=0.5, relative=TRUE, textSize=0.5, 
+                 IRCheck=1, tabularCovStats=TRUE, output=outFile)
 }
 
 foreach(i=1:length(inFiles), .packages=c("PACVr")) %dopar% {
