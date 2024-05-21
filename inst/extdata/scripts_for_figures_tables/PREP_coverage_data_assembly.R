@@ -81,8 +81,9 @@ join_metadata_with_samplelist <- function(meta_data) {
 
 normalize_metadata_names <- function(meta_data) {
   # resolve spelling mistake
-  meta_data[which(meta_data$Samples == "Eragrostis_tef"), ]$`Assembly Method` <-
-    "Geneious"
+  if ("Eragrostis_tef" %in% meta_data$Samples) {
+	  meta_data[which(meta_data$Samples == "Eragrostis_tef"), ]$`Assembly Method` <- "Geneious"
+  }
 
   # unify assembly methods
   nameList <- c(
@@ -125,10 +126,9 @@ normalize_metadata_names <- function(meta_data) {
   )
 
   for (i in 1:length(nameList)) {
-    meta_data$`Assembly Method`[grepl(nameList[i],
-                                      meta_data$`Assembly Method`,
-                                      ignore.case = TRUE)] <-
-      assignList[i]
+	if (nameList[i] %in% meta_data$`Assembly Method`) {
+	  meta_data$`Assembly Method`[grepl(nameList[i], meta_data$`Assembly Method`, ignore.case = TRUE)] <- assignList[i]
+    }
   }
 
   # standardize sampling methods
