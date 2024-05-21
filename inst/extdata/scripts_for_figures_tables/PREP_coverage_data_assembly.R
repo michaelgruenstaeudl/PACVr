@@ -3,8 +3,10 @@
 #email="m_gruenstaeudl@fhsu.edu"
 #version="2024.05.19.1300"
 
-library(tidyverse)
-library(vroom)
+# pacman::p_load loads packages if they have been installed 
+# and installs if they are missing
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(tidyverse, vroom)
 
 ### INIT NEEDED DIRECTORIES ###
 set_script_dir <- function() {
@@ -22,13 +24,13 @@ set_script_dir <- function() {
 }
 
 set_script_dir()
-input_path <- "input/JenkeEtAl2024_samples_list.csv"
+
 
 ### METADATA ###
 create_metadata_df <- function() {
   # collect files
   metadata_files <- list.files(
-    path = w_dir,
+    path = inDir_data,
     full.names = TRUE,
     recursive = TRUE,
     pattern = "metadata.csv"
@@ -72,7 +74,7 @@ normalize_metadata_avgLength <- function(meta_data) {
 }
 
 join_metadata_with_samplelist <- function(meta_data) {
-  sample_list <- read.csv(input_path, header = TRUE)
+  sample_list <- read.csv(inFn_sampleList, header = TRUE)
   meta_data <- inner_join(meta_data, sample_list, by = "Accession")
   return(meta_data)
 }
@@ -158,7 +160,7 @@ get_metadata_df <- function() {
 create_cov_sum_df <- function(file_pattern) {
   # collect files
   cov_sum_files <- list.files(
-    path = w_dir,
+    path = inDir_data,
     full.names = TRUE,
     recursive = TRUE,
     pattern = file_pattern

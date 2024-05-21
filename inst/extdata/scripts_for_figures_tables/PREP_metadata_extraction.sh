@@ -13,17 +13,55 @@ SAMPLELOC=$1
 ACCESSION=$2
 SRA=$3
 
-# conduct PACVr Rscript
-Rscript $PACVR \
-    -k $SAMPLELOC/${ACCESSION}_annotated.gb \
-    -b $SAMPLELOC/${ACCESSION}_mapping_OneMoreLocations.sorted.bam \
-    -t 0.5 \
-    -r TRUE \
-    -c TRUE \
-    -o $SAMPLELOC/${ACCESSION}_CoverageDepth.pdf
+METADATA_DIR=$(echo $SAMPLELOC/${ACCESSION}.?.tmp)  # Trick to get the actual folder name, even if unclear if accession version 1,2,...
+METADATA_FILE1=$METADATA_DIR/${ACCESSION}_SRA_meta.csv
+METADATA_FILE2=$METADATA_DIR/${ACCESSION}_assembly_tech.csv
+METADATA_OUTF=$METADATA_DIR/${ACCESSION}_metadata.csv
 
-# merge metadata to one csv
-esearch -db sra -query $SRA | efetch -format runinfo | cut -f20,7 -s -d, > $SAMPLELOC/${ACCESSION}.tmp/${ACCESSION}_SRA_meta.csv
-esearch -db nuccore -query $ACCESSION | efetch -format gb | sed -n '/Assembly Method/,/Sequencing/{/Sequencing/!p;}' | awk '{$1=$1;print}' | sed 's/:: /\n/g' | paste -s -d ' ' | sed 's/  /\n/g' | awk /./ > $SAMPLELOC/${ACCESSION}.tmp/${ACCESSION}_assembly_tech.csv
-find $SAMPLELOC/${ACCESSION}.tmp/ -type f -size 0 -exec rm {} \;
-paste -d, $SAMPLELOC/${ACCESSION}.tmp/*.csv > $SAMPLELOC/${ACCESSION}.tmp/${ACCESSION}_metadata.csv
+# DECISION IF PACVR ALREADY RUN
+echo ""
+echo "Processing sample $2"
+echo ""
+
+# Test if the file $METADATA_OUTF exists
+if [ -e "$METADATA_OUTF" ]; then
+    echo "Metadata already extracted. Skipping PACVr ..."
+	echo ""
+else 
+	# conduct PACVr Rscript
+	echo "Running PACVr"
+	echo ""
+	Rscript $PACVR \
+		-k $SAMPLELOC/${ACCESSION}_annotated.gb \
+		-b $SAMPLELOC/${ACCESSION}_mapping_OneMoreLocations.sorted.bam \
+		-t 0.5 \
+		-r TRUE \
+		-c TRUE \
+		-o $SAMPLELOC/${ACCESSION}_CoverageDepth.pdf
+
+
+	# merge metadata to one csv
+	echo ""
+	echo "Extracting metadata"
+
+	esearch -db sra -query $SRA | \
+		efetch -format runinfo | \
+		cut -f20,7 -s -d, > $METADATA_FILE1
+
+	esearch -db nuccore -query $ACCESSION | \
+		efetch -format gb | \
+		sed -n '/Assembly Method/,/Sequencing/{/Sequencing/!p;}' | \
+		awk '{$1=$1;print}' | \
+		sed 's/:: /\n/g' | \
+		paste -s -d ' ' | \
+		sed 's/  /\n/g' | \
+		awk /./ > $METADATA_FILE2
+		
+	find $METADATA_DIR -type f -size 0 -exec rm {} \;
+
+	paste -d, $METADATA_DIR/*.csv > $METADATA_OUTF
+
+	echo ""
+fi 
+
+
