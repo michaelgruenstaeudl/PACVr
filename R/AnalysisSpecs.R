@@ -26,7 +26,6 @@ AnalysisSpecs <- R6Class("AnalysisSpecs",
       private$setSyntenyLineType(IRCheck)
       private$setIsIRCheck(IRCheck)
       private$setIsSyntenyLine()
-      private$setCovFields()
     }
   ),
 
@@ -59,19 +58,6 @@ AnalysisSpecs <- R6Class("AnalysisSpecs",
     # precondition: `syntenyLineType` is set
     setIsSyntenyLine = function() {
       self$isSyntenyLine <- !is.null(self$syntenyLineType)
-    },
-
-    # precondition: `isIRCheck` is set
-    setCovFields = function() {
-      if (self$isIRCheck) {
-        self$regions_name <- "Chromosome"
-        self$regions_start <- "chromStart"
-        self$regions_end <- "chromEnd"
-      } else {
-        self$regions_name <- "Source"
-        self$regions_start <- "srcStart"
-        self$regions_end <- "srcEnd"
-      }
     }
   )
 )
