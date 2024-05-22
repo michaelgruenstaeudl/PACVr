@@ -25,7 +25,7 @@ create_figure_1a <- function(cov_data) {
     add = "jitter",
     bxp.errorbar = TRUE,
     label = "Accession",
-    font.label = list(size = 10, color = "red"),
+    font.label = list(size = 5, color = "red"),
     label.select = list(top.down = 13),
     repel = TRUE,
     xlab = "Samples",
@@ -35,7 +35,6 @@ create_figure_1a <- function(cov_data) {
     theme(plot.margin = unit(c(0, 0, 0, 0), "cm")) +
     font("y.text", size = 10) +
     font("xylab", size = 10)
-  outlier$layers[[3]]$aes_params$size <- 0.5
   ggsave(
     filename = "JenkeEtAl2024_Figure_1A.pdf",
     path = "./images",
