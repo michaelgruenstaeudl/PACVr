@@ -159,25 +159,26 @@ setLowCoverage <- function(covDataField, regions_name = NULL) {
 # adapted from `nilsj9/PlastidSequenceCoverage`
 getCovSummaries <- function(covData,
                             analysisSpecs) {
-  regions_name <- analysisSpecs$regions_name
-
   covData <- filterCovData(covData,
                            analysisSpecs)
   covSummaries <- getCovDepths(covData,
-                               regions_name)
+                               analysisSpecs$regions_name)
   covSummaries <- updateRegionsSummary(covSummaries,
                                        covData$ir_regions,
-                                       regions_name)
+                                       analysisSpecs)
   return(covSummaries)
 }
 
 updateRegionsSummary <- function(covSummaries,
                                  covDataRegions,
-                                 regions_name) {
+                                 analysisSpecs) {
+  regions_name <- analysisSpecs$regions_name
+  isIRCheck <- analysisSpecs$isIRCheck
+
   covSumRegions <- covSummaries$regions_summary
   regions_evenness <- getCovEvenness(covDataRegions,
                                      regions_name)
-  if (regions_name == "Source") {
+  if (!isIRCheck) {
     covSumRegions[regions_name] <- "Complete_genome"
     regions_evenness[regions_name] <- "Complete_genome"
   }
@@ -185,7 +186,7 @@ updateRegionsSummary <- function(covSummaries,
                                     regions_evenness,
                                     regions_name)
 
-  if (regions_name != "Source") {
+  if (isIRCheck) {
     genome_summary <- getGenomeSummary(covDataRegions,
                                        regions_name)
     covSumRegions <- dplyr::bind_rows(covSumRegions,

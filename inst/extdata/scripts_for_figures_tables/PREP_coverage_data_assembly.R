@@ -188,10 +188,6 @@ create_cov_sum_df <- function(file_pattern) {
 }
 
 transform_regions_sum <- function(regions_sum) {
-  regions_sum <- regions_sum %>%
-    mutate(Chromosome = if_else(is.na(Chromosome), Source, Chromosome)) %>%
-    select(-Source)
-
   regions_wide <- regions_sum %>%
     pivot_wider(
       id_cols = Accession,
@@ -211,8 +207,6 @@ transform_cov_sum <- function(cov_sum, col_name) {
   col_name_sym <- ensym(col_name)
   
   cov_sum <- cov_sum %>%
-    mutate(Chromosome = if_else(is.na(Chromosome), Source, Chromosome)) %>%
-    select(-Source) %>%
     group_by(Accession) %>%
     summarise(!!col_name_sym := sum(lowCovWin_abs) / sum(regionLen))
 

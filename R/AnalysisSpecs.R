@@ -10,9 +10,9 @@ AnalysisSpecs <- R6Class("AnalysisSpecs",
     isIRCheck = FALSE,
     windowSize = 250,
     isSyntenyLine = FALSE,
-    regions_name = "Source",
-    regions_start = "srcStart",
-    regions_end = "srcEnd",
+    regions_name = "Chromosome",
+    regions_start = "chromStart",
+    regions_end = "chromEnd",
     
     # constructor
     initialize = function(IRCheck = NA,
