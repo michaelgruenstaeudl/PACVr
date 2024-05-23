@@ -195,8 +195,9 @@ updateCovSummary <- function(covSummary,
   cov_evenness <- getCovEvenness(covDataField,
                                  regions_name)
   if (!isIRCheck) {
-    covSummary[regions_name] <- "Complete_genome"
-    cov_evenness[regions_name] <- "Complete_genome"
+    unpartName <- ifelse(isRegions, "Complete_genome", "Unpartitioned")
+    covSummary[regions_name] <- unpartName
+    cov_evenness[regions_name] <- unpartName
   }
   covSummary <- dplyr::full_join(covSummary,
                                  cov_evenness,
