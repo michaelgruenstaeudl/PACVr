@@ -125,10 +125,11 @@ normalize_metadata_names <- function(meta_data) {
     "ALLPATHS-LG"
   )
 
-  for (i in 1:length(nameList)) {
-	if (nameList[i] %in% meta_data$`Assembly Method`) {
-	  meta_data$`Assembly Method`[grepl(nameList[i], meta_data$`Assembly Method`, ignore.case = TRUE)] <- assignList[i]
-    }
+  for (i in seq_along(nameList)) {
+    matching_indices <- grepl(nameList[i], meta_data$`Assembly Method`, ignore.case = TRUE)
+  	if (any(matching_indices)) {
+  	  meta_data$`Assembly Method`[matching_indices] <- assignList[i]
+  	}
   }
 
   # standardize sampling methods
