@@ -175,7 +175,7 @@ create_cov_sum_df <- function(file_pattern) {
       col_types = c(
         lowCovWin_abs = "i",
         regionLen = "i",
-        lowCovWin_relToRegionLen = "n",
+        lowCovWin_perKilobase = "n",
         E_score = "n",
         N_count = "i"
       )
@@ -193,7 +193,7 @@ transform_regions_sum <- function(regions_sum) {
     pivot_wider(
       id_cols = Accession,
       names_from = Chromosome,
-      values_from = lowCovWin_relToRegionLen
+      values_from = lowCovWin_perKilobase
     )
 
   complete_sum <- regions_sum %>%
@@ -208,9 +208,9 @@ transform_cov_sum <- function(cov_sum, col_name) {
   col_name_sym <- ensym(col_name)
   
   cov_sum <- cov_sum %>%
-    group_by(Accession) %>%
-    summarise(!!col_name_sym := sum(lowCovWin_abs) / sum(regionLen))
-
+    filter(Chromosome == "Unpartitioned") %>%
+    rename(!!col_name_sym := lowCovWin_perKilobase) %>%
+    dplyr::select(Accession, !!col_name_sym)
   return(cov_sum)
 }
 
