@@ -163,38 +163,53 @@ getCovSummaries <- function(covData,
                            analysisSpecs)
   covSummaries <- getCovDepths(covData,
                                analysisSpecs$regions_name)
-  covSummaries <- updateRegionsSummary(covSummaries,
-                                       covData$ir_regions,
-                                       analysisSpecs)
+  covSummaries <- updateSummaries(covSummaries,
+                                  covData,
+                                  analysisSpecs)
   return(covSummaries)
 }
 
-updateRegionsSummary <- function(covSummaries,
-                                 covDataRegions,
-                                 analysisSpecs) {
+updateSummaries <- function(covSummaries,
+                            covData,
+                            analysisSpecs) {
+  covSummaries$regions_summary <- updateCovSummary(covSummaries$regions_summary,
+                                                   covData$ir_regions,
+                                                   analysisSpecs,
+                                                   TRUE)
+  covSummaries$genes_summary <- updateCovSummary(covSummaries$genes_summary,
+                                                 covData$ir_genes,
+                                                 analysisSpecs)
+  covSummaries$noncoding_summary <- updateCovSummary(covSummaries$noncoding_summary,
+                                                     covData$ir_noncoding,
+                                                     analysisSpecs)
+  return(covSummaries)
+}
+
+updateCovSummary <- function(covSummary,
+                             covDataField,
+                             analysisSpecs,
+                             isRegions = FALSE) {
   regions_name <- analysisSpecs$regions_name
   isIRCheck <- analysisSpecs$isIRCheck
 
-  covSumRegions <- covSummaries$regions_summary
-  regions_evenness <- getCovEvenness(covDataRegions,
-                                     regions_name)
+  cov_evenness <- getCovEvenness(covDataField,
+                                 regions_name)
   if (!isIRCheck) {
     covSumRegions[regions_name] <- "Complete_genome"
-    regions_evenness[regions_name] <- "Complete_genome"
+    cov_evenness[regions_name] <- "Complete_genome"
   }
-  covSumRegions <- dplyr::full_join(covSumRegions,
-                                    regions_evenness,
-                                    regions_name)
+  covSummary <- dplyr::full_join(covSummary,
+                                 cov_evenness,
+                                 regions_name)
 
   if (isIRCheck) {
-    genome_summary <- getGenomeSummary(covDataRegions,
-                                       regions_name)
-    covSumRegions <- dplyr::bind_rows(covSumRegions,
-                                      genome_summary)
+    genome_summary <- getGenomeSummary(covDataField,
+                                       regions_name,
+                                       isRegions)
+    covSummary <- dplyr::bind_rows(covSummary,
+                                   genome_summary)
   }
-
-  covSummaries$regions_summary <- covSumRegions
-  return(covSummaries)
+  return(covSummary)
 }
 
 filterCovData <- function(covData,
@@ -327,13 +342,17 @@ evennessScore <- function(coverage) {
   return(E)
 }
 
-getGenomeSummary <- function(covDataField, regions_name) {
+getGenomeSummary <- function(covDataField, regions_name, isRegions) {
   genome_depth <- getCovDepth(covDataField)
   genome_evenness <- getCovEvenness(covDataField)
 
   genome_summary <- genome_depth %>%
     dplyr::bind_cols(genome_evenness)
-  genome_summary[regions_name] <- "Complete_genome"
+  if (isRegions) {
+    genome_summary[regions_name] <- "Complete_genome"
+  } else {
+    genome_summary[regions_name] <- "Unpartitioned"
+  }
   return(genome_summary)
 }
 
