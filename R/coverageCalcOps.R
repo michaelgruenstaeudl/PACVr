@@ -291,19 +291,19 @@ calcCovDepth <- function(df) {
       lowCovWin_abs = sum(lowCoverage == "*", na.rm = TRUE),
       regionLen = sum(length, na.rm = TRUE),
       .groups = "drop") %>%
-    addLowCovWin_relToRegionLen()
+    addLowCovWin_perKilobase()
   )
 }
 
-addLowCovWin_relToRegionLen <- function(df) {
+addLowCovWin_perKilobase <- function(df) {
   lowCovWin_abs <-
-    lowCovWin_relToRegionLen <-
+    lowCovWin_perKilobase <-
     regionLen <-
     NULL
 
   return (
     df %>%
-    dplyr::mutate(lowCovWin_relToRegionLen = lowCovWin_abs / regionLen)
+    dplyr::mutate(lowCovWin_perKilobase = lowCovWin_abs / regionLen * 1000)
   )
 }
 
