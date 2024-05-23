@@ -195,7 +195,7 @@ updateCovSummary <- function(covSummary,
   cov_evenness <- getCovEvenness(covDataField,
                                  regions_name)
   if (!isIRCheck) {
-    covSumRegions[regions_name] <- "Complete_genome"
+    covSummary[regions_name] <- "Complete_genome"
     cov_evenness[regions_name] <- "Complete_genome"
   }
   covSummary <- dplyr::full_join(covSummary,
