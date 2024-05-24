@@ -37,7 +37,7 @@ create_supp_table_2 <- function(cov_data) {
            Ns = N_count,
            Mism. = IR_mismatches) %>%
     arrange(Sample) %>%
-    mutate_if(is.numeric, round, digits = 4) %>%
+    mutate_if(is.numeric, round, digits = 2) %>%
     mutate_if(is.numeric, to_string_without_scientific) %>%
     mutate_all(~ifelse(is.na(.), "-", .)) %>%
     mutate_all(~str_replace_all(., "^\\s*NA$", "-")) %>%
