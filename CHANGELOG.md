@@ -1,6 +1,16 @@
 CHANGELOG
 ---------
 
+#### Version 1.1.2 (2024.05.24)
+* Updates to summary tabular statistics files
+  * Inclusion of unpartitioned statistics for coding and noncoding regions summaries
+  * Standardize name of summary groups to `Chromosome`
+  * Update WRSD metric to in terms of kilobases
+* Updates to `scripts_for_figures_tables`
+  * `Figure1` updated to use manual jittering for boxplot with outlier labels
+  * Include `Figure1b` in output file
+  * Changes to value exactness in some tables
+
 #### Version 1.1.1 (2024.05.21)
 * Minor fixes to tabular statistics file creation
 * A coverage of 0 for a window is always labeled as low coverage
