@@ -6,12 +6,12 @@
 # pacman::p_load loads packages if they have been installed 
 # and installs if they are missing
 if (!require("pacman")) install.packages("pacman")
-pacman::p_load(tcltk, tidyverse, ggplot2, ggrepel, ggpubr, optparse, png, grid)
+pacman::p_load(tcltk, tidyverse, ggplot2, ggrepel, ggpubr, optparse, magick, pdftools, grid)
 
 # Select input directory and input files
 inDir_data = tk_choose.dir(default="~", caption='Select directory with the .gb and .bam files')
 inFn_sampleList = tk_choose.files(caption='Select samples list file in csv-format (e.g., input/JenkeEtAl2024_samples_list.csv)')
-inFn_figure1b = tk_choose.files(caption='Select image file used for figure 1b (e.g., input/NC_026562_CoverageViz_crop.png)')
+inFn_figure1b = tk_choose.files(caption='Select PDF file used for figure 1b (e.g., input/NC_026562_CoverageViz_crop.pdf)')
 
 source("PREP_metadata_extraction_all.R")
 source("PREP_coverage_data_assembly.R")
@@ -49,8 +49,8 @@ create_figure_1a <- function(cov_data) {
 
 # FIGURE 1B - previously created viz of outlier
 create_figure_1b <- function() {
-  img <- readPNG(inFn_figure1b)
-  img_grob <- rasterGrob(img, width = unit(1, "npc"), height = unit(1, "npc"))
+  pdf_img <- image_read_pdf(inFn_figure1b, density = 300)
+  img_grob <- rasterGrob(as.raster(pdf_img), width = unit(1, "npc"), height = unit(1, "npc"))
   png_plot <- ggplot() +
     annotation_custom(img_grob) +
     theme_void()
