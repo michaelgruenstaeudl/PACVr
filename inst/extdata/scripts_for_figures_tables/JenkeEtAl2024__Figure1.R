@@ -20,7 +20,7 @@ source("PREP_coverage_data_preparation.R")
 # FIGURE 1A - evenness outliers
 create_figure_1a <- function(cov_data) {
   # manually jitter values
-  set.seed(42)
+  set.seed(2)
   cov_data <- cov_data %>%
     mutate(jittered_x = jitter(rep(1, n()), amount = 0.2))
   top_outliers <- cov_data %>% 
@@ -28,15 +28,15 @@ create_figure_1a <- function(cov_data) {
   
   # create ggplot
   outlier <- ggplot(cov_data, aes(x = 1, y = E_score)) +
-    geom_boxplot(outlier.shape = NA) +
-    geom_point(aes(x = jittered_x), alpha = 0.5) +
+    geom_boxplot(outlier.shape = NA, width = 0.5, height) +
+    geom_point(aes(x = jittered_x), alpha = 0.5, size = 0.75) +
     geom_text_repel(
       data = top_outliers,
       aes(x = jittered_x, y = E_score, label = Accession),
       size = 2,
       color = "red",
       nudge_x = 0.1,
-      nudge_y = -0.05
+      nudge_y = -0.1
     ) +
     theme_minimal() +
     theme(
@@ -75,7 +75,7 @@ create_figure_1 <- function(cov_data) {
     path = "./images",
     device = 'pdf',
     dpi = 700,
-    width = 15.49779,
+    width = 18,
     height = 7.700765,
     units = ("cm")
   )
