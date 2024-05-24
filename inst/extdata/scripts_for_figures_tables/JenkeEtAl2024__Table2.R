@@ -29,7 +29,7 @@ create_table_2 <- function(cov_data) {
     mutate("NA" = nrow(cov_data) - .$n) %>%
     select(variable, n, "NA", min, max, q1, q3, median, mean, sd)
   
-  xtab_2 <- xtable(table_2, digits = 3)
+  xtab_2 <- xtable(table_2, digits = 2)
   print(
     xtab_2,
     file = "./images/JenkeEtAl2024_Table_2.tex",
