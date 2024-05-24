@@ -64,8 +64,8 @@ create_figure_1 <- function(cov_data) {
   ggarrange(
     figure_1a,
     figure_1b,
-    nrow = 1,
-    ncol = 2,
+    nrow = 2,
+    ncol = 1,
     labels = c("A", "B"),
     label.y = 1.02,
     label.x = -0.02
@@ -75,8 +75,8 @@ create_figure_1 <- function(cov_data) {
     path = "./images",
     device = 'pdf',
     dpi = 700,
-    width = 18,
-    height = 7.700765,
+    width = 8.5,
+    height = 15.5,
     units = ("cm")
   )
 }
