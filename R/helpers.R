@@ -1,7 +1,7 @@
 #!/usr/bin/env RScript
 #contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2024.05.24.2040"
+#version="2024.05.24.2053"
 
 HistCol <- function(cov, threshold, relative, logScale) {
   # Function to generate color vector for histogram data
