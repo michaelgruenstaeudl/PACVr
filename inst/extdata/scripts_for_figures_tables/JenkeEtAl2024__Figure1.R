@@ -28,7 +28,7 @@ create_figure_1a <- function(cov_data) {
   
   # create ggplot
   outlier <- ggplot(cov_data, aes(x = 1, y = E_score)) +
-    geom_boxplot(outlier.shape = NA, width = 0.5, height) +
+    geom_boxplot(outlier.shape = NA, width = 0.5) +
     geom_point(aes(x = jittered_x), alpha = 0.5, size = 0.75) +
     geom_text_repel(
       data = top_outliers,
