@@ -18,7 +18,7 @@ source("PREP_coverage_data_preparation.R")
 
 # FIGURE 2 - E-score and WRSD distributions by groupings
 get_wrsd_figure <- function(df, grouping) {
-  wrsd_label <- "WRSD-Length Ratio"
+  wrsd_label <- "WRSD Per kb"
   y_axis_max_lim <- 0.005
   
   wrsd_figure <- ggpubr::ggboxplot(
