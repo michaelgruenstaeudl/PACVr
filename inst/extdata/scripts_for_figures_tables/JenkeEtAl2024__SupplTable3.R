@@ -27,7 +27,7 @@ create_supp_table_3 <- function(figure_data) {
     rename("State 1" = group1,
            "State 2" = group2,
            d_c = effsize)
-  supp_xtab_3 <- xtable(supp_table_3, digits = 3)
+  supp_xtab_3 <- xtable(supp_table_3, digits = 2)
   print(
     supp_xtab_3,
     file = "./images/JenkeEtAl2024_SupplTable_3.tex",

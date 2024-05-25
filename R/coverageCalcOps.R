@@ -1,7 +1,7 @@
 #!/usr/bin/env RScript
 #contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2024.05.20.2131"
+#version="2024.05.24.2053"
 
 CovCalc <- function(coverageRaw,
                     windowSize = 250,
@@ -159,41 +159,58 @@ setLowCoverage <- function(covDataField, regions_name = NULL) {
 # adapted from `nilsj9/PlastidSequenceCoverage`
 getCovSummaries <- function(covData,
                             analysisSpecs) {
-  regions_name <- analysisSpecs$regions_name
-
   covData <- filterCovData(covData,
                            analysisSpecs)
   covSummaries <- getCovDepths(covData,
-                               regions_name)
-  covSummaries <- updateRegionsSummary(covSummaries,
-                                       covData$ir_regions,
-                                       regions_name)
+                               analysisSpecs$regions_name)
+  covSummaries <- updateSummaries(covSummaries,
+                                  covData,
+                                  analysisSpecs)
   return(covSummaries)
 }
 
-updateRegionsSummary <- function(covSummaries,
-                                 covDataRegions,
-                                 regions_name) {
-  covSumRegions <- covSummaries$regions_summary
-  regions_evenness <- getCovEvenness(covDataRegions,
-                                     regions_name)
-  if (regions_name == "Source") {
-    covSumRegions[regions_name] <- "Complete_genome"
-    regions_evenness[regions_name] <- "Complete_genome"
-  }
-  covSumRegions <- dplyr::full_join(covSumRegions,
-                                    regions_evenness,
-                                    regions_name)
-
-  if (regions_name != "Source") {
-    genome_summary <- getGenomeSummary(covDataRegions,
-                                       regions_name)
-    covSumRegions <- dplyr::bind_rows(covSumRegions,
-                                      genome_summary)
-  }
-
-  covSummaries$regions_summary <- covSumRegions
+updateSummaries <- function(covSummaries,
+                            covData,
+                            analysisSpecs) {
+  covSummaries$regions_summary <- updateCovSummary(covSummaries$regions_summary,
+                                                   covData$ir_regions,
+                                                   analysisSpecs,
+                                                   TRUE)
+  covSummaries$genes_summary <- updateCovSummary(covSummaries$genes_summary,
+                                                 covData$ir_genes,
+                                                 analysisSpecs)
+  covSummaries$noncoding_summary <- updateCovSummary(covSummaries$noncoding_summary,
+                                                     covData$ir_noncoding,
+                                                     analysisSpecs)
   return(covSummaries)
+}
+
+updateCovSummary <- function(covSummary,
+                             covDataField,
+                             analysisSpecs,
+                             isRegions = FALSE) {
+  regions_name <- analysisSpecs$regions_name
+  isIRCheck <- analysisSpecs$isIRCheck
+
+  cov_evenness <- getCovEvenness(covDataField,
+                                 regions_name)
+  if (!isIRCheck) {
+    unpartName <- ifelse(isRegions, "Complete_genome", "Unpartitioned")
+    covSummary[regions_name] <- unpartName
+    cov_evenness[regions_name] <- unpartName
+  }
+  covSummary <- dplyr::full_join(covSummary,
+                                 cov_evenness,
+                                 regions_name)
+
+  if (isIRCheck) {
+    genome_summary <- getGenomeSummary(covDataField,
+                                       regions_name,
+                                       isRegions)
+    covSummary <- dplyr::bind_rows(covSummary,
+                                   genome_summary)
+  }
+  return(covSummary)
 }
 
 filterCovData <- function(covData,
@@ -256,7 +273,7 @@ getCovDepth <- function(covDataField, regions_name = NULL) {
   }
   covDepth <- covDataField %>%
     calcCovDepth()
-  if (!is.null(regions_name) && regions_name == "Source") {
+  if (nrow(covDepth) == 1) {
     covDepth[regions_name] <- "Unpartitioned"
   }
   return(covDepth)
@@ -275,19 +292,19 @@ calcCovDepth <- function(df) {
       lowCovWin_abs = sum(lowCoverage == "*", na.rm = TRUE),
       regionLen = sum(length, na.rm = TRUE),
       .groups = "drop") %>%
-    addLowCovWin_relToRegionLen()
+    addLowCovWin_perKilobase()
   )
 }
 
-addLowCovWin_relToRegionLen <- function(df) {
+addLowCovWin_perKilobase <- function(df) {
   lowCovWin_abs <-
-    lowCovWin_relToRegionLen <-
+    lowCovWin_perKilobase <-
     regionLen <-
     NULL
 
   return (
     df %>%
-    dplyr::mutate(lowCovWin_relToRegionLen = lowCovWin_abs / regionLen)
+    dplyr::mutate(lowCovWin_perKilobase = lowCovWin_abs / regionLen * 1000)
   )
 }
 
@@ -326,13 +343,17 @@ evennessScore <- function(coverage) {
   return(E)
 }
 
-getGenomeSummary <- function(covDataField, regions_name) {
+getGenomeSummary <- function(covDataField, regions_name, isRegions) {
   genome_depth <- getCovDepth(covDataField)
   genome_evenness <- getCovEvenness(covDataField)
 
   genome_summary <- genome_depth %>%
     dplyr::bind_cols(genome_evenness)
-  genome_summary[regions_name] <- "Complete_genome"
+  if (isRegions) {
+    genome_summary[regions_name] <- "Complete_genome"
+  } else {
+    genome_summary[regions_name] <- "Unpartitioned"
+  }
   return(genome_summary)
 }
 

@@ -125,10 +125,11 @@ normalize_metadata_names <- function(meta_data) {
     "ALLPATHS-LG"
   )
 
-  for (i in 1:length(nameList)) {
-	if (nameList[i] %in% meta_data$`Assembly Method`) {
-	  meta_data$`Assembly Method`[grepl(nameList[i], meta_data$`Assembly Method`, ignore.case = TRUE)] <- assignList[i]
-    }
+  for (i in seq_along(nameList)) {
+    matching_indices <- grepl(nameList[i], meta_data$`Assembly Method`, ignore.case = TRUE)
+  	if (any(matching_indices)) {
+  	  meta_data$`Assembly Method`[matching_indices] <- assignList[i]
+  	}
   }
 
   # standardize sampling methods
@@ -174,7 +175,7 @@ create_cov_sum_df <- function(file_pattern) {
       col_types = c(
         lowCovWin_abs = "i",
         regionLen = "i",
-        lowCovWin_relToRegionLen = "n",
+        lowCovWin_perKilobase = "n",
         E_score = "n",
         N_count = "i"
       )
@@ -188,15 +189,11 @@ create_cov_sum_df <- function(file_pattern) {
 }
 
 transform_regions_sum <- function(regions_sum) {
-  regions_sum <- regions_sum %>%
-    mutate(Chromosome = if_else(is.na(Chromosome), Source, Chromosome)) %>%
-    select(-Source)
-
   regions_wide <- regions_sum %>%
     pivot_wider(
       id_cols = Accession,
       names_from = Chromosome,
-      values_from = lowCovWin_relToRegionLen
+      values_from = lowCovWin_perKilobase
     )
 
   complete_sum <- regions_sum %>%
@@ -211,11 +208,9 @@ transform_cov_sum <- function(cov_sum, col_name) {
   col_name_sym <- ensym(col_name)
   
   cov_sum <- cov_sum %>%
-    mutate(Chromosome = if_else(is.na(Chromosome), Source, Chromosome)) %>%
-    select(-Source) %>%
-    group_by(Accession) %>%
-    summarise(!!col_name_sym := sum(lowCovWin_abs) / sum(regionLen))
-
+    filter(Chromosome == "Unpartitioned") %>%
+    rename(!!col_name_sym := lowCovWin_perKilobase) %>%
+    dplyr::select(Accession, !!col_name_sym)
   return(cov_sum)
 }
 

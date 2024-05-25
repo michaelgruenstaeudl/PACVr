@@ -17,7 +17,8 @@ wilcox_coding_data <- function(cov_data) {
       cols = everything(), 
       names_to = "sequences", 
       values_to = "low_coverage") %>%
-    arrange(sequences)
+    arrange(sequences) %>%
+    remove_cov_outliers("sequences", "low_coverage")
 }
 
 # Is evenness of coverage significantly different across different read lengths?
@@ -39,7 +40,8 @@ kruskal_regions_data <- function(cov_data) {
       cols = everything(), 
       names_to = "regions", 
       values_to = "low_coverage") %>%
-    arrange(regions)
+    arrange(regions) %>%
+    remove_cov_outliers("regions", "low_coverage")
 }
 
 # Is evenness of coverage significantly different across different assembly software tools?
@@ -50,7 +52,8 @@ kruskal_assembly_data <- function(cov_data) {
     filter(!is.na(Assembly)) %>%
     group_by(Assembly) %>%
     filter(n() >= 5) %>%
-    ungroup()
+    ungroup() %>%
+    remove_cov_outliers("Assembly", "E_score")
 }
 
 # Is evenness of coverage significantly different across different sequencing forms?
@@ -60,7 +63,8 @@ kruskal_model_data <- function(cov_data) {
     filter(!is.na(Model)) %>%
     group_by(Model) %>%
     filter(n() >= 5) %>% 
-    ungroup()
+    ungroup() %>%
+    remove_cov_outliers("Model", "E_score")
 }
 
 # Collect needed data for figures
@@ -153,3 +157,25 @@ get_wilcox_results <- function(figure_data) {
     rename(variable = .y.) %>%
     select(-p.adj.signif)
 }
+
+# Outlier filtering functions
+remove_cov_outliers <- function(cov_sum, names, values) {
+  cov_sum <- cov_sum %>%
+    group_by(!!sym(names)) %>%
+    group_modify(~ remove_outliers(.x, values, 3)) %>%
+    ungroup()
+  return(cov_sum)
+}
+
+remove_outliers <- function(df, col_name, k = 1.5) {
+  quartile <- quantile(df[[col_name]], probs = c(0.25, 0.75), na.rm = TRUE)
+  iqr <- diff(quartile)
+  lower_bound <- quartile[1] - k * iqr
+  upper_bound <- quartile[2] + k * iqr
+  
+  col_name_sym <- sym(col_name)
+  df <- df %>%
+    filter(!!col_name_sym >= lower_bound & !!col_name_sym <= upper_bound)
+  return(df)
+}
+

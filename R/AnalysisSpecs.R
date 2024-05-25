@@ -1,7 +1,7 @@
 #!/usr/bin/env RScript
 #contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2024.05.20.2131"
+#version="2024.05.24.2053"
 
 AnalysisSpecs <- R6Class("AnalysisSpecs",
   public = list(
@@ -10,9 +10,9 @@ AnalysisSpecs <- R6Class("AnalysisSpecs",
     isIRCheck = FALSE,
     windowSize = 250,
     isSyntenyLine = FALSE,
-    regions_name = "Source",
-    regions_start = "srcStart",
-    regions_end = "srcEnd",
+    regions_name = "Chromosome",
+    regions_start = "chromStart",
+    regions_end = "chromEnd",
     
     # constructor
     initialize = function(IRCheck = NA,
@@ -26,7 +26,6 @@ AnalysisSpecs <- R6Class("AnalysisSpecs",
       private$setSyntenyLineType(IRCheck)
       private$setIsIRCheck(IRCheck)
       private$setIsSyntenyLine()
-      private$setCovFields()
     }
   ),
 
@@ -59,19 +58,6 @@ AnalysisSpecs <- R6Class("AnalysisSpecs",
     # precondition: `syntenyLineType` is set
     setIsSyntenyLine = function() {
       self$isSyntenyLine <- !is.null(self$syntenyLineType)
-    },
-
-    # precondition: `isIRCheck` is set
-    setCovFields = function() {
-      if (self$isIRCheck) {
-        self$regions_name <- "Chromosome"
-        self$regions_start <- "chromStart"
-        self$regions_end <- "chromEnd"
-      } else {
-        self$regions_name <- "Source"
-        self$regions_start <- "srcStart"
-        self$regions_end <- "srcEnd"
-      }
     }
   )
 )
