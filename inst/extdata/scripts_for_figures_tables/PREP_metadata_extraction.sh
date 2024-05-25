@@ -56,7 +56,13 @@ else
 		paste -s -d ' ' | \
 		sed 's/  /\n/g' | \
 		awk /./ > $METADATA_FILE2
-		
+
+	if [ ! -s "$METADATA_OUTF" ]; then
+		echo "Generating empty assembly metadata file ..."
+		echo ""
+		echo -e "Assembly Method\nmissing" > $METADATA_FILE2
+	fi
+
 	find $METADATA_DIR -type f -size 0 -exec rm {} \;
 
 	paste -d, $METADATA_DIR/*.csv > $METADATA_OUTF
