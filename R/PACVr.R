@@ -1,7 +1,7 @@
 #!/usr/bin/env RScript
 #contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2024.05.24.2053"
+#version="2024.05.25.0158"
 
 PACVr.read.gb <- function(gbkFile) {
   gbkRaw <- getGbkRaw(gbkFile)

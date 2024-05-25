@@ -1,7 +1,7 @@
 CHANGELOG
 ---------
 
-#### Version 1.1.2 (2024.05.24)
+#### Version 1.1.2 (2024.05.25)
 * Updates to summary tabular statistics files
   * Inclusion of unpartitioned statistics for coding and noncoding regions summaries
   * Standardize name of summary groups to `Chromosome`
