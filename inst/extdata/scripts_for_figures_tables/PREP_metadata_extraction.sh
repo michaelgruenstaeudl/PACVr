@@ -13,7 +13,7 @@ SAMPLELOC=$1
 ACCESSION=$2
 SRA=$3
 
-METADATA_DIR=$(echo $SAMPLELOC/${ACCESSION}.?.tmp)  # Trick to get the actual folder name, even if unclear if accession version 1,2,...
+METADATA_DIR=$SAMPLELOC/${ACCESSION}.tmp
 METADATA_FILE1=$METADATA_DIR/${ACCESSION}_SRA_meta.csv
 METADATA_FILE2=$METADATA_DIR/${ACCESSION}_assembly_tech.csv
 METADATA_OUTF=$METADATA_DIR/${ACCESSION}_metadata.csv
