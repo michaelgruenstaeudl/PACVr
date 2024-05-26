@@ -14,8 +14,8 @@ ACCESSION=$2
 SRA=$3
 
 METADATA_DIR=$SAMPLELOC/${ACCESSION}.tmp
-METADATA_FILE1=$METADATA_DIR/${ACCESSION}_SRA_meta.csv
-METADATA_FILE2=$METADATA_DIR/${ACCESSION}_assembly_tech.csv
+METADATA_FILE1=$METADATA_DIR/${ACCESSION}_meta_SequencingMethod.csv
+METADATA_FILE2=$METADATA_DIR/${ACCESSION}_meta_AssemblyMethod.csv
 METADATA_OUTF=$METADATA_DIR/${ACCESSION}_metadata.csv
 
 # DECISION IF PACVR ALREADY RUN
@@ -47,25 +47,32 @@ else
 	esearch -db sra -query $SRA | \
 		efetch -format runinfo | \
 		cut -f20,7 -s -d, > $METADATA_FILE1
+	sed -i 's/Model/SequencingMethod/g' $METADATA_FILE1
 
 	esearch -db nuccore -query $ACCESSION | \
 		efetch -format gb | \
-		sed -n '/Assembly Method/,/Sequencing/{/Sequencing/!p;}' | \
+		grep -E "Assembly|Sequencing" | \
+		grep -v '##' | \
+		sed -n '/Assembly/,/Sequencing/{/Sequencing/!p;}' | \
 		awk '{$1=$1;print}' | \
 		sed 's/:: /\n/g' | \
 		paste -s -d ' ' | \
 		sed 's/  /\n/g' | \
-		awk /./ > $METADATA_FILE2
+		awk /./ | \
+		awk '{print $1}' > $METADATA_FILE2
+	sed -i 's/Assembly Method/AssemblyMethod/g' $METADATA_FILE2
 
-	if [ ! -s "$METADATA_OUTF" ]; then
+	if [ ! -s "$METADATA_FILE2" ]; then
 		echo "Generating empty assembly metadata file ..."
 		echo ""
-		echo -e "Assembly Method\nmissing" > $METADATA_FILE2
+		echo -e "AssemblyMethod\n" > $METADATA_FILE2
 	fi
 
 	find $METADATA_DIR -type f -size 0 -exec rm {} \;
 
-	paste -d, $METADATA_DIR/*.csv > $METADATA_OUTF
+	paste -d, $METADATA_DIR/*_meta_*.csv > $METADATA_OUTF
+	rm $METADATA_FILE1
+	rm $METADATA_FILE2
 
 	echo ""
 fi 

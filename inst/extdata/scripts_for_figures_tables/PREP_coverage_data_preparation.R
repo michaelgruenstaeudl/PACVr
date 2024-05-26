@@ -45,26 +45,29 @@ kruskal_regions_data <- function(cov_data) {
 }
 
 # Is evenness of coverage significantly different across different assembly software tools?
-kruskal_assembly_data <- function(cov_data) {
+kruskal_AssemblyMethod_data <- function(cov_data) {
   kruskal_df <- cov_data %>%
-    select("Assembly Method", E_score) %>%
-    rename(Assembly = "Assembly Method") %>%
-    filter(!is.na(Assembly)) %>%
-    group_by(Assembly) %>%
+    select("AssemblyMethod", E_score) %>%
+    #rename(Assembly = "AssemblyMethod") %>%
+    #filter(!is.na(Assembly)) %>%
+    #group_by(Assembly) %>%
+    filter(!is.na(AssemblyMethod)) %>%
+    group_by(AssemblyMethod) %>%
     filter(n() >= 5) %>%
     ungroup() %>%
-    remove_cov_outliers("Assembly", "E_score")
+    #remove_cov_outliers("Assembly", "E_score")
+    remove_cov_outliers("AssemblyMethod", "E_score")
 }
 
 # Is evenness of coverage significantly different across different sequencing forms?
-kruskal_model_data <- function(cov_data) {
+kruskal_SequencingMethod_data <- function(cov_data) {
   kruskal_df <- cov_data %>%
-    select(Model, E_score) %>%
-    filter(!is.na(Model)) %>%
-    group_by(Model) %>%
+    select(SequencingMethod, E_score) %>%
+    filter(!is.na(SequencingMethod)) %>%
+    group_by(SequencingMethod) %>%
     filter(n() >= 5) %>% 
     ungroup() %>%
-    remove_cov_outliers("Model", "E_score")
+    remove_cov_outliers("SequencingMethod", "E_score")
 }
 
 # Collect needed data for figures
@@ -73,16 +76,16 @@ get_figure_data <- function(cov_data) {
     wilcox_coding = wilcox_coding_data(cov_data),
     wilcox_length = wilcox_length_data(cov_data),
     kruskal_regions = kruskal_regions_data(cov_data),
-    kruskal_assembly = kruskal_assembly_data(cov_data),
-    kruskal_model = kruskal_model_data(cov_data)
+    kruskal_AssemblyMethod = kruskal_AssemblyMethod_data(cov_data),
+    kruskal_SequencingMethod = kruskal_SequencingMethod_data(cov_data)
   )
 }
 
 # Kruskal-Wallis test results
 get_kruskal_results <- function(figure_data) {
   kruskal_df <- figure_data$kruskal_regions
-  kruskal_df2 <- figure_data$kruskal_assembly
-  kruskal_df3 <- figure_data$kruskal_model
+  kruskal_df2 <- figure_data$kruskal_AssemblyMethod
+  kruskal_df3 <- figure_data$kruskal_SequencingMethod
   
   kruskal_results <-
     rstatix::kruskal_test(kruskal_df[!is.na(kruskal_df$low_coverage), ], low_coverage ~ regions) %>%
@@ -91,17 +94,17 @@ get_kruskal_results <- function(figure_data) {
       effsize
     )) %>%
     bind_rows(., bind_cols(
-      rstatix::kruskal_test(kruskal_df3[!is.na(kruskal_df3$E_score), ], E_score ~ Model),
-      select(rstatix::kruskal_effsize(kruskal_df3, E_score ~ Model), effsize)
+      rstatix::kruskal_test(kruskal_df3[!is.na(kruskal_df3$E_score), ], E_score ~ SequencingMethod),
+      select(rstatix::kruskal_effsize(kruskal_df3, E_score ~ SequencingMethod), effsize)
     )) %>%
     bind_rows(., bind_cols(
-      rstatix::kruskal_test(kruskal_df2[!is.na(kruskal_df2$E_score), ], E_score ~ Assembly),
+      rstatix::kruskal_test(kruskal_df2[!is.na(kruskal_df2$E_score), ], E_score ~ AssemblyMethod),
       select(
-        rstatix::kruskal_effsize(kruskal_df2, E_score ~ Assembly),
+        rstatix::kruskal_effsize(kruskal_df2, E_score ~ AssemblyMethod),
         effsize
       )
     )) %>%
-    mutate(variable = c("regions", "assembly", "model")) %>%
+    mutate(variable = c("regions", "AssemblyMethod", "SequencingMethod")) %>%
     select(variable, n, p, effsize) %>%
     rename(d_c = effsize)
 }
@@ -116,8 +119,8 @@ get_wilcox_results <- function(figure_data) {
   wilcox_df2 <- figure_data$wilcox_length
   
   kruskal_df <- figure_data$kruskal_regions
-  kruskal_df2 <- figure_data$kruskal_assembly
-  kruskal_df3 <- figure_data$kruskal_model
+  kruskal_df2 <- figure_data$kruskal_AssemblyMethod
+  kruskal_df3 <- figure_data$kruskal_SequencingMethod
   
   wilcox_results <-
     rstatix::pairwise_wilcox_test(kruskal_df[!is.na(kruskal_df$low_coverage), ], low_coverage ~ regions, p.adjust.method = "BH") %>%
@@ -133,16 +136,16 @@ get_wilcox_results <- function(figure_data) {
       ))
     )) %>%
     bind_rows(., bind_cols(
-      rstatix::pairwise_wilcox_test(kruskal_df3[!is.na(kruskal_df3$E_score), ], E_score ~ Model, p.adjust.method = "BH"),
+      rstatix::pairwise_wilcox_test(kruskal_df3[!is.na(kruskal_df3$E_score), ], E_score ~ SequencingMethod, p.adjust.method = "BH"),
       (select(
-        rstatix::wilcox_effsize(kruskal_df3, E_score ~ Model),
+        rstatix::wilcox_effsize(kruskal_df3, E_score ~ SequencingMethod),
         effsize
       ))
     )) %>%
     bind_rows(., bind_cols(
-      rstatix::pairwise_wilcox_test(kruskal_df2[!is.na(kruskal_df2$E_score), ], E_score ~ Assembly, p.adjust.method = "BH"),
+      rstatix::pairwise_wilcox_test(kruskal_df2[!is.na(kruskal_df2$E_score), ], E_score ~ AssemblyMethod, p.adjust.method = "BH"),
       (select(
-        rstatix::wilcox_effsize(kruskal_df2, E_score ~ Assembly),
+        rstatix::wilcox_effsize(kruskal_df2, E_score ~ AssemblyMethod),
         effsize
       ))
     )) %>%

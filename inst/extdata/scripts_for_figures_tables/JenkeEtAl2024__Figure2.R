@@ -18,7 +18,7 @@ source("PREP_coverage_data_preparation.R")
 
 # FIGURE 2 - E-score and WRSD distributions by groupings
 get_wrsd_figure <- function(df, grouping) {
-  wrsd_label <- "WRSD Per kb"
+  wrsd_label <- "WRSD per kb"
   y_axis_max_lim <- 0.005
   
   wrsd_figure <- ggpubr::ggboxplot(
@@ -32,7 +32,7 @@ get_wrsd_figure <- function(df, grouping) {
     ylab = wrsd_label
   ) +
     rremove("xlab") +
-    theme(plot.margin = unit(c(0, 0, 0.5, 0), "cm"))
+    theme(plot.margin = unit(c(0.25, 0.5, 0.5, 0), "cm"))
   ggpar(wrsd_figure, ylim = c(0, y_axis_max_lim))
   wrsd_figure <- wrsd_figure +
     font("axis.text", size = 10) +
@@ -52,7 +52,7 @@ get_escore_figure <- function(df, grouping) {
   ) +
     rotate_x_text(25) +
     rremove("xlab") +
-    theme(plot.margin = unit(c(0, 0, 0.5, 0), "cm"))
+    theme(plot.margin = unit(c(0.25, 0.5, 0, 0), "cm"))
   ggpar(escore_figure, ylim = c(0, 1.0))
   escore_figure <- escore_figure +
     font("axis.text", size = 10) +
@@ -63,7 +63,7 @@ create_figure_2 <- function(figure_data) {
   coding_figure <- get_wrsd_figure(figure_data$wilcox_coding, "sequences")
   partition_figure <- get_wrsd_figure(figure_data$kruskal_regions, "regions")
   assembly_figure <- get_escore_figure(figure_data$kruskal_assembly, "Assembly")
-  model_figure <- get_escore_figure(figure_data$kruskal_model, "Model")
+  model_figure <- get_escore_figure(figure_data$kruskal_model, "SequencingMethod")
   
   ggarrange(
     partition_figure,
@@ -73,16 +73,16 @@ create_figure_2 <- function(figure_data) {
     nrow = 2,
     ncol = 2,
     labels = c("A", "B", "C", "D"),
-    label.y = 1.02,
-    label.x = -0.02,
-    heights = c(1, 1.1156625968355375019018071372623, 0.99)
+    label.y = 1.015,
+    label.x = -0.025,
+    heights = c(1, 1.12, 0.99)
   )
   ggsave(
     filename = "JenkeEtAl2024_Figure_2.pdf",
     path = "./images",
     device = 'pdf',
     dpi = 700,
-    width = 15.49779,
+    width = 15.50,
     height = 20.75,
     units = ("cm")
   )

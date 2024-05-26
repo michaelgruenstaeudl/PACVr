@@ -43,9 +43,9 @@ create_metadata_df <- function() {
       delim = ",",
       col_types = c(
         avgLength = "i",
-        Model = "c",
-        `Assembly Method` = "c",
-        `Sequencing Technology` = "c"
+        SequencingMethod = "c",
+        `AssemblyMethod` = "c",
+        `SequencingMethod` = "c"
       )
     )
     data$Accession <- gsub("_metadata.csv", "", basename(.x))
@@ -82,7 +82,7 @@ join_metadata_with_samplelist <- function(meta_data) {
 normalize_metadata_names <- function(meta_data) {
   # resolve spelling mistake
   if ("Eragrostis_tef" %in% meta_data$Samples) {
-	  meta_data[which(meta_data$Samples == "Eragrostis_tef"), ]$`Assembly Method` <- "Geneious"
+	  meta_data[which(meta_data$Samples == "Eragrostis_tef"), ]$`AssemblyMethod` <- "Geneious"
   }
 
   # unify assembly methods
@@ -126,15 +126,15 @@ normalize_metadata_names <- function(meta_data) {
   )
 
   for (i in seq_along(nameList)) {
-    matching_indices <- grepl(nameList[i], meta_data$`Assembly Method`, ignore.case = TRUE)
+    matching_indices <- grepl(nameList[i], meta_data$`AssemblyMethod`, ignore.case = TRUE)
   	if (any(matching_indices)) {
-  	  meta_data$`Assembly Method`[matching_indices] <- assignList[i]
+  	  meta_data$`AssemblyMethod`[matching_indices] <- assignList[i]
   	}
   }
 
   # standardize sampling methods
-  meta_data$Model <- gsub("Illumina ", "", meta_data$Model)
-  meta_data$Model <- gsub("Genome Analyzer", "GA", meta_data$Model)
+  meta_data$SequencingMethod <- gsub("Illumina ", "", meta_data$SequencingMethod)
+  meta_data$SequencingMethod <- gsub("Genome Analyzer", "GA", meta_data$SequencingMethod)
 
   # annotate avgLength
   meta_data$avgLength <-

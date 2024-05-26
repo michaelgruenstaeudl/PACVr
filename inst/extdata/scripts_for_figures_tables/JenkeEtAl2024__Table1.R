@@ -32,8 +32,8 @@ get_table_1_subtable <- function(cov_data, grouping) {
 }
 
 create_table_1 <- function(cov_data) {
-  subtable_platform <- get_table_1_subtable(cov_data, "Model")
-  subtable_assembly <- get_table_1_subtable(cov_data, "Assembly Method")
+  subtable_platform <- get_table_1_subtable(cov_data, "SequencingMethod")
+  subtable_assembly <- get_table_1_subtable(cov_data, "AssemblyMethod")
   table_1 <- bind_rows(subtable_platform, subtable_assembly) %>%
     select(State, count, percentage, cumulative_percentage, evenness, std)
   xtab_1 <- xtable(table_1)
