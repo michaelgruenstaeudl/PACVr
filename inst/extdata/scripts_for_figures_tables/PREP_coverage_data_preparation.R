@@ -178,3 +178,18 @@ remove_outliers <- function(df, col_name, k = 1.5) {
   return(df)
 }
 
+# Adding asterisks to p-values
+pval_asterisk <- function(x){
+  symbols   = c(" ***"," **"," *","")
+  cutoffs = c(0, 0.001, 0.01, 0.05, 1)
+  index <- findInterval(x, cutoffs, left.open=T, rightmost.closed=T)
+  paste(x, symbols[index], sep="")
+}
+
+# Adding letters to effect sizes
+effectsize_symbol <- function(x){
+  symbols   = c(""," s"," m"," l")
+  cutoffs = c(0, 0.2, 0.5, 0.8, 10)
+  index <- findInterval(x, cutoffs, left.open=T, rightmost.closed=T)
+  paste(x, symbols[index], sep="")
+}

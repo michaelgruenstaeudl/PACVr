@@ -16,6 +16,7 @@ source("PREP_metadata_extraction_all.R")
 source("PREP_coverage_data_assembly.R")
 source("PREP_coverage_data_preparation.R")
 
+
 # SUPPLEMENTARY TABLE 3 - pairwise Wilcoxon tests for evenness
 create_supp_table_3 <- function(figure_data) {
   supp_table_3 <- get_wilcox_results(figure_data) %>%
@@ -26,8 +27,11 @@ create_supp_table_3 <- function(figure_data) {
     select(-c(variable,p,statistic)) %>%
     rename("State 1" = group1,
            "State 2" = group2,
-           d_c = effsize)
-  supp_xtab_3 <- xtable(supp_table_3, digits = 2)
+           d_c = effsize) %>% 
+    mutate(p.adj = pval_asterisk(format(round(p.adj, digits=3), nsmall=3))) %>% 
+    mutate(d_c = effectsize_symbol(format(round(d_c, digits=3), nsmall=3)))
+
+  supp_xtab_3 <- xtable(supp_table_3, digits=3)
   print(
     supp_xtab_3,
     file = "./images/JenkeEtAl2024_SupplTable_3.tex",

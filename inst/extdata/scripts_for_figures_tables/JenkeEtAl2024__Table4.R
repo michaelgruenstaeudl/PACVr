@@ -23,8 +23,11 @@ create_table_4 <- function(figure_data) {
     select(-c(variable,statistic)) %>%
     rename("State 1" = group1,
            "State 2" = group2,
-           d_c = effsize)
-  xtab_4 <- xtable(table_4, digits = 3)
+           d_c = effsize) %>% 
+    mutate(p.adj = pval_asterisk(format(round(p.adj, digits=3), nsmall=3))) %>% 
+    mutate(d_c = effectsize_symbol(format(round(d_c, digits=3), nsmall=3)))
+  
+  xtab_4 <- xtable(table_4, digits=3)
   print(
     xtab_4,
     file = "./images/JenkeEtAl2024_Table_4.tex",
