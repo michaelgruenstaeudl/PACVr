@@ -35,14 +35,16 @@ create_figure_1a <- function(cov_data) {
       aes(x = jittered_x, y = E_score, label = Accession),
       size = 2,
       color = "red",
-      nudge_x = 0.1,
-      nudge_y = -0.1
+      #nudge_x = 0.1,
+      #nudge_y = -0.1
     ) +
     theme_minimal() +
     theme(
-      plot.margin = unit(c(1, 1, 1, 1), "cm"),
-      text = element_text(size = 10)
+      plot.margin = unit(c(0.25, 0.25, 0.75, 0), "cm"),
+      text = element_text(size = 9)
     ) +
+    coord_cartesian(ylim = c(0, 1), 
+                    expand = FALSE) +
     labs(x = "Samples", y = "E-score") +
     rremove("x.text")
 }
@@ -67,6 +69,7 @@ create_figure_1 <- function(cov_data) {
     nrow = 2,
     ncol = 1,
     labels = c("A", "B"),
+    font.label = list(size=13),
     label.y = 1.02,
     label.x = -0.02
   )
