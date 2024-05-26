@@ -48,14 +48,10 @@ kruskal_regions_data <- function(cov_data) {
 kruskal_AssemblyMethod_data <- function(cov_data) {
   kruskal_df <- cov_data %>%
     select("AssemblyMethod", E_score) %>%
-    #rename(Assembly = "AssemblyMethod") %>%
-    #filter(!is.na(Assembly)) %>%
-    #group_by(Assembly) %>%
     filter(!is.na(AssemblyMethod)) %>%
     group_by(AssemblyMethod) %>%
     filter(n() >= 5) %>%
     ungroup() %>%
-    #remove_cov_outliers("Assembly", "E_score")
     remove_cov_outliers("AssemblyMethod", "E_score")
 }
 

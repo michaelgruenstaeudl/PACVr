@@ -42,10 +42,9 @@ create_metadata_df <- function() {
       .x,
       delim = ",",
       col_types = c(
+        AssemblyMethod = "c",
         avgLength = "i",
-        SequencingMethod = "c",
-        `AssemblyMethod` = "c",
-        `SequencingMethod` = "c"
+        SequencingMethod = "c"
       )
     )
     data$Accession <- gsub("_metadata.csv", "", basename(.x))
@@ -82,7 +81,7 @@ join_metadata_with_samplelist <- function(meta_data) {
 normalize_metadata_names <- function(meta_data) {
   # resolve spelling mistake
   if ("Eragrostis_tef" %in% meta_data$Samples) {
-	  meta_data[which(meta_data$Samples == "Eragrostis_tef"), ]$`AssemblyMethod` <- "Geneious"
+	  meta_data[which(meta_data$Samples == "Eragrostis_tef"), ]$AssemblyMethod <- "Geneious"
   }
 
   # unify assembly methods
@@ -108,9 +107,9 @@ normalize_metadata_names <- function(meta_data) {
   assignList <- c(
     "Velvet",
     "Consed",
-    "Newbler Assembler",
+    "Newbler",
     "SPAdes",
-    "CLC Assembly",
+    "CLC",
     "SOAPdenovo",
     "MIRA",
     "Ray",
@@ -120,15 +119,15 @@ normalize_metadata_names <- function(meta_data) {
     "PriceTI",
     "SPAdes",
     "YASRA",
-    "GS De novo assembler",
+    "GS_denovo",
     "ABySS",
     "ALLPATHS-LG"
   )
 
   for (i in seq_along(nameList)) {
-    matching_indices <- grepl(nameList[i], meta_data$`AssemblyMethod`, ignore.case = TRUE)
+    matching_indices <- grepl(nameList[i], meta_data$AssemblyMethod, ignore.case = TRUE)
   	if (any(matching_indices)) {
-  	  meta_data$`AssemblyMethod`[matching_indices] <- assignList[i]
+  	  meta_data$AssemblyMethod[matching_indices] <- assignList[i]
   	}
   }
 

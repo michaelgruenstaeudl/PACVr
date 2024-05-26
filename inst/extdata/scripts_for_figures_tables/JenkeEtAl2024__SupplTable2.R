@@ -27,12 +27,12 @@ to_string_without_scientific <- function(x) {
 
 create_supp_table_2 <- function(cov_data) {
   supp_table_2 <- cov_data %>%
-    select(Accession, SequencingMethod, "AssemblyMethod", E_score, 
+    select(Accession, SequencingMethod, AssemblyMethod, E_score, 
            LSC, IRb, SSC, IRa, coding, noncoding, 
            N_count, IR_mismatches) %>%
     rename(Sample = Accession,
            "Seq. platform" = SequencingMethod,
-           "Asm. software" = "AssemblyMethod",
+           "Asm. software" = AssemblyMethod,
            "E-score" = E_score,
            Ns = N_count,
            Mism. = IR_mismatches) %>%

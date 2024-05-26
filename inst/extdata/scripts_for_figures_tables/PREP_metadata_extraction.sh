@@ -60,6 +60,8 @@ else
 		sed 's/  /\n/g' | \
 		awk /./ | \
 		awk '{print $1}' > $METADATA_FILE2
+	sed -i 's/Assembly/AssemblyMethod/g' $METADATA_FILE2
+	sed -i 's/AssemblyMethod Method/AssemblyMethod/g' $METADATA_FILE2
 	sed -i 's/Assembly Method/AssemblyMethod/g' $METADATA_FILE2
 
 	if [ ! -s "$METADATA_FILE2" ]; then

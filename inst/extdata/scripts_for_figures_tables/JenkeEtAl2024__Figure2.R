@@ -62,8 +62,8 @@ get_escore_figure <- function(df, grouping) {
 create_figure_2 <- function(figure_data) {
   coding_figure <- get_wrsd_figure(figure_data$wilcox_coding, "sequences")
   partition_figure <- get_wrsd_figure(figure_data$kruskal_regions, "regions")
-  assembly_figure <- get_escore_figure(figure_data$kruskal_assembly, "Assembly")
-  model_figure <- get_escore_figure(figure_data$kruskal_model, "SequencingMethod")
+  assembly_figure <- get_escore_figure(figure_data$kruskal_AssemblyMethod, "AssemblyMethod")
+  model_figure <- get_escore_figure(figure_data$kruskal_SequencingMethod, "SequencingMethod")
   
   ggarrange(
     partition_figure,
