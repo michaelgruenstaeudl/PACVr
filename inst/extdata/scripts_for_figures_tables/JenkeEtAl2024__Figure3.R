@@ -37,15 +37,15 @@ get_asm_qual_figure <- function(df, x_name, x_lab) {
     ylab = "E-score",
     xlim = c(0, 1.01)
   ) +
-    theme(plot.margin = unit(c(0.05, 0, 0, 0), "cm")) +
+    theme(plot.margin = unit(c(0.25, 0.5, 0, 0), "cm")) +
     font("axis.title", size = 10) +
     font("axis.text", size = 10) +
-    theme(axis.text.y = element_blank()) +
+    #theme(axis.text.y = element_blank()) +
     stat_cor(
       method = "spearman",
       p.accuracy = 0.001,
       r.accuracy = 0.01,
-      label.y = 1.025,
+      label.y = 1.1,
       label.x = 0.2
     )
 }
@@ -71,8 +71,8 @@ create_figure_3 <- function(cov_data) {
     path = "./images",
     device = 'pdf',
     dpi = 700,
-    width = 15.49779,
-    height = 7.654888,
+    width = 15.5,
+    height = 7.66,
     units = ("cm")
   )
 }

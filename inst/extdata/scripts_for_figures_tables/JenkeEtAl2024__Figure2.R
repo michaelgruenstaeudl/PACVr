@@ -39,6 +39,11 @@ get_wrsd_figure <- function(df, grouping) {
     font("ylab", size = 10)
 }
 
+get_wrsd_figure_1 <- function(df, grouping) {
+  coding_figure <- get_wrsd_figure(df, grouping) +
+  scale_x_discrete(limit = c('LSC', 'IRb', 'SSC', 'IRa'))
+}
+
 get_escore_figure <- function(df, grouping) {
   escore_figure <- ggpubr::ggboxplot(
     df,
@@ -60,16 +65,16 @@ get_escore_figure <- function(df, grouping) {
 }
 
 create_figure_2 <- function(figure_data) {
+  partition_figure <- get_wrsd_figure_1(figure_data$kruskal_regions, "regions")
   coding_figure <- get_wrsd_figure(figure_data$wilcox_coding, "sequences")
-  partition_figure <- get_wrsd_figure(figure_data$kruskal_regions, "regions")
-  assembly_figure <- get_escore_figure(figure_data$kruskal_AssemblyMethod, "AssemblyMethod")
-  model_figure <- get_escore_figure(figure_data$kruskal_SequencingMethod, "SequencingMethod")
+  seqMethod_figure <- get_escore_figure(figure_data$kruskal_SequencingMethod, "SequencingMethod")
+  assemblyMethod_figure <- get_escore_figure(figure_data$kruskal_AssemblyMethod, "AssemblyMethod")
   
   ggarrange(
     partition_figure,
     coding_figure,
-    model_figure,
-    assembly_figure,
+    seqMethod_figure,
+    assemblyMethod_figure,
     nrow = 2,
     ncol = 2,
     labels = c("A", "B", "C", "D"),

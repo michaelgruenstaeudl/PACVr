@@ -23,6 +23,7 @@ get_table_1_subtable <- function(cov_data, grouping) {
     group_by(State) %>%
     mutate(count = n()) %>%
     ungroup() %>%
+    mutate(State = replace_na(State, "missing")) %>%
     mutate(State := ifelse(count < 5, "missing", State)) %>%
     select(-count) %>%
     group_by(State) %>%
