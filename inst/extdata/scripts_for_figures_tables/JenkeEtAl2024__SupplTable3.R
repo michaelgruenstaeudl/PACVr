@@ -1,7 +1,7 @@
 #!/usr/bin/env RScript
 #contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2024.05.19.1300"
+#version="2024.05.26.1500"
 
 # pacman::p_load loads packages if they have been installed 
 # and installs if they are missing
