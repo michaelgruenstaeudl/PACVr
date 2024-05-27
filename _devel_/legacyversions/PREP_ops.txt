@@ -1,9 +1,0 @@
-# RULES
-# 1. Always have a source feature
-# 2. Remove local duplicate lines:  sed '$!N; /^\(.*\)\n\1$/!P; D'
-# 3. Remove all exons
-# 4. Format changes:
-join(complement(4316..4354),complement(1752..1790))  -->  join(complement(4316..4354,1752..1790))
-
-join(complement(44491..44616,43562..43789),  -->  join(complement(44491..44616,43562..43789,42672..42824))
-     complement(42672..42824))
