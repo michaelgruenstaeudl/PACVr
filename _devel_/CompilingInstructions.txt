@@ -1,0 +1,23 @@
+# Start R within your package directory (so that your package directory is R’s working directory).
+
+# Ensure that deb package 'qpdf' is installed
+# Ensure that R package 'devtools' is installed: require(devtools)
+
+# Delete non-R files from GitHub repo copy
+
+# Reducing PDF size
+#convert -density 300x300 -quality 100 input.pdf output.pdf
+
+
+### COMPILING INSTRUCTIONS ###
+
+R CMD build PACVr --compact-vignettes="gs+qpdf"
+
+R CMD check PACVr_1.0.9.tar.gz --as-cran
+
+R CMD check PACVr_1.0.9.tar.gz --as-cran --run-donttest
+
+
+### TEST PACKAGE LOCALLY ###
+
+install.packages("/home/gruenstaeudl/Desktop/PACVr_1.0.9.tar.gz", repos=NULL, type="source")
