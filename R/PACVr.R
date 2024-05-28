@@ -114,21 +114,19 @@ PACVr.complete <- function(gbkFile,
                                  gbkData$sampleName)
 
   ###################################
-  coverage <- PACVr.calcCoverage(bamFile,
-                                 analysisSpecs$windowSize,
-                                 outputSpecs$logScale)
+  coverage <- Coverage$new(bamFile,
+                           analysisSpecs,
+                           outputSpecs)
 
   ###################################
   if (tabularCovStats) {
     PACVr.compileCovStats(gbkData,
-                          coverage$raw,
-                          analysisSpecs,
-                          outputSpecs)
+                          coverage)
   }
   
   ###################################
   PACVr.vizWithRCircos(gbkData,
-                       coverage$plot,
+                       coverage$coveragePlot,
                        analysisSpecs,
                        outputSpecs)
 

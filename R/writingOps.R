@@ -35,32 +35,3 @@ getSumField2File <- function() {
   )
   return(sumField2File)
 }
-
-printCovStats <- function(gbkData,
-                          coverageRaw,
-                          analysisSpecs,
-                          outputSpecs) {
-  sampleName <- gbkData$sampleName
-  seqnames <- unname(sampleName[sampleName %in% names(coverageRaw)])
-  if (length(seqnames) == 0) {
-    logger::log_error("Neither `ACCESSION` nor `VERSION` matches BAM sample name")
-    return(NULL)
-  }
-
-  logger::log_info('Generating statistical information on the sequencing coverage')
-  quadripRegions <- gbkData$quadripRegions
-  genes <- gbkData$genes
-  covData <- getCovData(quadripRegions, genes)
-  covData <- filter_IR_genes(quadripRegions, coverageRaw, seqnames, covData, analysisSpecs)
-  covData <- filter_IR_noncoding(quadripRegions, coverageRaw, seqnames, covData, analysisSpecs)
-  covData <- filter_IR_regions(coverageRaw, seqnames, covData, analysisSpecs)
-  covData <- setLowCoverages(covData, analysisSpecs)
-
-  # Writing values to output table
-  statsFilePath <- outputSpecs$statsFilePath
-  writeCovTables(covData,
-                 sampleName,
-                 statsFilePath)
-
-  return(covData)
-}
