@@ -49,10 +49,10 @@ kruskal_AssemblyMethod_data <- function(cov_data) {
   kruskal_df <- cov_data %>%
     select("AssemblyMethod", E_score) %>%
     filter(!is.na(AssemblyMethod)) %>%
+    remove_cov_outliers("AssemblyMethod", "E_score") %>%
     group_by(AssemblyMethod) %>%
     filter(n() >= 5) %>%
-    ungroup() %>%
-    remove_cov_outliers("AssemblyMethod", "E_score")
+    ungroup()
 }
 
 # Is evenness of coverage significantly different across different sequencing forms?
@@ -60,10 +60,10 @@ kruskal_SequencingMethod_data <- function(cov_data) {
   kruskal_df <- cov_data %>%
     select(SequencingMethod, E_score) %>%
     filter(!is.na(SequencingMethod)) %>%
+    remove_cov_outliers("SequencingMethod", "E_score") %>%
     group_by(SequencingMethod) %>%
     filter(n() >= 5) %>% 
-    ungroup() %>%
-    remove_cov_outliers("SequencingMethod", "E_score")
+    ungroup()
 }
 
 # Collect needed data for figures
