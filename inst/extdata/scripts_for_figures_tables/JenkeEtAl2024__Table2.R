@@ -18,11 +18,23 @@ source("PREP_coverage_data_preparation.R")
 
 # TABLE 2 - descriptive statistics for the partitions
 create_table_2 <- function(cov_data) {
+  # prepare source dataframe for rstatix
   table_2 <-
-    cov_data %>% select(LSC, IRb, SSC, IRa, 
-                        coding, noncoding, 
-                        E_score, 
-                        N_count, IR_mismatches) %>%
+    cov_data %>% select(LSC, IRb, SSC, IRa,
+                        coding, noncoding,
+                        E_score,
+                        N_count, IR_mismatches)
+  wrsd_cols <- c(
+    "LSC", "IRb", "SSC", "IRa",
+    "coding", "noncoding"
+  )
+  for (col_name in wrsd_cols) {
+    table_2 <- handle_outliers(table_2, col_name, 3, FALSE)
+  }
+
+  # create summary table
+  table_2 <-
+    table_2 %>%
     rename("E-score" = E_score,
            Ns = N_count,
            mismatches = IR_mismatches) %>%
