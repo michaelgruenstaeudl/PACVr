@@ -29,7 +29,7 @@ create_table_2 <- function(cov_data) {
     "coding", "noncoding"
   )
   for (col_name in wrsd_cols) {
-    table_2 <- handle_outliers(table_2, col_name, 3, FALSE)
+    table_2 <- handle_outliers(table_2, col_name, 3, 1)
   }
 
   # create summary table

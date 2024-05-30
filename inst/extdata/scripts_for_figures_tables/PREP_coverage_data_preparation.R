@@ -158,7 +158,7 @@ get_wilcox_results <- function(figure_data) {
 }
 
 # Outlier filtering functions
-handle_cov_outliers <- function(cov_sum, names, values, remove = TRUE) {
+handle_cov_outliers <- function(cov_sum, names, values, remove = 0) {
   cov_sum <- cov_sum %>%
     group_by(!!sym(names)) %>%
     group_modify(~ handle_outliers(.x, values, 3, remove)) %>%
@@ -171,12 +171,15 @@ handle_outliers <- function(df, col_name, k, remove) {
 
   col_name_sym <- sym(col_name)
   outlier_expr <- expr(!!col_name_sym >= bounds[1] & !!col_name_sym <= bounds[2])
-  if (remove) {
+  if (remove == 0) {
     df <- df %>%
       filter(!!outlier_expr)
-  } else {
+  } else if (remove == 1) {
     df <- df %>%
       mutate(!!col_name_sym := ifelse(!!outlier_expr, !!col_name_sym, NA))
+  } else {
+    df <- df %>%
+      mutate(outlier = ! (!!outlier_expr))
   }
   return(df)
 }

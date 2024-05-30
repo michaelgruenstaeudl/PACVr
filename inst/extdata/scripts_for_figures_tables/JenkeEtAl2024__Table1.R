@@ -20,8 +20,7 @@ source("PREP_coverage_data_preparation.R")
 get_table_1_subtable <- function(cov_data, grouping) {
   subtable <- cov_data %>%
     rename(State = !!ensym(grouping)) %>%
-    handle_cov_outliers("State", "E_score", FALSE) %>%
-    mutate(State = ifelse(is.na(E_score), "missing", State)) %>%
+    handle_cov_outliers("State", "E_score", 2) %>%
     group_by(State) %>%
     mutate(count = n()) %>%
     ungroup() %>%
