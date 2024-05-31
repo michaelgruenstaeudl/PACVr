@@ -18,7 +18,7 @@ wilcox_coding_data <- function(cov_data) {
       names_to = "sequences", 
       values_to = "low_coverage") %>%
     arrange(sequences) %>%
-    remove_cov_outliers("sequences", "low_coverage")
+    handle_cov_outliers("sequences", "low_coverage")
 }
 
 # Is evenness of coverage significantly different across different read lengths?
@@ -41,7 +41,7 @@ kruskal_regions_data <- function(cov_data) {
       names_to = "regions", 
       values_to = "low_coverage") %>%
     arrange(regions) %>%
-    remove_cov_outliers("regions", "low_coverage")
+    handle_cov_outliers("regions", "low_coverage")
 }
 
 # Is evenness of coverage significantly different across different assembly software tools?
@@ -49,10 +49,10 @@ kruskal_AssemblyMethod_data <- function(cov_data) {
   kruskal_df <- cov_data %>%
     select("AssemblyMethod", E_score) %>%
     filter(!is.na(AssemblyMethod)) %>%
+    handle_cov_outliers("AssemblyMethod", "E_score") %>%
     group_by(AssemblyMethod) %>%
     filter(n() >= 5) %>%
-    ungroup() %>%
-    remove_cov_outliers("AssemblyMethod", "E_score")
+    ungroup()
 }
 
 # Is evenness of coverage significantly different across different sequencing forms?
@@ -60,10 +60,10 @@ kruskal_SequencingMethod_data <- function(cov_data) {
   kruskal_df <- cov_data %>%
     select(SequencingMethod, E_score) %>%
     filter(!is.na(SequencingMethod)) %>%
+    handle_cov_outliers("SequencingMethod", "E_score") %>%
     group_by(SequencingMethod) %>%
     filter(n() >= 5) %>% 
-    ungroup() %>%
-    remove_cov_outliers("SequencingMethod", "E_score")
+    ungroup()
 }
 
 # Collect needed data for figures
@@ -158,24 +158,40 @@ get_wilcox_results <- function(figure_data) {
 }
 
 # Outlier filtering functions
-remove_cov_outliers <- function(cov_sum, names, values) {
+handle_cov_outliers <- function(cov_sum, names, values, remove = 0) {
   cov_sum <- cov_sum %>%
     group_by(!!sym(names)) %>%
-    group_modify(~ remove_outliers(.x, values, 3)) %>%
+    group_modify(~ handle_outliers(.x, values, 3, remove)) %>%
     ungroup()
   return(cov_sum)
 }
 
-remove_outliers <- function(df, col_name, k = 1.5) {
+handle_outliers <- function(df, col_name, k, remove) {
+  bounds <- find_tukey_fences(df, col_name, k)
+
+  col_name_sym <- sym(col_name)
+  outlier_expr <- expr(!!col_name_sym >= bounds[1] & !!col_name_sym <= bounds[2])
+  if (remove == 0) {
+    df <- df %>%
+      filter(!!outlier_expr)
+  } else if (remove == 1) {
+    df <- df %>%
+      mutate(!!col_name_sym := ifelse(!!outlier_expr, !!col_name_sym, NA))
+  } else {
+    df <- df %>%
+      mutate(outlier = ! (!!outlier_expr))
+  }
+  return(df)
+}
+
+find_tukey_fences <- function(df, col_name, k = 1.5) {
   quartile <- quantile(df[[col_name]], probs = c(0.25, 0.75), na.rm = TRUE)
   iqr <- diff(quartile)
   lower_bound <- quartile[1] - k * iqr
   upper_bound <- quartile[2] + k * iqr
-  
-  col_name_sym <- sym(col_name)
-  df <- df %>%
-    filter(!!col_name_sym >= lower_bound & !!col_name_sym <= upper_bound)
-  return(df)
+
+  bounds <- c(lower_bound, upper_bound)
+  return(bounds)
 }
 
 # Adding asterisks to p-values

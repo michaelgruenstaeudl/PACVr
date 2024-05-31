@@ -1,7 +1,7 @@
 #!/usr/bin/env RScript
 #contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2024.05.25.0158"
+#version="2024.05.31.0123"
 
 CovCalc <- function(coverageRaw,
                     windowSize = 250,
@@ -74,6 +74,12 @@ getCovData <- function(regions, genes) {
     select = "all"
   )
 
+  ir_regions <- unlist(IRanges::slidingWindows(
+    ir_regions,
+    width = 250L,
+    step = 250L
+  ))
+
   covData <- list(
     ir_regions = ir_regions,
     ir_genes = ir_genes,
@@ -113,8 +119,7 @@ filter_IR_noncoding <- function(regions, coverageRaw, seqnames, covData, analysi
 }
 
 filter_IR_regions <- function(coverageRaw, seqnames, covData, analysisSpecs) {
-  ir_regions <- unlist(IRanges::slidingWindows(covData$ir_regions, width = 250L, step = 250L))
-  ir_regions <- GenomicRanges::GRanges(seqnames = seqnames, ir_regions)
+  ir_regions <- GenomicRanges::GRanges(seqnames = seqnames, covData$ir_regions)
   ir_regions <- GenomicRanges::binnedAverage(ir_regions, coverageRaw, "coverage")
   chr <- ir_regions@ranges@NAMES
   ir_regions <- as.data.frame(ir_regions, row.names = NULL)[c("seqnames", "start", "end", "coverage")]
