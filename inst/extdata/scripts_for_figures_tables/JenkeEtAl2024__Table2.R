@@ -54,6 +54,12 @@ create_table_2 <- function(cov_data) {
       values_from = low_coverage
     ) %>%
     full_join(., asym_qual_df) %>%
+    select(
+      LSC, IRb, SSC, IRa,
+      coding, noncoding,
+      "E-score",
+      Ns, mismatches
+    ) %>%
     rstatix::get_summary_stats(
       show = c("n", "min", "max", "q1", "q3",
                "median", "mean", "sd")
