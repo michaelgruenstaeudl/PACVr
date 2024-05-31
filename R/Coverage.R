@@ -1,7 +1,7 @@
 #!/usr/bin/env RScript
 #contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2024.05.28.2100"
+#version="2024.05.31.0123"
 
 Coverage <- R6Class("Coverage",
   public = list(

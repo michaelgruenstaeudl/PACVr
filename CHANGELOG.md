@@ -1,7 +1,7 @@
 CHANGELOG
 ---------
 
-#### Version 1.1.3 (2024.05.30)
+#### Version 1.1.3 (2024.05.31)
 * Refactoring of `coverage` to an R6 class
 * Updates to how outliers are handled for artifacts created by `scripts_for_figures_tables`
 
