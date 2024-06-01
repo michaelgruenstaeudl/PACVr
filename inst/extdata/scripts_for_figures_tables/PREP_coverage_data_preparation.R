@@ -102,7 +102,7 @@ get_kruskal_results <- function(figure_data) {
     )) %>%
     mutate(variable = c("regions", "AssemblyMethod", "SequencingMethod")) %>%
     select(variable, n, p, effsize) %>%
-    rename(d_c = effsize)
+    rename(eta = effsize)
 }
 
 # Wilcoxon rank-sum test results
@@ -195,17 +195,34 @@ find_tukey_fences <- function(df, col_name, k = 1.5) {
 }
 
 # Adding asterisks to p-values
+format_table_vals <- function(x) {
+  format(round(x, digits=3), nsmall=3)
+}
+
 pval_asterisk <- function(x){
-  symbols   = c(" ***"," **"," *","")
-  cutoffs = c(0, 0.001, 0.01, 0.05, 1)
+  symbols <- c(" ***"," **"," *","")
+  cutoffs <- c(0, 0.001, 0.01, 0.05, 1)
   index <- findInterval(x, cutoffs, left.open=T, rightmost.closed=T)
-  paste(x, symbols[index], sep="")
+  paste(format_table_vals(x), symbols[index], sep="")
 }
 
 # Adding letters to effect sizes
-effectsize_symbol <- function(x){
-  symbols   = c(""," s"," m"," l")
-  cutoffs = c(0, 0.2, 0.5, 0.8, 10)
+effectsize_symbol <- function(x, type = 0){
+  symbols <- c(""," s"," m"," l")
+  if (type == 0) {
+    cutoffs <- cohen_cutoffs()
+  } else {
+    cutoffs <- eta_cutoffs()
+  }
+  
   index <- findInterval(x, cutoffs, left.open=T, rightmost.closed=T)
-  paste(x, symbols[index], sep="")
+  paste(format_table_vals(x), symbols[index], sep="")
+}
+
+cohen_cutoffs <- function() {
+  c(0, 0.2, 0.5, 0.8, 10)
+}
+
+eta_cutoffs <- function() {
+  c(-1, 0.01, 0.06, 0.14, 1)
 }
