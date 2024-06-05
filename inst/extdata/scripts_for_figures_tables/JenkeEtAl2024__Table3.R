@@ -19,8 +19,8 @@ source("PREP_coverage_data_preparation.R")
 # TABLE 3 - summary of Kruskal-Wallis tests
 create_table_3 <- function(figure_data) {
   kruskal_results <- get_kruskal_results(figure_data) %>% 
-    mutate(p = pval_asterisk(format(round(p, digits=3), nsmall=3))) %>% 
-    mutate(d_c = effectsize_symbol(format(round(d_c, digits=3), nsmall=3)))
+    mutate(p = pval_asterisk(p)) %>% 
+    mutate(eta = effectsize_symbol(eta, 1))
 
   xtab_3 <- xtable(kruskal_results, digits=3)
   print(

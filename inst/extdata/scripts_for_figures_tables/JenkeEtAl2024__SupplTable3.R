@@ -28,8 +28,8 @@ create_supp_table_3 <- function(figure_data) {
     rename("State 1" = group1,
            "State 2" = group2,
            d_c = effsize) %>% 
-    mutate(p.adj = pval_asterisk(format(round(p.adj, digits=3), nsmall=3))) %>% 
-    mutate(d_c = effectsize_symbol(format(round(d_c, digits=3), nsmall=3)))
+    mutate(p.adj = pval_asterisk(p.adj)) %>%
+    mutate(d_c = effectsize_symbol(d_c))
 
   supp_xtab_3 <- xtable(supp_table_3, digits=3)
   print(
