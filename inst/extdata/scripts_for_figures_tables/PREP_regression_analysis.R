@@ -8,7 +8,10 @@ inFn_sampleList <- tk_choose.files(caption='Select samples list file in csv-form
 # Find and load script dependency
 assembly_name <- "PREP_coverage_data_assembly.R"
 assembly_path <- list.files(path = getwd(), pattern = assembly_name, recursive = TRUE, full.names = TRUE)
+preparation_name <- "PREP_coverage_data_preparation.R"
+preparation_path <- list.files(path = getwd(), pattern = preparation_name, recursive = TRUE, full.names = TRUE)
 source(assembly_path)
+source(preparation_path)
 
 
 ### FUNCTIONS ###
@@ -98,7 +101,7 @@ split_train_test <- function(df, prop = 0.8) {
   set.seed(42)
   initial_split(
     df %>%
-      filter(if_all(everything(), ~!is.na(.))),
+      drop_na(),
     prop = prop
   )
 }
@@ -205,15 +208,133 @@ reg_sub_tree %>%
 # This leads up to believe that although the effect of region on coverage is not as great as subset type,
 # both are important in reducing variance.
 
+## Decision tree for just region and region subset
+rs_2_sub_df <- reg_sub_df %>%
+  handle_outliers("lowCovWin", 3, 0) %>%
+  select(lowCovWin, Chromosome, RegionSubset)
+
+rs_2_tree_fit <- get_tree_fit(rs_2_sub_df, "lowCovWin")
+
+rs_2_tree_fit %>%
+  collect_metrics()
+rs_2_tree <- extract_workflow(rs_2_tree_fit)
+rs_2_tree
+rs_2_tree %>%
+  extract_fit_engine() %>%
+  rpart.plot(roundint = FALSE)
+rs_2_tree %>%
+  extract_fit_parsnip() %>%
+  vip()
+
+# Focusing on region and region subset, in addition to removing outliers, supports the results from above.
+# That is, that the coding-noncoding split and the SSC region are most important for predicting
+# coverage, but we get a broader view of how region is used beyond just SSC.
+
 
 ## EVENNESS ANALYSIS ##
 
+# Linear regression models were attempted on the evenness data, with no statistical
+# significance for any of the variables of interest. We instead continue with non-linear
+# models that more likely represent the relationship between these variables and evenness,
+# if such a relationship exists.
+
 ## Examine complete genomes for evenness
 genome_df <- cov_df %>%
-  filter_complete_genome() %>%
-  filter_small_method_classes()
+  filter_complete_genome()
 
-# So far multiple models have been attempted to provide either classification or regression insights from
-# evenness score and the four variables of interest: ambiguous nucleotide count, IR mismatch count, sequencing
-# platform, and assembly software. Additional investigations will continue, but worst-case scenario we
-# can continue using the nonparametric group statistics for evenness.
+genome_filter_df <- genome_df %>%
+  filter_small_method_classes() %>%
+  handle_outliers("E_score", 3, 0) %>%
+  select(-lowCovWin, -AssemblyMethod)
+
+genome_tree_fit <- get_tree_fit(genome_filter_df, "E_score")
+genome_tree_fit %>%
+  collect_metrics()
+genome_tree <- extract_workflow(genome_tree_fit)
+genome_tree
+genome_tree %>%
+  extract_fit_engine() %>%
+  rpart.plot(roundint = FALSE)
+genome_tree %>%
+  extract_fit_parsnip() %>%
+  vip()
+
+# To prevent removing too many observations we remove the assembly method from this
+# model, and to prevent over-reliance on the highly correlated low coverage count this is also removed.
+# Of the tree variables of interest that are present here, only sequencing method appears to have importance.
+# We will continue will single variable decision tree models for all four variables of interest.
+
+## Assembly method decision tree
+assembly_df <- genome_df %>%
+  filter_small_method_classes() %>%
+  handle_cov_outliers("AssemblyMethod", "E_score") %>%
+  select(E_score, AssemblyMethod)
+
+assembly_tree_fit <- get_tree_fit(assembly_df, "E_score")
+assembly_tree_fit %>% collect_metrics()
+assembly_tree <- extract_workflow(assembly_tree_fit)
+assembly_tree
+assembly_tree %>%
+  extract_fit_engine() %>%
+  rpart.plot(roundint = FALSE)
+assembly_tree %>%
+  extract_fit_parsnip() %>%
+  vip()
+
+# When considering only assembly methods with 5 or more observations and
+# removing in-class outliers, there does appear a very minor importance
+# on assembly method, especially given the low R^2. If we elect to not
+# remove outliers or remove outliers based on the entire data set,
+# the assembly method is not determined to have any importance.
+# If we keep in the assembly methods with low counts, this artificially increases
+# the importance of the method and has a major impact on the explanatory value (R^2).
+
+## Sequencing method decision tree
+sequencing_df <- genome_df %>%
+  filter_small_method_classes() %>%
+  handle_cov_outliers("SequencingMethod", "E_score") %>%
+  select(E_score, SequencingMethod)
+
+sequencing_tree_fit <- get_tree_fit(sequencing_df, "E_score")
+sequencing_tree_fit %>% collect_metrics()
+sequencing_tree <- extract_workflow(sequencing_tree_fit)
+sequencing_tree
+sequencing_tree %>%
+  extract_fit_engine() %>%
+  rpart.plot(roundint = FALSE)
+sequencing_tree %>%
+  extract_fit_parsnip() %>%
+  vip()
+
+# When considering only sequencing methods with 5 or more observations and
+# removing in-class outliers, there does appear a moderate importance
+# on assembly method, with the moderate R^2 supporting this.
+
+## Ambiguous count
+
+# A linear regression model is already being used for the analysis.
+# Applying a decision tree to this metric (as a count or normalized)
+# finds no importance of this variable.
+
+# IR mismatches
+
+# A linear regression model is already being used for the analysis.
+# Applying a decision tree to this metric (as a count or normalized)
+# finds no importance of this variable.
+
+## BONUS - Read length decision tree
+length_df <- genome_df %>%
+  filter_small_method_classes() %>%
+  handle_outliers("E_score", 3, 0) %>%
+  select(E_score, avgLength)
+
+length_tree_fit <- get_tree_fit(length_df, "E_score")
+length_tree_fit %>% collect_metrics()
+length_tree <- extract_workflow(length_tree_fit)
+length_tree
+length_tree %>%
+  extract_fit_engine() %>%
+  rpart.plot(roundint = FALSE)
+length_tree %>%
+  extract_fit_parsnip() %>%
+  vip()
