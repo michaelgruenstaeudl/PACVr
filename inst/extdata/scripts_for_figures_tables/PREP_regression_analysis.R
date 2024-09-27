@@ -1,0 +1,219 @@
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(tcltk, tidyverse, tidymodels, vip, rpart.plot)
+
+# Select input directory and input files
+inDir_data <- tk_choose.dir(default="~", caption='Select directory with the .gb and .bam files')
+inFn_sampleList <- tk_choose.files(caption='Select samples list file in csv-format (e.g., input/JenkeEtAl2024_samples_list.csv)')
+
+# Find and load script dependency
+assembly_name <- "PREP_coverage_data_assembly.R"
+assembly_path <- list.files(path = getwd(), pattern = assembly_name, recursive = TRUE, full.names = TRUE)
+source(assembly_path)
+
+
+### FUNCTIONS ###
+get_long_cov_df <- function() {
+  metadata_df <- get_metadata_df(FALSE)
+
+  noncoding_pattern <- ".[0-9]_coverage.summary.noncoding.tsv$"
+  noncoding_df <- create_cov_sum_df(noncoding_pattern) %>%
+    mutate(RegionSubset = "noncoding")
+
+  coding_pattern <- ".[0-9]_coverage.summary.genes.tsv$"
+  coding_df <- create_cov_sum_df(coding_pattern) %>%
+    mutate(RegionSubset = "coding")
+
+  regions_pattern <- ".[0-9]_summary.regions.tsv$"
+  regions_df <- create_cov_sum_df(regions_pattern) %>%
+    mutate(RegionSubset = "all") %>%
+    mutate(Chromosome = replace(Chromosome, Chromosome == "Complete_genome", "Unpartitioned"))
+
+  coverage_df <- bind_rows(list(noncoding_df, coding_df, regions_df)) %>%
+    inner_join(metadata_df, by = "Accession") %>%
+    mutate(Chromosome = relevel(as.factor(Chromosome), ref = "Unpartitioned")) %>%
+    mutate(Accession = as.factor(Accession)) %>%
+    mutate(RegionSubset = relevel(as.factor(RegionSubset), ref = "all")) %>%
+    mutate(AssemblyMethod = as.factor(AssemblyMethod)) %>%
+    mutate(SequencingMethod = as.factor(SequencingMethod)) %>%
+    mutate(IR_mismatches = as.integer(IR_mismatches)) %>%
+    rename(lowCovWin = lowCovWin_abs) %>%
+    mutate(N_count = 1 / (N_count + 1)) %>%
+    mutate(IR_mismatches = 1/ (IR_mismatches + 1))
+}
+
+filter_most_metadata <- function(df) {
+  df %>% select(-TITLE, -SRA, -Samples, -Accession)
+}
+
+filter_for_coverage <- function(df) {
+  df %>% filter_most_metadata() %>%
+    select(-N_count, -IR_mismatches, -E_score, -AssemblyMethod, -SequencingMethod, -lowCovWin_perKilobase)
+}
+
+filter_region_x_subset <- function(df) {
+  df %>%
+    filter_for_coverage() %>%
+    filter(!is.na(Chromosome)) %>%
+    filter(!str_detect(Chromosome, "Junction")) %>%
+    filter(Chromosome != "Unpartitioned") %>%
+    filter(RegionSubset != "all")
+}
+
+filter_complete_subset <- function(df) {
+  df %>%
+    filter_for_coverage() %>%
+    filter(Chromosome == "Unpartitioned") %>%
+    select(-Chromosome) %>%
+    filter(RegionSubset != "all")
+}
+
+filter_complete_region <- function(df) {
+  df %>%
+    filter_for_coverage() %>%
+    filter(RegionSubset == "all") %>%
+    select(-RegionSubset) %>%
+    filter(Chromosome != "Unpartitioned")
+}
+
+filter_complete_genome <- function(df) {
+  df %>%
+    filter_most_metadata() %>%
+    select(-lowCovWin_perKilobase) %>%
+    filter(Chromosome == "Unpartitioned") %>%
+    filter(RegionSubset == "all") %>%
+    select(-Chromosome, -RegionSubset)
+}
+
+filter_small_method_classes <- function(df) {
+  df %>%
+    group_by(AssemblyMethod) %>%
+    filter(n() >= 5) %>%
+    ungroup() %>%
+    group_by(SequencingMethod) %>%
+    filter(n() >= 5) %>%
+    ungroup()
+}
+
+split_train_test <- function(df, prop = 0.8) {
+  set.seed(42)
+  initial_split(
+    df %>%
+      filter(if_all(everything(), ~!is.na(.))),
+    prop = prop
+  )
+}
+
+get_tree_fit <- function(df, response_name, grid_levels = 5) {
+  # The below code is broadly borrowed from
+  # https://www.tidymodels.org/start/tuning/
+
+  tree_model <- decision_tree(
+    cost_complexity = tune(),
+    min_n = tune(),
+    tree_depth = tune()
+  ) %>%
+    set_engine("rpart") %>%
+    set_mode("regression")
+
+  tree_grid <- grid_regular(
+    cost_complexity(),
+    min_n(),
+    tree_depth(),
+    levels = grid_levels
+  )
+
+  split <- df %>%
+    split_train_test()
+  set.seed(321)
+  folds <- split %>%
+    training() %>%
+    vfold_cv(v = 10)
+
+  formula <- as.formula(paste(response_name, "~ ."))
+  tree_wf <- workflow() %>%
+    add_model(tree_model) %>%
+    add_formula(formula)
+
+  set.seed(123)
+  tree_res <- tree_wf %>%
+    tune_grid(resamples = folds, grid = tree_grid)
+
+  best_tree <- tree_res %>%
+    select_best(metric = "rmse")
+
+  final_wf <- tree_wf %>%
+    finalize_workflow(best_tree)
+
+  final_fit <- final_wf %>%
+    last_fit(split)
+}
+
+
+## Get all coverage data including available metadata
+cov_df <- get_long_cov_df()
+
+
+### COVERAGE ANALYSIS ###
+
+# The data that looks at only region or subset (coding-noncoding) coverage
+# is available by `filter_complete_region()` and `filter_complete_subset()`,
+# but conceptually provides less detail as data by region-subset,
+# and from preliminary models does not appear to result in statistically significant differences.
+# Instead we will directly proceed to region-subset analysis.
+
+## Mutually disjoint region-subset coverage data
+reg_sub_df <- cov_df %>%
+  filter_region_x_subset()
+
+## Preliminary linear regression model
+reg_sub_lm_fit <- linear_reg() %>%
+  fit(lowCovWin ~ . + Chromosome * RegionSubset, data = reg_sub_df)
+tidy(reg_sub_lm_fit)
+summary(reg_sub_lm_fit$fit)
+
+# When controlling for both region and coding-noncoding subset,
+# including an interaction term for the two, we generally see a statistically significant differences
+# in these two dimensions.
+# Specifically, compared to the reference ChromosomeIRa:RegionSubsetcoding,
+# the other region-subsets are statistically different, except for IRb,
+# which is not significally different in either coding or noncoding.
+# We could perform additional diagnostics tests to iterate on the model to be more statistically valid,
+# or regularize the model with something like LASSO or ridge regression, but for now let's move onto
+# other model types as the motivation for the hypothesis tests seems supported.
+
+## Decision tree tuned to minimize RMSE on a training subset of `reg_sub_df`
+reg_sub_tree_fit <- get_tree_fit(reg_sub_df, "lowCovWin")
+
+# Performance on testing subset
+reg_sub_tree_fit %>%
+  collect_metrics()
+
+# Structure of tree and importance of predictors
+reg_sub_tree <- extract_workflow(reg_sub_tree_fit)
+reg_sub_tree
+reg_sub_tree %>%
+  extract_fit_engine() %>%
+  rpart.plot(roundint = FALSE)
+reg_sub_tree %>%
+  extract_fit_parsnip() %>%
+  vip()
+
+# We see that the resulting model has an incredibly similar explanatory power (R^2) to the linear regression,
+# and a slightly lower RMSE. The importance of the variables in the decision tree are, in order from greatest
+# to least: region length, region, region subset, and average sample length. Inspecting the final tree created,
+# we notice that while both coding-noncoding are important for prediction, only the SSC region was utilized.
+# This leads up to believe that although the effect of region on coverage is not as great as subset type,
+# both are important in reducing variance.
+
+
+## EVENNESS ANALYSIS ##
+
+## Examine complete genomes for evenness
+genome_df <- cov_df %>%
+  filter_complete_genome() %>%
+  filter_small_method_classes()
+
+# So far multiple models have been attempted to provide either classification or regression insights from
+# evenness score and the four variables of interest: ambiguous nucleotide count, IR mismatch count, sequencing
+# platform, and assembly software. Additional investigations will continue, but worst-case scenario we
+# can continue using the nonparametric group statistics for evenness.
