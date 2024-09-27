@@ -67,7 +67,8 @@ normalize_metadata_avgLength <- function(meta_data) {
     inner_join(meta_data, ., by = "Accession") %>%
     distinct(Accession, .keep_all = TRUE) %>%
     select(-avgLength) %>%
-    rename(avgLength = newAvgLength)
+    rename(avgLength = newAvgLength) %>%
+    mutate(avgLength = as.integer(avgLength))
 
   return(meta_data)
 }
@@ -78,7 +79,7 @@ join_metadata_with_samplelist <- function(meta_data) {
   return(meta_data)
 }
 
-normalize_metadata_names <- function(meta_data) {
+normalize_metadata_names <- function(meta_data, annotate_len) {
   # resolve spelling mistake
   if ("Eragrostis_tef" %in% meta_data$Samples) {
 	  meta_data[which(meta_data$Samples == "Eragrostis_tef"), ]$AssemblyMethod <- "Geneious"
@@ -136,21 +137,23 @@ normalize_metadata_names <- function(meta_data) {
   meta_data$SequencingMethod <- gsub("Genome Analyzer", "GA", meta_data$SequencingMethod)
 
   # annotate avgLength
-  meta_data$avgLength <-
-    ifelse(
-      meta_data$avgLength <= 300,
-      paste0(meta_data$avgLength, " (s)"),
-      paste0(meta_data$avgLength, " (m)")
-    )
+  if (annotate_len) {
+    meta_data$avgLength <-
+      ifelse(
+        meta_data$avgLength <= 300,
+        paste0(meta_data$avgLength, " (s)"),
+        paste0(meta_data$avgLength, " (m)")
+      )
+  }
 
   return(meta_data)
 }
 
-get_metadata_df <- function() {
+get_metadata_df <- function(annotate_len = TRUE) {
   meta_data <- create_metadata_df() %>%
     normalize_metadata_avgLength() %>%
     join_metadata_with_samplelist() %>%
-    normalize_metadata_names()
+    normalize_metadata_names(annotate_len)
 
   return(meta_data)
 }
