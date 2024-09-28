@@ -311,16 +311,56 @@ sequencing_tree %>%
 # on assembly method, with the moderate R^2 supporting this.
 
 ## Ambiguous count
+ambig_df <- genome_df %>%
+  filter_small_method_classes() %>%
+  handle_outliers("E_score", 3, 0) %>%
+  select(E_score, N_count)
 
-# A linear regression model is already being used for the analysis.
-# Applying a decision tree to this metric (as a count or normalized)
-# finds no importance of this variable.
+ambig_lm_fit <- linear_reg() %>%
+  fit(E_score ~ ., data = ambig_df)
+tidy(ambig_lm_fit)
+summary(ambig_lm_fit$fit)
+
+ambig_tree_fit <- get_tree_fit(ambig_df, "E_score")
+ambig_tree_fit %>% collect_metrics()
+ambig_tree <- extract_workflow(ambig_tree_fit)
+ambig_tree
+ambig_tree %>%
+  extract_fit_engine() %>%
+  rpart.plot(roundint = FALSE)
+ambig_tree %>%
+  extract_fit_parsnip() %>%
+  vip()
+
+# The linear regression result supports the previous Pearson metric that demonstrated
+# statistical significance for ambiguous count's impact on evenness. The decision tree
+# additionally supports this with importance given to the count.
 
 # IR mismatches
+mismatch_df <- genome_df %>%
+  filter_small_method_classes() %>%
+  handle_outliers("E_score", 3, 0) %>%
+  select(E_score, IR_mismatches)
 
-# A linear regression model is already being used for the analysis.
-# Applying a decision tree to this metric (as a count or normalized)
-# finds no importance of this variable.
+mismatch_lm_fit <- linear_reg() %>%
+  fit(E_score ~ ., data = mismatch_df)
+tidy(mismatch_lm_fit)
+summary(mismatch_lm_fit$fit)
+
+mismatch_tree_fit <- get_tree_fit(mismatch_df, "E_score")
+mismatch_tree_fit %>% collect_metrics()
+mismatch_tree <- extract_workflow(mismatch_tree_fit)
+mismatch_tree
+mismatch_tree %>%
+  extract_fit_engine() %>%
+  rpart.plot(roundint = FALSE)
+mismatch_tree %>%
+  extract_fit_parsnip() %>%
+  vip()
+
+# The linear regression result supports the previous Pearson metric that demonstrated
+# lack of statistical significance for mismatch's impact on evenness. The decision tree
+# additionally supports this with no importance given to mismatches.
 
 ## BONUS - Read length decision tree
 length_df <- genome_df %>%
