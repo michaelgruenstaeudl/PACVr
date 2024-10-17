@@ -1,5 +1,5 @@
 ########################################################################
-#				DEPENDENCIES, DEFINING INPUT/OUTPUT					   #
+#                DEPENDENCIES, DEFINING INPUT/OUTPUT                   #
 ########################################################################
 
 if (!require("pacman")) install.packages("pacman")
@@ -10,7 +10,7 @@ inData_fn <- tk_choose.files(default="~", caption='Select the RDS file generated
 cov_df <- readRDS(file=inData_fn)
 
 ########################################################################
-#							FUNCTIONS								   #
+#                            FUNCTIONS                                 #
 ########################################################################
 
 filter_most_metadata <- function(df) {
@@ -122,7 +122,7 @@ get_tree_fit <- function(df, response_name, grid_levels = 5) {
 
 
 ########################################################################
-#								MAIN								   #
+#                               MAIN                                   #
 ########################################################################
 
 #########################
