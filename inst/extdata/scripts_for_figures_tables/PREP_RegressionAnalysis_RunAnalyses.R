@@ -3,11 +3,26 @@
 ########################################################################
 
 if (!require("pacman")) install.packages("pacman")
-pacman::p_load(tcltk, tidyverse, tidymodels, vip, rpart.plot)
+pacman::p_load(svglite, tcltk, tidyverse, tidymodels, vip, rpart.plot)
 
 inData_fn <- tk_choose.files(default="~", caption='Select the RDS file generated via script `PREP_RegressionAnalysis_DataFiltering`', multi=FALSE)
-
 cov_df <- readRDS(file=inData_fn)
+
+# Find and load script dependency
+assembly_name <- "PREP_coverage_data_assembly.R"
+assembly_path <- list.files(path = getwd(), pattern = assembly_name, recursive = TRUE, full.names = TRUE)
+preparation_name <- "PREP_coverage_data_preparation.R"
+preparation_path <- list.files(path = getwd(), pattern = preparation_name, recursive = TRUE, full.names = TRUE)
+
+# tryCatch necessary if there are multiple R files with the same name on computer
+tryCatch(
+    expr = {source(assembly_path)},
+	error = function(e){source(assembly_path[[grep("git", assembly_path)]])}
+)
+tryCatch(
+    expr = {source(preparation_path)},
+	error = function(e){source(preparation_path[[grep("git", preparation_path)]])}
+)
 
 ########################################################################
 #                            FUNCTIONS                                 #
@@ -155,6 +170,8 @@ summary(reg_sub_lm_fit$fit)
 # or regularize the model with something like LASSO or ridge regression, but for now let's move onto
 # other model types as the motivation for the hypothesis tests seems supported.
 
+########################################################################
+
 ## DECISION TREE tuned to minimize RMSE on a training subset of `reg_sub_df`
 reg_sub_tree_fit <- get_tree_fit(reg_sub_df, "lowCovWin")
 
@@ -165,12 +182,21 @@ reg_sub_tree_fit %>%
 # Structure of tree and importance of predictors
 reg_sub_tree <- extract_workflow(reg_sub_tree_fit)
 reg_sub_tree
+
+# Decision Tree Plot for QUADRIPARTITE GENOME REGION and CODING/NONCODING DIVISION
+# Plotting a regression tree
+#svglite("Decision_Tree_Plot.svg", width=4, height=4)
 reg_sub_tree %>%
-  extract_fit_engine() %>%
-  rpart.plot(roundint = FALSE)
-reg_sub_tree %>%
-  extract_fit_parsnip() %>%
-  vip()
+	extract_fit_engine() %>%
+	rpart.plot(roundint = FALSE)
+#dev.off()
+
+# Variable Importance Plot for QUADRIPARTITE GENOME REGION and CODING/NONCODING DIVISION
+# Plotting importance scores for the model predictors
+p_vip_quadrregion_coding <- reg_sub_tree %>%
+						extract_fit_parsnip() %>%
+						vip()
+#ggsave(filename="Variable_Importance_Plot.svg", device='svg', dpi=300, width=4, height=4, units=("cm"))
 
 # We see that the resulting model has an incredibly similar explanatory power (R^2) to the linear regression,
 # and a slightly lower RMSE. The importance of the variables in the decision tree are, in order from greatest
@@ -178,6 +204,8 @@ reg_sub_tree %>%
 # we notice that while both coding-noncoding are important for prediction, only the SSC region was utilized.
 # This leads up to believe that although the effect of region on coverage is not as great as subset type,
 # both are important in reducing variance.
+
+########################################################################
 
 ## DECISION TREE for just region and region subset
 rs_2_sub_df <- reg_sub_df %>%
@@ -190,16 +218,30 @@ rs_2_tree_fit %>%
   collect_metrics()
 rs_2_tree <- extract_workflow(rs_2_tree_fit)
 rs_2_tree
+
+
+# Decision Tree Plot for QUADRIPARTITE GENOME REGION only
+# Plotting a regression tree
+#svglite("Decision_Tree_Plot.svg", width=4, height=4)
 rs_2_tree %>%
-  extract_fit_engine() %>%
-  rpart.plot(roundint = FALSE)
-rs_2_tree %>%
-  extract_fit_parsnip() %>%
-  vip()
+	extract_fit_engine() %>%
+	rpart.plot(roundint = FALSE)
+#dev.off()
+
+# Variable Importance Plot for QUADRIPARTITE GENOME REGION only
+# Plotting importance scores for the model predictors
+p_vip_quadrregionONLY <- rs_2_tree %>%
+						extract_fit_parsnip() %>%
+						vip()
+#ggsave(filename="Variable_Importance_Plot.svg", device='svg', dpi=300, width=4, height=4, units=("cm"))
 
 # Focusing on region and region subset, in addition to removing outliers, supports the results from above.
 # That is, that the coding-noncoding split and the SSC region are most important for predicting
 # coverage, but we get a broader view of how region is used beyond just SSC.
+
+########################################################################
+
+
 
 
 #######################
