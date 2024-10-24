@@ -135,6 +135,15 @@ get_tree_fit <- function(df, response_name, grid_levels = 5) {
     last_fit(split)
 }
 
+plot_regression_tree <- function(tree, descr) {
+	descr = gsub(" ", "_", descr)
+	svglite(paste0("DecisionTree__Effects_of_", descr,".svg"), width=8, height=4)
+	tree %>%
+		extract_fit_engine() %>%
+		rpart.plot(roundint = FALSE)
+	dev.off()
+}
+
 ########################################################################
 #                               MAIN                                   #
 ########################################################################
@@ -170,30 +179,25 @@ summary(reg_sub_lm_fit$fit)
 # other model types as the motivation for the hypothesis tests seems supported.
 
 ########################################################################
-## Effects of the QUADRIPARTITE GENOME REGION and CODING/NONCODING DIVISION on SEQUENCING COVERAGE
+## Effects of the QUADRIPARTITE REGION and CODING-NONCODING DIVISION on SEQ COVERAGE
 ########################################################################
+descr = "QUADRIPARTITE REGION and CODING-NONCODING DIVISION on SEQ COVERAGE"
 
 ## DECISION TREE tuned to minimize RMSE on a training subset of `reg_sub_df`
 reg_sub_tree_fit <- get_tree_fit(reg_sub_df, "lowCovWin")
 
 # Performance on testing subset
-reg_sub_tree_fit %>%
-  collect_metrics()
+reg_sub_tree_fit %>% collect_metrics()
 
 # Structure of tree and importance of predictors
 reg_sub_tree <- extract_workflow(reg_sub_tree_fit)
 reg_sub_tree
 
-####################################
-# Decision-Tree plot for QUADRIPARTITE GENOME REGION and CODING/NONCODING DIVISION
-# Plotting a regression tree
-#svglite("Decision_Tree_Plot.svg", width=4, height=4)
-reg_sub_tree %>%
-	extract_fit_engine() %>%
-	rpart.plot(roundint = FALSE)
-#dev.off()
+# Decision-Tree plot
+plot_regression_tree(reg_sub_tree, descr)
 
-# Variable-Importance plot for QUADRIPARTITE GENOME REGION and CODING/NONCODING DIVISION
+
+# Variable-Importance plot for QUADRIPARTITE REGION and CODING-NONCODING DIVISION
 # Plotting importance scores for the model predictors
 p_vip_quadrregion_coding <- reg_sub_tree %>%
 						extract_fit_parsnip() %>%
@@ -211,29 +215,24 @@ p_vip_quadrregion_coding <- reg_sub_tree %>%
 
 
 ########################################################################
-## Effects of the QUADRIPARTITE GENOME REGION on SEQUENCING COVERAGE
+## Effects of only the QUADRIPARTITE REGION on SEQ COVERAGE
 ########################################################################
+descr = "only QUADRIPARTITE REGION on SEQ COVERAGE"
+
 rs_2_sub_df <- reg_sub_df %>%
   handle_outliers("lowCovWin", 3, 0) %>%
   select(lowCovWin, Chromosome, RegionSubset)
 
 rs_2_tree_fit <- get_tree_fit(rs_2_sub_df, "lowCovWin")
 
-rs_2_tree_fit %>%
-  collect_metrics()
+rs_2_tree_fit %>% collect_metrics()
 rs_2_tree <- extract_workflow(rs_2_tree_fit)
 rs_2_tree
 
-####################################
-# Decision-Tree plot for QUADRIPARTITE GENOME REGION only
-# Plotting a regression tree
-#svglite("Decision_Tree_Plot.svg", width=4, height=4)
-rs_2_tree %>%
-	extract_fit_engine() %>%
-	rpart.plot(roundint = FALSE)
-#dev.off()
+# Decision-Tree plot
+plot_regression_tree(rs_2_tree, descr)
 
-# Variable-Importance plot for QUADRIPARTITE GENOME REGION only
+# Variable-Importance plot for QUADRIPARTITE REGION only
 # Plotting importance scores for the model predictors
 p_vip_quadrregionONLY <- rs_2_tree %>%
 						extract_fit_parsnip() %>%
@@ -261,12 +260,11 @@ p_vip_quadrregionONLY <- rs_2_tree %>%
 # relationship exists.
 
 ########################################################################
-## Effects of ALL FOUR VARIABLES* on SEQUENCING EVENNESS
-# * NUMBER OF AMBIGUOUS NUCLEOTIDES, 
-# NUMBER OF IR MISMATCHES, 
-# IDENTITY OF SEQUENCING PLATFORM, and 
-# IDENTITY OF ASSEMBLY METHOD
+## Effects of FOUR VARIABLES (AMBIGUOUS NUCL, IR MISMATCHES, 
+## SEQ PLATFORM, and ASSEMBLY METHOD) on SEQ EVENNESS
 ########################################################################
+descr = "FOUR VARIABLES on SEQ EVENNESS"
+
 genome_df <- cov_df %>%
   filter_complete_genome()
 
@@ -276,19 +274,12 @@ genome_filter_df <- genome_df %>%
   select(-lowCovWin, -AssemblyMethod)
 
 genome_tree_fit <- get_tree_fit(genome_filter_df, "E_score")
-genome_tree_fit %>%
-  collect_metrics()
+genome_tree_fit %>% collect_metrics()
 genome_tree <- extract_workflow(genome_tree_fit)
 genome_tree
 
-####################################
-# Decision-Tree plot for ALL FOUR VARIABLES COMBINED
-# Plotting a regression tree
-#svglite("Decision_Tree_Plot.svg", width=4, height=4)
-genome_tree %>%
-  extract_fit_engine() %>%
-  rpart.plot(roundint = FALSE)
-#dev.off()
+# Decision-Tree plot
+plot_regression_tree(genome_tree, descr)
 
 # Variable-Importance plot for ALL FOUR VARIABLES COMBINED
 # Plotting importance scores for the model predictors
@@ -306,30 +297,26 @@ genome_tree %>%
 
 
 ########################################################################
-## Effects of the IDENTITY OF ASSEMBLY METHOD on SEQUENCING EVENNESS
+## Effects of only ASSEMBLY METHOD on SEQ EVENNESS
 ########################################################################
-assembly_df <- genome_df %>%
+descr = "only ASSEMBLY METHOD on SEQ EVENNESS"
+
+asmMethod_df <- genome_df %>%
   filter_small_method_classes() %>%
   handle_cov_outliers("AssemblyMethod", "E_score") %>%
   select(E_score, AssemblyMethod)
 
-assembly_tree_fit <- get_tree_fit(assembly_df, "E_score")
-assembly_tree_fit %>% collect_metrics()
-assembly_tree <- extract_workflow(assembly_tree_fit)
-assembly_tree
+asmMethod_tree_fit <- get_tree_fit(asmMethod_df, "E_score")
+asmMethod_tree_fit %>% collect_metrics()
+asmMethod_tree <- extract_workflow(asmMethod_tree_fit)
+asmMethod_tree
 
-####################################
-# Decision-Tree plot for IDENTITY OF ASSEMBLY METHOD only
-# Plotting a regression tree
-#svglite("Decision_Tree_Plot.svg", width=4, height=4)
-assembly_tree %>%
-  extract_fit_engine() %>%
-  rpart.plot(roundint = FALSE)
-#dev.off()
+# Decision-Tree plot
+plot_regression_tree(asmMethod_tree, descr)
 
-# Variable-Importance plot for IDENTITY OF ASSEMBLY METHOD only
+# Variable-Importance plot for ASSEMBLY METHOD only
 # Plotting importance scores for the model predictors
-assembly_tree %>%
+asmMethod_tree %>%
   extract_fit_parsnip() %>%
   vip()
 #ggsave(filename="Variable_Importance_Plot.svg", device='svg', dpi=300, width=4, height=4, units=("cm"))
@@ -346,30 +333,26 @@ assembly_tree %>%
 
 
 ########################################################################
-## Effects of the IDENTITY OF SEQUENCING PLATFORM on SEQUENCING EVENNESS
+## Effects of only SEQ PLATFORM on SEQ EVENNESS
 ########################################################################
-sequencing_df <- genome_df %>%
+descr = "only SEQ PLATFORM on SEQ EVENNESS"
+
+seqMethod_df <- genome_df %>%
   filter_small_method_classes() %>%
   handle_cov_outliers("SequencingMethod", "E_score") %>%
   select(E_score, SequencingMethod)
 
-sequencing_tree_fit <- get_tree_fit(sequencing_df, "E_score")
-sequencing_tree_fit %>% collect_metrics()
-sequencing_tree <- extract_workflow(sequencing_tree_fit)
-sequencing_tree
+seqMethod_tree_fit <- get_tree_fit(seqMethod_df, "E_score")
+seqMethod_tree_fit %>% collect_metrics()
+seqMethod_tree <- extract_workflow(seqMethod_tree_fit)
+seqMethod_tree
 
-####################################
-# Decision-Tree plot for IDENTITY OF SEQUENCING PLATFORM only
-# Plotting a regression tree
-#svglite("Decision_Tree_Plot.svg", width=4, height=4)
-sequencing_tree %>%
-  extract_fit_engine() %>%
-  rpart.plot(roundint = FALSE)
-#dev.off()
+# Decision-Tree plot
+plot_regression_tree(seqMethod_tree, descr)
 
-# Variable-Importance plot for IDENTITY OF SEQUENCING PLATFORM only
+# Variable-Importance plot for SEQ PLATFORM only
 # Plotting importance scores for the model predictors
-sequencing_tree %>%
+seqMethod_tree %>%
   extract_fit_parsnip() %>%
   vip()
 #ggsave(filename="Variable_Importance_Plot.svg", device='svg', dpi=300, width=4, height=4, units=("cm"))
@@ -382,35 +365,31 @@ sequencing_tree %>%
 
 
 ########################################################################
-## Effects of the NUMBER OF AMBIGUOUS NUCLEOTIDES on SEQUENCING EVENNESS
+## Effects of only AMBIGUOUS NUCL on SEQ EVENNESS
 ########################################################################
-ambig_df <- genome_df %>%
+descr = "only AMBIGUOUS NUCL on SEQ EVENNESS"
+
+ambigNucl_df <- genome_df %>%
   filter_small_method_classes() %>%
   handle_outliers("E_score", 3, 0) %>%
   select(E_score, N_count)
 
-ambig_lm_fit <- linear_reg() %>%
-  fit(E_score ~ ., data = ambig_df)
-tidy(ambig_lm_fit)
-summary(ambig_lm_fit$fit)
+ambigNucl_lm_fit <- linear_reg() %>%
+  fit(E_score ~ ., data = ambigNucl_df)
+tidy(ambigNucl_lm_fit)
+summary(ambigNucl_lm_fit$fit)
 
-ambig_tree_fit <- get_tree_fit(ambig_df, "E_score")
-ambig_tree_fit %>% collect_metrics()
-ambig_tree <- extract_workflow(ambig_tree_fit)
-ambig_tree
+ambigNucl_tree_fit <- get_tree_fit(ambigNucl_df, "E_score")
+ambigNucl_tree_fit %>% collect_metrics()
+ambigNucl_tree <- extract_workflow(ambigNucl_tree_fit)
+ambigNucl_tree
 
-####################################
-# Decision-Tree plot for NUMBER OF AMBIGUOUS NUCLEOTIDES only
-# Plotting a regression tree
-#svglite("Decision_Tree_Plot.svg", width=4, height=4)
-ambig_tree %>%
-  extract_fit_engine() %>%
-  rpart.plot(roundint = FALSE)
-#dev.off()
+# Decision-Tree plot
+plot_regression_tree(ambigNucl_tree, descr)
 
-# Variable-Importance plot for NUMBER OF AMBIGUOUS NUCLEOTIDES only
+# Variable-Importance plot for AMBIGUOUS NUCL only
 # Plotting importance scores for the model predictors
-ambig_tree %>%
+ambigNucl_tree %>%
   extract_fit_parsnip() %>%
   vip()
 #ggsave(filename="Variable_Importance_Plot.svg", device='svg', dpi=300, width=4, height=4, units=("cm"))
@@ -423,35 +402,34 @@ ambig_tree %>%
 
 
 ########################################################################
-## Effects of the NUMBER OF IR MISMATCHES on SEQUENCING EVENNESS
+## Effects of only IR MISMATCHES on SEQ EVENNESS
 ########################################################################
-mismatch_df <- genome_df %>%
+descr = "only IR MISMATCHES on SEQ EVENNESS"
+
+IRmism_df <- genome_df %>%
   filter_small_method_classes() %>%
   handle_outliers("E_score", 3, 0) %>%
   select(E_score, IR_mismatches)
 
-mismatch_lm_fit <- linear_reg() %>%
-  fit(E_score ~ ., data = mismatch_df)
-tidy(mismatch_lm_fit)
-summary(mismatch_lm_fit$fit)
+IRmism_lm_fit <- linear_reg() %>%
+  fit(E_score ~ ., data = IRmism_df)
+tidy(IRmism_lm_fit)
+summary(IRmism_lm_fit$fit)
 
-mismatch_tree_fit <- get_tree_fit(mismatch_df, "E_score")
-mismatch_tree_fit %>% collect_metrics()
-mismatch_tree <- extract_workflow(mismatch_tree_fit)
-mismatch_tree
+IRmism_tree_fit <- get_tree_fit(IRmism_df, "E_score")
+IRmism_tree_fit %>% collect_metrics()
+IRmism_tree <- extract_workflow(IRmism_tree_fit)
+IRmism_tree
 
-####################################
-# Decision-Tree plot for NUMBER OF IR MISMATCHES only
-# Plotting a regression tree
-#svglite("Decision_Tree_Plot.svg", width=4, height=4)
-mismatch_tree %>%
-  extract_fit_engine() %>%
-  rpart.plot(roundint = FALSE)
-#dev.off()
+# Decision-Tree plot
+plot_regression_tree(IRmism_tree, descr)
 
-# Variable-Importance plot for NUMBER OF IR MISMATCHES only
+
+## DEBUGGING NECESSARY: ERROR OCCURS IN COMMAND HEREAFTER !
+
+# Variable-Importance plot for IR MISMATCHES only
 # Plotting importance scores for the model predictors
-mismatch_tree %>%
+IRmism_tree %>%
   extract_fit_parsnip() %>%
   vip()
 #ggsave(filename="Variable_Importance_Plot.svg", device='svg', dpi=300, width=4, height=4, units=("cm"))
@@ -466,30 +444,26 @@ mismatch_tree %>%
 ########################################################################
 
 ########################################################################
-## Effects of READ LENGTH on SEQUENCING EVENNESS
+## Effects of READ LENGTH on SEQ EVENNESS
 ########################################################################
-length_df <- genome_df %>%
+descr = "READ LENGTH on SEQ EVENNESS"
+
+readLen_df <- genome_df %>%
   filter_small_method_classes() %>%
   handle_outliers("E_score", 3, 0) %>%
   select(E_score, avgLength)
 
-length_tree_fit <- get_tree_fit(length_df, "E_score")
-length_tree_fit %>% collect_metrics()
-length_tree <- extract_workflow(length_tree_fit)
-length_tree
+readLen_tree_fit <- get_tree_fit(readLen_df, "E_score")
+readLen_tree_fit %>% collect_metrics()
+readLen_tree <- extract_workflow(readLen_tree_fit)
+readLen_tree
 
-####################################
-# Decision-Tree plot for READ LENGTH
-# Plotting a regression tree
-#svglite("Decision_Tree_Plot.svg", width=4, height=4)
-length_tree %>%
-  extract_fit_engine() %>%
-  rpart.plot(roundint = FALSE)
-#dev.off()
+# Decision-Tree plot
+plot_regression_tree(readLen_tree, descr)
 
 # Variable-Importance plot for READ LENGTH
 # Plotting importance scores for the model predictors
-length_tree %>%
+readLen_tree %>%
   extract_fit_parsnip() %>%
   vip()
 #ggsave(filename="Variable_Importance_Plot.svg", device='svg', dpi=300, width=4, height=4, units=("cm"))
