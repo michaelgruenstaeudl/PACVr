@@ -135,7 +135,6 @@ get_tree_fit <- function(df, response_name, grid_levels = 5) {
     last_fit(split)
 }
 
-
 ########################################################################
 #                               MAIN                                   #
 ########################################################################
@@ -171,6 +170,8 @@ summary(reg_sub_lm_fit$fit)
 # other model types as the motivation for the hypothesis tests seems supported.
 
 ########################################################################
+## Effects of the QUADRIPARTITE GENOME REGION and CODING/NONCODING DIVISION on SEQUENCING COVERAGE
+########################################################################
 
 ## DECISION TREE tuned to minimize RMSE on a training subset of `reg_sub_df`
 reg_sub_tree_fit <- get_tree_fit(reg_sub_df, "lowCovWin")
@@ -183,7 +184,8 @@ reg_sub_tree_fit %>%
 reg_sub_tree <- extract_workflow(reg_sub_tree_fit)
 reg_sub_tree
 
-# Decision Tree Plot for QUADRIPARTITE GENOME REGION and CODING/NONCODING DIVISION
+####################################
+# Decision-Tree plot for QUADRIPARTITE GENOME REGION and CODING/NONCODING DIVISION
 # Plotting a regression tree
 #svglite("Decision_Tree_Plot.svg", width=4, height=4)
 reg_sub_tree %>%
@@ -191,13 +193,15 @@ reg_sub_tree %>%
 	rpart.plot(roundint = FALSE)
 #dev.off()
 
-# Variable Importance Plot for QUADRIPARTITE GENOME REGION and CODING/NONCODING DIVISION
+# Variable-Importance plot for QUADRIPARTITE GENOME REGION and CODING/NONCODING DIVISION
 # Plotting importance scores for the model predictors
 p_vip_quadrregion_coding <- reg_sub_tree %>%
 						extract_fit_parsnip() %>%
 						vip()
 #ggsave(filename="Variable_Importance_Plot.svg", device='svg', dpi=300, width=4, height=4, units=("cm"))
+####################################
 
+# RESULTS:
 # We see that the resulting model has an incredibly similar explanatory power (R^2) to the linear regression,
 # and a slightly lower RMSE. The importance of the variables in the decision tree are, in order from greatest
 # to least: region length, region, region subset, and average sample length. Inspecting the final tree created,
@@ -205,9 +209,10 @@ p_vip_quadrregion_coding <- reg_sub_tree %>%
 # This leads up to believe that although the effect of region on coverage is not as great as subset type,
 # both are important in reducing variance.
 
-########################################################################
 
-## DECISION TREE for just region and region subset
+########################################################################
+## Effects of the QUADRIPARTITE GENOME REGION on SEQUENCING COVERAGE
+########################################################################
 rs_2_sub_df <- reg_sub_df %>%
   handle_outliers("lowCovWin", 3, 0) %>%
   select(lowCovWin, Chromosome, RegionSubset)
@@ -219,8 +224,8 @@ rs_2_tree_fit %>%
 rs_2_tree <- extract_workflow(rs_2_tree_fit)
 rs_2_tree
 
-
-# Decision Tree Plot for QUADRIPARTITE GENOME REGION only
+####################################
+# Decision-Tree plot for QUADRIPARTITE GENOME REGION only
 # Plotting a regression tree
 #svglite("Decision_Tree_Plot.svg", width=4, height=4)
 rs_2_tree %>%
@@ -228,13 +233,15 @@ rs_2_tree %>%
 	rpart.plot(roundint = FALSE)
 #dev.off()
 
-# Variable Importance Plot for QUADRIPARTITE GENOME REGION only
+# Variable-Importance plot for QUADRIPARTITE GENOME REGION only
 # Plotting importance scores for the model predictors
 p_vip_quadrregionONLY <- rs_2_tree %>%
 						extract_fit_parsnip() %>%
 						vip()
 #ggsave(filename="Variable_Importance_Plot.svg", device='svg', dpi=300, width=4, height=4, units=("cm"))
+####################################
 
+# RESULTS:
 # Focusing on region and region subset, in addition to removing outliers, supports the results from above.
 # That is, that the coding-noncoding split and the SSC region are most important for predicting
 # coverage, but we get a broader view of how region is used beyond just SSC.
@@ -242,18 +249,24 @@ p_vip_quadrregionONLY <- rs_2_tree %>%
 ########################################################################
 
 
-
-
 #######################
 ## EVENNESS ANALYSIS ##
 #######################
 
 # Linear regression models were attempted on the evenness data, with no statistical
-# significance for any of the variables of interest. We instead continue with non-linear
-# models that more likely represent the relationship between these variables and evenness,
-# if such a relationship exists.
+# significance for any of the variables of interest. 
 
-## Examine complete genomes for evenness
+# We instead continue with NON-LINEAR MODELS that more likely represent 
+# the relationship between these variables and evenness, if such a 
+# relationship exists.
+
+########################################################################
+## Effects of ALL FOUR VARIABLES* on SEQUENCING EVENNESS
+# * NUMBER OF AMBIGUOUS NUCLEOTIDES, 
+# NUMBER OF IR MISMATCHES, 
+# IDENTITY OF SEQUENCING PLATFORM, and 
+# IDENTITY OF ASSEMBLY METHOD
+########################################################################
 genome_df <- cov_df %>%
   filter_complete_genome()
 
@@ -267,19 +280,34 @@ genome_tree_fit %>%
   collect_metrics()
 genome_tree <- extract_workflow(genome_tree_fit)
 genome_tree
+
+####################################
+# Decision-Tree plot for ALL FOUR VARIABLES COMBINED
+# Plotting a regression tree
+#svglite("Decision_Tree_Plot.svg", width=4, height=4)
 genome_tree %>%
   extract_fit_engine() %>%
   rpart.plot(roundint = FALSE)
+#dev.off()
+
+# Variable-Importance plot for ALL FOUR VARIABLES COMBINED
+# Plotting importance scores for the model predictors
 genome_tree %>%
   extract_fit_parsnip() %>%
   vip()
+#ggsave(filename="Variable_Importance_Plot.svg", device='svg', dpi=300, width=4, height=4, units=("cm"))
+####################################
 
+# RESULTS:
 # To prevent removing too many observations we remove the assembly method from this
 # model, and to prevent over-reliance on the highly correlated low coverage count this is also removed.
 # Of the tree variables of interest that are present here, only sequencing method appears to have importance.
 # We will continue will single variable decision tree models for all four variables of interest.
 
-## Assembly method decision tree
+
+########################################################################
+## Effects of the IDENTITY OF ASSEMBLY METHOD on SEQUENCING EVENNESS
+########################################################################
 assembly_df <- genome_df %>%
   filter_small_method_classes() %>%
   handle_cov_outliers("AssemblyMethod", "E_score") %>%
@@ -289,13 +317,25 @@ assembly_tree_fit <- get_tree_fit(assembly_df, "E_score")
 assembly_tree_fit %>% collect_metrics()
 assembly_tree <- extract_workflow(assembly_tree_fit)
 assembly_tree
+
+####################################
+# Decision-Tree plot for IDENTITY OF ASSEMBLY METHOD only
+# Plotting a regression tree
+#svglite("Decision_Tree_Plot.svg", width=4, height=4)
 assembly_tree %>%
   extract_fit_engine() %>%
   rpart.plot(roundint = FALSE)
+#dev.off()
+
+# Variable-Importance plot for IDENTITY OF ASSEMBLY METHOD only
+# Plotting importance scores for the model predictors
 assembly_tree %>%
   extract_fit_parsnip() %>%
   vip()
+#ggsave(filename="Variable_Importance_Plot.svg", device='svg', dpi=300, width=4, height=4, units=("cm"))
+####################################
 
+# RESULTS:
 # When considering only assembly methods with 5 or more observations and
 # removing in-class outliers, there does appear a very minor importance
 # on assembly method, especially given the low R^2. If we elect to not
@@ -304,7 +344,10 @@ assembly_tree %>%
 # If we keep in the assembly methods with low counts, this artificially increases
 # the importance of the method and has a major impact on the explanatory value (R^2).
 
-## Sequencing method decision tree
+
+########################################################################
+## Effects of the IDENTITY OF SEQUENCING PLATFORM on SEQUENCING EVENNESS
+########################################################################
 sequencing_df <- genome_df %>%
   filter_small_method_classes() %>%
   handle_cov_outliers("SequencingMethod", "E_score") %>%
@@ -314,18 +357,33 @@ sequencing_tree_fit <- get_tree_fit(sequencing_df, "E_score")
 sequencing_tree_fit %>% collect_metrics()
 sequencing_tree <- extract_workflow(sequencing_tree_fit)
 sequencing_tree
+
+####################################
+# Decision-Tree plot for IDENTITY OF SEQUENCING PLATFORM only
+# Plotting a regression tree
+#svglite("Decision_Tree_Plot.svg", width=4, height=4)
 sequencing_tree %>%
   extract_fit_engine() %>%
   rpart.plot(roundint = FALSE)
+#dev.off()
+
+# Variable-Importance plot for IDENTITY OF SEQUENCING PLATFORM only
+# Plotting importance scores for the model predictors
 sequencing_tree %>%
   extract_fit_parsnip() %>%
   vip()
+#ggsave(filename="Variable_Importance_Plot.svg", device='svg', dpi=300, width=4, height=4, units=("cm"))
+####################################
 
+# RESULTS:
 # When considering only sequencing methods with 5 or more observations and
 # removing in-class outliers, there does appear a moderate importance
 # on assembly method, with the moderate R^2 supporting this.
 
-## Ambiguous count
+
+########################################################################
+## Effects of the NUMBER OF AMBIGUOUS NUCLEOTIDES on SEQUENCING EVENNESS
+########################################################################
 ambig_df <- genome_df %>%
   filter_small_method_classes() %>%
   handle_outliers("E_score", 3, 0) %>%
@@ -340,18 +398,33 @@ ambig_tree_fit <- get_tree_fit(ambig_df, "E_score")
 ambig_tree_fit %>% collect_metrics()
 ambig_tree <- extract_workflow(ambig_tree_fit)
 ambig_tree
+
+####################################
+# Decision-Tree plot for NUMBER OF AMBIGUOUS NUCLEOTIDES only
+# Plotting a regression tree
+#svglite("Decision_Tree_Plot.svg", width=4, height=4)
 ambig_tree %>%
   extract_fit_engine() %>%
   rpart.plot(roundint = FALSE)
+#dev.off()
+
+# Variable-Importance plot for NUMBER OF AMBIGUOUS NUCLEOTIDES only
+# Plotting importance scores for the model predictors
 ambig_tree %>%
   extract_fit_parsnip() %>%
   vip()
+#ggsave(filename="Variable_Importance_Plot.svg", device='svg', dpi=300, width=4, height=4, units=("cm"))
+####################################
 
+# RESULTS:
 # The linear regression result supports the previous Pearson metric that demonstrated
 # statistical significance for ambiguous count's impact on evenness. The decision tree
 # additionally supports this with importance given to the count.
 
-# IR mismatches
+
+########################################################################
+## Effects of the NUMBER OF IR MISMATCHES on SEQUENCING EVENNESS
+########################################################################
 mismatch_df <- genome_df %>%
   filter_small_method_classes() %>%
   handle_outliers("E_score", 3, 0) %>%
@@ -366,18 +439,35 @@ mismatch_tree_fit <- get_tree_fit(mismatch_df, "E_score")
 mismatch_tree_fit %>% collect_metrics()
 mismatch_tree <- extract_workflow(mismatch_tree_fit)
 mismatch_tree
+
+####################################
+# Decision-Tree plot for NUMBER OF IR MISMATCHES only
+# Plotting a regression tree
+#svglite("Decision_Tree_Plot.svg", width=4, height=4)
 mismatch_tree %>%
   extract_fit_engine() %>%
   rpart.plot(roundint = FALSE)
+#dev.off()
+
+# Variable-Importance plot for NUMBER OF IR MISMATCHES only
+# Plotting importance scores for the model predictors
 mismatch_tree %>%
   extract_fit_parsnip() %>%
   vip()
+#ggsave(filename="Variable_Importance_Plot.svg", device='svg', dpi=300, width=4, height=4, units=("cm"))
+####################################
 
+# RESULTS:
 # The linear regression result supports the previous Pearson metric that demonstrated
 # lack of statistical significance for mismatch's impact on evenness. The decision tree
 # additionally supports this with no importance given to mismatches.
 
-## BONUS - Read length decision tree
+########################################################################
+########################################################################
+
+########################################################################
+## Effects of READ LENGTH on SEQUENCING EVENNESS
+########################################################################
 length_df <- genome_df %>%
   filter_small_method_classes() %>%
   handle_outliers("E_score", 3, 0) %>%
@@ -387,9 +477,20 @@ length_tree_fit <- get_tree_fit(length_df, "E_score")
 length_tree_fit %>% collect_metrics()
 length_tree <- extract_workflow(length_tree_fit)
 length_tree
+
+####################################
+# Decision-Tree plot for READ LENGTH
+# Plotting a regression tree
+#svglite("Decision_Tree_Plot.svg", width=4, height=4)
 length_tree %>%
   extract_fit_engine() %>%
   rpart.plot(roundint = FALSE)
+#dev.off()
+
+# Variable-Importance plot for READ LENGTH
+# Plotting importance scores for the model predictors
 length_tree %>%
   extract_fit_parsnip() %>%
   vip()
+#ggsave(filename="Variable_Importance_Plot.svg", device='svg', dpi=300, width=4, height=4, units=("cm"))
+####################################
