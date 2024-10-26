@@ -17,11 +17,11 @@ preparation_path <- list.files(path = getwd(), pattern = preparation_name, recur
 # tryCatch necessary if there are multiple R files with the same name on computer
 tryCatch(
     expr = {source(assembly_path)},
-	error = function(e){source(assembly_path[[grep("git", assembly_path)]])}
+    error = function(e){source(assembly_path[[grep("git", assembly_path)]])}
 )
 tryCatch(
     expr = {source(preparation_path)},
-	error = function(e){source(preparation_path[[grep("git", preparation_path)]])}
+    error = function(e){source(preparation_path[[grep("git", preparation_path)]])}
 )
 
 ########################################################################
@@ -136,12 +136,28 @@ get_tree_fit <- function(df, response_name, grid_levels = 5) {
 }
 
 plot_regression_tree <- function(tree, descr) {
-	descr = gsub(" ", "_", descr)
-	svglite(paste0("DecisionTree__Effects_of_", descr,".svg"), width=8, height=4)
-	tree %>%
-		extract_fit_engine() %>%
-		rpart.plot(roundint = FALSE)
-	dev.off()
+    descr = gsub(" ", "_", descr)
+    svglite(paste0("DecisionTree__Effects_of_", descr,".svg"), width=8, height=4)
+    tree %>%
+        extract_fit_engine() %>%
+        rpart.plot(roundint = FALSE)
+    dev.off()
+}
+
+plot_variable_importance <- function(tree, descr) {
+    descr = gsub(" ", "_", descr)
+    my_plot <- tree %>%
+                extract_fit_parsnip() %>%
+                vip(aesthetics = list(alpha=0.5))
+    my_plot <- my_plot + theme_bw()  + 
+        theme(
+          axis.text.x=element_text(size=6),
+          axis.text.y=element_text(size=6),
+          axis.title.x=element_text(size=8),
+          axis.title.y=element_text(size=8)
+          )
+    ggsave(filename=paste0("VariableImportance__Effects_of_", descr,".svg"), 
+	       plot=my_plot, device='svg', dpi=300, width=8, height=4, units=("cm"))
 }
 
 ########################################################################
@@ -196,14 +212,8 @@ reg_sub_tree
 # Decision-Tree plot
 plot_regression_tree(reg_sub_tree, descr)
 
-
-# Variable-Importance plot for QUADRIPARTITE REGION and CODING-NONCODING DIVISION
-# Plotting importance scores for the model predictors
-p_vip_quadrregion_coding <- reg_sub_tree %>%
-						extract_fit_parsnip() %>%
-						vip()
-#ggsave(filename="Variable_Importance_Plot.svg", device='svg', dpi=300, width=4, height=4, units=("cm"))
-####################################
+# Variable-Importance plot: plotting importance scores for the model predictors
+plot_variable_importance(reg_sub_tree, descr)
 
 # RESULTS:
 # We see that the resulting model has an incredibly similar explanatory power (R^2) to the linear regression,
@@ -232,13 +242,8 @@ rs_2_tree
 # Decision-Tree plot
 plot_regression_tree(rs_2_tree, descr)
 
-# Variable-Importance plot for QUADRIPARTITE REGION only
-# Plotting importance scores for the model predictors
-p_vip_quadrregionONLY <- rs_2_tree %>%
-						extract_fit_parsnip() %>%
-						vip()
-#ggsave(filename="Variable_Importance_Plot.svg", device='svg', dpi=300, width=4, height=4, units=("cm"))
-####################################
+# Variable-Importance plot: plotting importance scores for the model predictors
+plot_variable_importance(rs_2_tree, descr)
 
 # RESULTS:
 # Focusing on region and region subset, in addition to removing outliers, supports the results from above.
@@ -281,13 +286,8 @@ genome_tree
 # Decision-Tree plot
 plot_regression_tree(genome_tree, descr)
 
-# Variable-Importance plot for ALL FOUR VARIABLES COMBINED
-# Plotting importance scores for the model predictors
-genome_tree %>%
-  extract_fit_parsnip() %>%
-  vip()
-#ggsave(filename="Variable_Importance_Plot.svg", device='svg', dpi=300, width=4, height=4, units=("cm"))
-####################################
+# Variable-Importance plot: plotting importance scores for the model predictors
+plot_variable_importance(genome_tree, descr)
 
 # RESULTS:
 # To prevent removing too many observations we remove the assembly method from this
@@ -314,13 +314,8 @@ asmMethod_tree
 # Decision-Tree plot
 plot_regression_tree(asmMethod_tree, descr)
 
-# Variable-Importance plot for ASSEMBLY METHOD only
-# Plotting importance scores for the model predictors
-asmMethod_tree %>%
-  extract_fit_parsnip() %>%
-  vip()
-#ggsave(filename="Variable_Importance_Plot.svg", device='svg', dpi=300, width=4, height=4, units=("cm"))
-####################################
+# Variable-Importance plot: plotting importance scores for the model predictors
+plot_variable_importance(asmMethod_tree, descr)
 
 # RESULTS:
 # When considering only assembly methods with 5 or more observations and
@@ -350,13 +345,8 @@ seqMethod_tree
 # Decision-Tree plot
 plot_regression_tree(seqMethod_tree, descr)
 
-# Variable-Importance plot for SEQ PLATFORM only
-# Plotting importance scores for the model predictors
-seqMethod_tree %>%
-  extract_fit_parsnip() %>%
-  vip()
-#ggsave(filename="Variable_Importance_Plot.svg", device='svg', dpi=300, width=4, height=4, units=("cm"))
-####################################
+# Variable-Importance plot: plotting importance scores for the model predictors
+plot_variable_importance(seqMethod_tree, descr)
 
 # RESULTS:
 # When considering only sequencing methods with 5 or more observations and
@@ -387,13 +377,8 @@ ambigNucl_tree
 # Decision-Tree plot
 plot_regression_tree(ambigNucl_tree, descr)
 
-# Variable-Importance plot for AMBIGUOUS NUCL only
-# Plotting importance scores for the model predictors
-ambigNucl_tree %>%
-  extract_fit_parsnip() %>%
-  vip()
-#ggsave(filename="Variable_Importance_Plot.svg", device='svg', dpi=300, width=4, height=4, units=("cm"))
-####################################
+# Variable-Importance plot: plotting importance scores for the model predictors
+plot_variable_importance(ambigNucl_tree, descr)
 
 # RESULTS:
 # The linear regression result supports the previous Pearson metric that demonstrated
@@ -424,16 +409,10 @@ IRmism_tree
 # Decision-Tree plot
 plot_regression_tree(IRmism_tree, descr)
 
-
 ## DEBUGGING NECESSARY: ERROR OCCURS IN COMMAND HEREAFTER !
 
-# Variable-Importance plot for IR MISMATCHES only
-# Plotting importance scores for the model predictors
-IRmism_tree %>%
-  extract_fit_parsnip() %>%
-  vip()
-#ggsave(filename="Variable_Importance_Plot.svg", device='svg', dpi=300, width=4, height=4, units=("cm"))
-####################################
+# Variable-Importance plot: plotting importance scores for the model predictors
+plot_variable_importance(IRmism_tree, descr)
 
 # RESULTS:
 # The linear regression result supports the previous Pearson metric that demonstrated
@@ -446,25 +425,20 @@ IRmism_tree %>%
 ########################################################################
 ## Effects of READ LENGTH on SEQ EVENNESS
 ########################################################################
-descr = "READ LENGTH on SEQ EVENNESS"
+#descr = "READ LENGTH on SEQ EVENNESS"
 
-readLen_df <- genome_df %>%
-  filter_small_method_classes() %>%
-  handle_outliers("E_score", 3, 0) %>%
-  select(E_score, avgLength)
+#readLen_df <- genome_df %>%
+#  filter_small_method_classes() %>%
+#  handle_outliers("E_score", 3, 0) %>%
+#  select(E_score, avgLength)
 
-readLen_tree_fit <- get_tree_fit(readLen_df, "E_score")
-readLen_tree_fit %>% collect_metrics()
-readLen_tree <- extract_workflow(readLen_tree_fit)
-readLen_tree
+#readLen_tree_fit <- get_tree_fit(readLen_df, "E_score")
+#readLen_tree_fit %>% collect_metrics()
+#readLen_tree <- extract_workflow(readLen_tree_fit)
+#readLen_tree
 
-# Decision-Tree plot
-plot_regression_tree(readLen_tree, descr)
+## Decision-Tree plot
+#plot_regression_tree(readLen_tree, descr)
 
-# Variable-Importance plot for READ LENGTH
-# Plotting importance scores for the model predictors
-readLen_tree %>%
-  extract_fit_parsnip() %>%
-  vip()
-#ggsave(filename="Variable_Importance_Plot.svg", device='svg', dpi=300, width=4, height=4, units=("cm"))
-####################################
+## Variable-Importance plot: plotting importance scores for the model predictors
+#plot_variable_importance(readLen_tree, descr)
