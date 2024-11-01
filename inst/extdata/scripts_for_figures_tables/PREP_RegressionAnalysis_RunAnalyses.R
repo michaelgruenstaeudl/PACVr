@@ -3,7 +3,7 @@
 ########################################################################
 
 if (!require("pacman")) install.packages("pacman")
-pacman::p_load(svglite, tcltk, tidyverse, tidymodels, vip, rpart.plot)
+pacman::p_load(svglite, tcltk, tidyverse, tidymodels, vip, rpart.plot, ggpubr, gridExtra)
 
 inData_fn <- tk_choose.files(default="~", caption='Select the RDS file generated via script `PREP_RegressionAnalysis_DataFiltering`', multi=FALSE)
 cov_df <- readRDS(file=inData_fn)
@@ -145,19 +145,22 @@ plot_regression_tree <- function(tree, descr) {
 }
 
 plot_variable_importance <- function(tree, descr) {
-    descr = gsub(" ", "_", descr)
+    descr_mod = gsub(" ", "_", descr)
     my_plot <- tree %>%
                 extract_fit_parsnip() %>%
                 vip(aesthetics = list(alpha=0.5))
     my_plot <- my_plot + theme_bw()  + 
+        ggtitle(paste0("Effects of ", descr)) +
         theme(
           axis.text.x=element_text(size=6),
           axis.text.y=element_text(size=6),
           axis.title.x=element_text(size=8),
-          axis.title.y=element_text(size=8)
+          axis.title.y=element_text(size=8),
+          plot.title = element_text(size=6)
           )
-    ggsave(filename=paste0("VariableImportance__Effects_of_", descr,".svg"), 
+    ggsave(filename=paste0("VariableImportance__Effects_of_", descr_mod,".svg"), 
 	       plot=my_plot, device='svg', dpi=300, width=8, height=4, units=("cm"))
+    return(my_plot)
 }
 
 ########################################################################
@@ -213,7 +216,7 @@ reg_sub_tree
 plot_regression_tree(reg_sub_tree, descr)
 
 # Variable-Importance plot: plotting importance scores for the model predictors
-plot_variable_importance(reg_sub_tree, descr)
+varImp_SeqCov_row1 <- plot_variable_importance(reg_sub_tree, descr)
 
 # RESULTS:
 # We see that the resulting model has an incredibly similar explanatory power (R^2) to the linear regression,
@@ -243,7 +246,7 @@ rs_2_tree
 plot_regression_tree(rs_2_tree, descr)
 
 # Variable-Importance plot: plotting importance scores for the model predictors
-plot_variable_importance(rs_2_tree, descr)
+varImp_SeqCov_row2 <- plot_variable_importance(rs_2_tree, descr)
 
 # RESULTS:
 # Focusing on region and region subset, in addition to removing outliers, supports the results from above.
@@ -251,7 +254,9 @@ plot_variable_importance(rs_2_tree, descr)
 # coverage, but we get a broader view of how region is used beyond just SSC.
 
 ########################################################################
-
+varImp_collage_seqCov <- ggarrange(plotlist=list(varImp_SeqCov_row1, varImp_SeqCov_row2), ncol=1, nrow=2)
+ggsave(filename=paste0("VariableImportance_Collage_SeqCoverage.svg"), 
+       plot=varImp_collage_seqCov, device='svg', dpi=300, width=16, height=8, units=("cm"))
 
 #######################
 ## EVENNESS ANALYSIS ##
@@ -287,7 +292,7 @@ genome_tree
 plot_regression_tree(genome_tree, descr)
 
 # Variable-Importance plot: plotting importance scores for the model predictors
-plot_variable_importance(genome_tree, descr)
+varImp_SeqEven_row1 <- plot_variable_importance(genome_tree, descr)
 
 # RESULTS:
 # To prevent removing too many observations we remove the assembly method from this
@@ -315,7 +320,7 @@ asmMethod_tree
 plot_regression_tree(asmMethod_tree, descr)
 
 # Variable-Importance plot: plotting importance scores for the model predictors
-plot_variable_importance(asmMethod_tree, descr)
+varImp_SeqEven_row2a <- plot_variable_importance(asmMethod_tree, descr)
 
 # RESULTS:
 # When considering only assembly methods with 5 or more observations and
@@ -346,7 +351,7 @@ seqMethod_tree
 plot_regression_tree(seqMethod_tree, descr)
 
 # Variable-Importance plot: plotting importance scores for the model predictors
-plot_variable_importance(seqMethod_tree, descr)
+varImp_SeqEven_row2b <- plot_variable_importance(seqMethod_tree, descr)
 
 # RESULTS:
 # When considering only sequencing methods with 5 or more observations and
@@ -378,7 +383,7 @@ ambigNucl_tree
 plot_regression_tree(ambigNucl_tree, descr)
 
 # Variable-Importance plot: plotting importance scores for the model predictors
-plot_variable_importance(ambigNucl_tree, descr)
+varImp_SeqEven_row2c <- plot_variable_importance(ambigNucl_tree, descr)
 
 # RESULTS:
 # The linear regression result supports the previous Pearson metric that demonstrated
@@ -412,7 +417,7 @@ plot_regression_tree(IRmism_tree, descr)
 ## DEBUGGING NECESSARY: ERROR OCCURS IN COMMAND HEREAFTER !
 
 # Variable-Importance plot: plotting importance scores for the model predictors
-plot_variable_importance(IRmism_tree, descr)
+varImp_SeqEven_row2d <- plot_variable_importance(IRmism_tree, descr)
 
 # RESULTS:
 # The linear regression result supports the previous Pearson metric that demonstrated
@@ -420,7 +425,10 @@ plot_variable_importance(IRmism_tree, descr)
 # additionally supports this with no importance given to mismatches.
 
 ########################################################################
-########################################################################
+varImp_collage_seqEven <- ggarrange(varImp_SeqEven_row1, arrangeGrob(varImp_SeqEven_row2a, varImp_SeqEven_row2b, varImp_SeqEven_row2c, ncol=3), ncol=1, nrow=2)
+ggsave(filename=paste0("VariableImportance_Collage_SeqEvenness.svg"), 
+       plot=varImp_collage_seqEven, device='svg', dpi=300, width=24, height=8, units=("cm"))
+
 
 ########################################################################
 ## Effects of READ LENGTH on SEQ EVENNESS
