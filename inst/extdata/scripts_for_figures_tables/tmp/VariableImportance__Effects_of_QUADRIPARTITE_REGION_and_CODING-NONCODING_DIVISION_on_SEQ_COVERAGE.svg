@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' class='svglite' width='226.77pt' height='113.39pt' viewBox='0 0 226.77 113.39'>
+<defs>
+  <style type='text/css'><![CDATA[
+    .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {
+      fill: none;
+      stroke: #000000;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-miterlimit: 10.00;
+    }
+    .svglite text {
+      white-space: pre;
+    }
+  ]]></style>
+</defs>
+<rect width='100%' height='100%' style='stroke: none; fill: #FFFFFF;'/>
+<defs>
+  <clipPath id='cpMC4wMHwyMjYuNzd8MC4wMHwxMTMuMzk='>
+    <rect x='0.00' y='0.00' width='226.77' height='113.39' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpMC4wMHwyMjYuNzd8MC4wMHwxMTMuMzk=)'>
+<rect x='0.00' y='0.00' width='226.77' height='113.39' style='stroke-width: 1.07; stroke: #FFFFFF; fill: #FFFFFF;' />
+</g>
+<defs>
+  <clipPath id='cpNTkuNjF8MjIxLjI5fDE2LjY4fDg2Ljg3'>
+    <rect x='59.61' y='16.68' width='161.69' height='70.19' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpNTkuNjF8MjIxLjI5fDE2LjY4fDg2Ljg3)'>
+<rect x='59.61' y='16.68' width='161.69' height='70.19' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
+<polyline points='85.05,86.87 85.05,16.68 ' style='stroke-width: 0.53; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='121.25,86.87 121.25,16.68 ' style='stroke-width: 0.53; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='157.44,86.87 157.44,16.68 ' style='stroke-width: 0.53; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='193.64,86.87 193.64,16.68 ' style='stroke-width: 0.53; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='59.61,76.84 221.29,76.84 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='59.61,60.13 221.29,60.13 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='59.61,43.42 221.29,43.42 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='59.61,26.71 221.29,26.71 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='66.95,86.87 66.95,16.68 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='103.15,86.87 103.15,16.68 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='139.34,86.87 139.34,16.68 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='175.54,86.87 175.54,16.68 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='211.73,86.87 211.73,16.68 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
+<rect x='66.95' y='19.19' width='146.99' height='15.04' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #595959; fill-opacity: 0.50;' />
+<rect x='66.95' y='35.90' width='69.72' height='15.04' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #595959; fill-opacity: 0.50;' />
+<rect x='66.95' y='52.61' width='42.07' height='15.04' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #595959; fill-opacity: 0.50;' />
+<rect x='66.95' y='69.32' width='40.92' height='15.04' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #595959; fill-opacity: 0.50;' />
+<rect x='59.61' y='16.68' width='161.69' height='70.19' style='stroke-width: 1.07; stroke: #333333;' />
+</g>
+<g clip-path='url(#cpMC4wMHwyMjYuNzd8MC4wMHwxMTMuMzk=)'>
+<text x='54.67' y='78.99' text-anchor='end' style='font-size: 6.00px;fill: #4D4D4D; font-family: "Arimo";' textLength='29.92px' lengthAdjust='spacingAndGlyphs'>avgLength</text>
+<text x='54.67' y='62.28' text-anchor='end' style='font-size: 6.00px;fill: #4D4D4D; font-family: "Arimo";' textLength='38.82px' lengthAdjust='spacingAndGlyphs'>RegionSubset</text>
+<text x='54.67' y='45.56' text-anchor='end' style='font-size: 6.00px;fill: #4D4D4D; font-family: "Arimo";' textLength='38.34px' lengthAdjust='spacingAndGlyphs'>Chromosome</text>
+<text x='54.67' y='28.85' text-anchor='end' style='font-size: 6.00px;fill: #4D4D4D; font-family: "Arimo";' textLength='28.68px' lengthAdjust='spacingAndGlyphs'>regionLen</text>
+<polyline points='56.87,76.84 59.61,76.84 ' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
+<polyline points='56.87,60.13 59.61,60.13 ' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
+<polyline points='56.87,43.42 59.61,43.42 ' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
+<polyline points='56.87,26.71 59.61,26.71 ' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
+<polyline points='66.95,89.61 66.95,86.87 ' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
+<polyline points='103.15,89.61 103.15,86.87 ' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
+<polyline points='139.34,89.61 139.34,86.87 ' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
+<polyline points='175.54,89.61 175.54,86.87 ' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
+<polyline points='211.73,89.61 211.73,86.87 ' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
+<text x='66.95' y='96.09' text-anchor='middle' style='font-size: 6.00px;fill: #4D4D4D; font-family: "Arimo";' textLength='3.43px' lengthAdjust='spacingAndGlyphs'>0</text>
+<text x='103.15' y='96.09' text-anchor='middle' style='font-size: 6.00px;fill: #4D4D4D; font-family: "Arimo";' textLength='17.17px' lengthAdjust='spacingAndGlyphs'>10000</text>
+<text x='139.34' y='96.09' text-anchor='middle' style='font-size: 6.00px;fill: #4D4D4D; font-family: "Arimo";' textLength='17.17px' lengthAdjust='spacingAndGlyphs'>20000</text>
+<text x='175.54' y='96.09' text-anchor='middle' style='font-size: 6.00px;fill: #4D4D4D; font-family: "Arimo";' textLength='17.17px' lengthAdjust='spacingAndGlyphs'>30000</text>
+<text x='211.73' y='96.09' text-anchor='middle' style='font-size: 6.00px;fill: #4D4D4D; font-family: "Arimo";' textLength='17.17px' lengthAdjust='spacingAndGlyphs'>40000</text>
+<text x='140.45' y='105.98' text-anchor='middle' style='font-size: 8.00px; font-family: "Arimo";' textLength='43.93px' lengthAdjust='spacingAndGlyphs'>Importance</text>
+<text x='59.61' y='9.76' style='font-size: 6.00px; font-family: "Arimo";' textLength='257.66px' lengthAdjust='spacingAndGlyphs'>Effects of QUADRIPARTITE REGION and CODING-NONCODING DIVISION on SEQ COVERAGE</text>
+</g>
+</svg>

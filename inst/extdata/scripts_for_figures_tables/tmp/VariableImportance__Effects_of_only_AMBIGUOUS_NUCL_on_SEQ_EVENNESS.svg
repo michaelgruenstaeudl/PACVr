@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' class='svglite' width='226.77pt' height='113.39pt' viewBox='0 0 226.77 113.39'>
+<defs>
+  <style type='text/css'><![CDATA[
+    .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {
+      fill: none;
+      stroke: #000000;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-miterlimit: 10.00;
+    }
+    .svglite text {
+      white-space: pre;
+    }
+  ]]></style>
+</defs>
+<rect width='100%' height='100%' style='stroke: none; fill: #FFFFFF;'/>
+<defs>
+  <clipPath id='cpMC4wMHwyMjYuNzd8MC4wMHwxMTMuMzk='>
+    <rect x='0.00' y='0.00' width='226.77' height='113.39' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpMC4wMHwyMjYuNzd8MC4wMHwxMTMuMzk=)'>
+<rect x='0.00' y='0.00' width='226.77' height='113.39' style='stroke-width: 1.07; stroke: #FFFFFF; fill: #FFFFFF;' />
+</g>
+<defs>
+  <clipPath id='cpNDQuMTB8MjIxLjI5fDE2LjY4fDg2Ljg3'>
+    <rect x='44.10' y='16.68' width='177.19' height='70.19' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpNDQuMTB8MjIxLjI5fDE2LjY4fDg2Ljg3)'>
+<rect x='44.10' y='16.68' width='177.19' height='70.19' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
+<polyline points='71.68,86.87 71.68,16.68 ' style='stroke-width: 0.53; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='110.73,86.87 110.73,16.68 ' style='stroke-width: 0.53; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='149.78,86.87 149.78,16.68 ' style='stroke-width: 0.53; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='188.84,86.87 188.84,16.68 ' style='stroke-width: 0.53; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='44.10,51.78 221.29,51.78 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='52.16,86.87 52.16,16.68 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='91.21,86.87 91.21,16.68 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='130.26,86.87 130.26,16.68 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='169.31,86.87 169.31,16.68 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='208.36,86.87 208.36,16.68 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
+<rect x='52.16' y='25.46' width='161.08' height='52.64' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #595959; fill-opacity: 0.50;' />
+<rect x='44.10' y='16.68' width='177.19' height='70.19' style='stroke-width: 1.07; stroke: #333333;' />
+</g>
+<g clip-path='url(#cpMC4wMHwyMjYuNzd8MC4wMHwxMTMuMzk=)'>
+<text x='39.17' y='53.92' text-anchor='end' style='font-size: 6.00px;fill: #4D4D4D; font-family: "Arimo";' textLength='23.31px' lengthAdjust='spacingAndGlyphs'>N_count</text>
+<polyline points='41.36,51.78 44.10,51.78 ' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
+<polyline points='52.16,89.61 52.16,86.87 ' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
+<polyline points='91.21,89.61 91.21,86.87 ' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
+<polyline points='130.26,89.61 130.26,86.87 ' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
+<polyline points='169.31,89.61 169.31,86.87 ' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
+<polyline points='208.36,89.61 208.36,86.87 ' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
+<text x='52.16' y='96.09' text-anchor='middle' style='font-size: 6.00px;fill: #4D4D4D; font-family: "Arimo";' textLength='18.78px' lengthAdjust='spacingAndGlyphs'>0.0000</text>
+<text x='91.21' y='96.09' text-anchor='middle' style='font-size: 6.00px;fill: #4D4D4D; font-family: "Arimo";' textLength='18.78px' lengthAdjust='spacingAndGlyphs'>0.0025</text>
+<text x='130.26' y='96.09' text-anchor='middle' style='font-size: 6.00px;fill: #4D4D4D; font-family: "Arimo";' textLength='18.78px' lengthAdjust='spacingAndGlyphs'>0.0050</text>
+<text x='169.31' y='96.09' text-anchor='middle' style='font-size: 6.00px;fill: #4D4D4D; font-family: "Arimo";' textLength='18.78px' lengthAdjust='spacingAndGlyphs'>0.0075</text>
+<text x='208.36' y='96.09' text-anchor='middle' style='font-size: 6.00px;fill: #4D4D4D; font-family: "Arimo";' textLength='18.78px' lengthAdjust='spacingAndGlyphs'>0.0100</text>
+<text x='132.70' y='105.98' text-anchor='middle' style='font-size: 8.00px; font-family: "Arimo";' textLength='43.93px' lengthAdjust='spacingAndGlyphs'>Importance</text>
+<text x='44.10' y='9.76' style='font-size: 6.00px; font-family: "Arimo";' textLength='147.54px' lengthAdjust='spacingAndGlyphs'>Effects of only AMBIGUOUS NUCL on SEQ EVENNESS</text>
+</g>
+</svg>
