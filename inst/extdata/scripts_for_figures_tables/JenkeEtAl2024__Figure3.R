@@ -53,10 +53,10 @@ get_asm_qual_figure <- function(df, x_name, x_lab) {
 create_figure_3 <- function(cov_data) {
   n_count_figure <- get_asm_qual_figure(cov_data, 
                                         "N_count", 
-                                        "Assembly quality (#Ns)")
+                                        "Number of ambiguous nucl.")
   IR_mismatches_figure <- get_asm_qual_figure(cov_data, 
                                               "IR_mismatches", 
-                                              "Assembly quality (#Mismatches)")
+                                              "Number of IR mismatches")
   ggarrange(
     n_count_figure,
     IR_mismatches_figure,
