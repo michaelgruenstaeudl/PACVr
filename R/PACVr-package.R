@@ -15,5 +15,8 @@
 #' @importFrom stats sd
 #' @importFrom utils write.csv
 #' @importFrom utils write.table
+#' @importFrom pwalign pairwiseAlignment
+#' @importFrom pwalign compareStrings
+#' @importFrom pwalign nucleotideSubstitutionMatrix
 ## usethis namespace: end
 NULL

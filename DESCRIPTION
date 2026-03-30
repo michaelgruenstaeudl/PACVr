@@ -1,13 +1,13 @@
 Package: PACVr
-Version: 1.1.3
-Date: 2024-05-31
+Version: 1.1.4
+Date: 2026-03-30
 Title: Plastome Assembly Coverage Visualization
-Authors@R: c(person("Gregory", "Smith", role=c("ctb")),
-             person("Nils", "Jenke", role=c("ctb")),
-             person("Michael", "Gruenstaeudl", role=c("aut", "cre"), email="m_gruenstaeudl@fhsu.edu", comment=c(ORCID="0000-0002-1666-1773"))
+Authors@R: c(person("Michael", "Gruenstaeudl", role=c("aut", "cre"), email="m_gruenstaeudl@fhsu.edu", comment=c(ORCID="0000-0002-1666-1773")),
+			 person("Gregory", "Smith", role=c("ctb")),
+             person("Nils", "Jenke", role=c("ctb"))
              )
 Maintainer: Michael Gruenstaeudl <m_gruenstaeudl@fhsu.edu>
-Depends: R (>= 3.3.0)
+Depends: R (>= 3.5.0)
 Imports: 
     Biostrings (>= 2.48.0),
     dplyr,
@@ -21,6 +21,7 @@ Imports:
     stats,
     utils,
     tidyr,
+    pwalign,
     R6
 Description: Visualizes the coverage depth of a complete plastid genome as well as the equality of its inverted repeat regions in relation to the circular, quadripartite genome structure and the location of individual genes. For more information, please see Gruenstaeudl and Jenke (2020) <doi:10.1186/s12859-020-3475-0>.
 License: BSD 3-clause License + file LICENSE

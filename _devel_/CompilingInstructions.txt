@@ -1,0 +1,26 @@
+# Start R within your package directory (so that your package directory is R’s working directory).
+# Then type:
+
+require(devtools)
+devtools::build(vignettes=FALSE)  ## Note: This removes /inst/doc
+devtools::install(upgrade=FALSE)
+
+
+# Initial compilation
+R CMD build PACVr --compact-vignettes="gs+qpdf"
+
+# Evaluating the package for submission to CRAN
+R CMD check PACVr_1.1.4.tar.gz --as-cran
+
+
+## If necessary, reduce PDF size of vignette
+#convert -density 300x300 -quality 100 input.pdf output.pdf
+
+
+### COMPILING INSTRUCTIONS ###
+
+R CMD build PACVr --compact-vignettes="gs+qpdf"
+
+R CMD check PACVr_1.1.4.tar.gz --as-cran
+
+R CMD check PACVr_1.1.4.tar.gz --as-cran --run-donttest

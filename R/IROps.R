@@ -79,9 +79,11 @@ findIRAlignment <- function(IRa_seq, IRb_seq) {
   IR_diff_SNPS <- c()
   IR_diff_gaps <- c()
   for (i in 1:min(length(IRa_seq), length(IRb_seq))) {
-    subst_mat <- Biostrings::nucleotideSubstitutionMatrix(match = 1, mismatch = -3, baseOnly = TRUE)
+    #subst_mat <- pwalign::nucleotideSubstitutionMatrix(match = 1, mismatch = -3, baseOnly = TRUE)
+    subst_mat <- nucleotideSubstitutionMatrix(match = 1, mismatch = -3, baseOnly = TRUE)
     globalAlign <- tryCatch({
-      Biostrings::pairwiseAlignment(
+      #pwalign::pairwiseAlignment(
+      pairwiseAlignment(
         IRa_seq[[i]],
         IRb_seq[[i]],
         substitutionMatrix = subst_mat,
@@ -92,14 +94,24 @@ findIRAlignment <- function(IRa_seq, IRb_seq) {
       error = function(e) {
         return(NULL)
       })
+    #if (!is.null(globalAlign)) {
+    #  IR_diff_SNPS <-
+    #    c(IR_diff_SNPS, which(strsplit(
+    #      Biostrings::compareStrings(globalAlign), ""
+    #    )[[1]] == "?"))
+    #  IR_diff_gaps <-
+    #    c(IR_diff_gaps, which(strsplit(
+    #      Biostrings::compareStrings(globalAlign), ""
+    #    )[[1]] == "-"))
+    #}
     if (!is.null(globalAlign)) {
       IR_diff_SNPS <-
         c(IR_diff_SNPS, which(strsplit(
-          Biostrings::compareStrings(globalAlign), ""
+          compareStrings(globalAlign), ""
         )[[1]] == "?"))
       IR_diff_gaps <-
         c(IR_diff_gaps, which(strsplit(
-          Biostrings::compareStrings(globalAlign), ""
+          compareStrings(globalAlign), ""
         )[[1]] == "-"))
     }
   }

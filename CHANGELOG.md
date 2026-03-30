@@ -1,6 +1,9 @@
 CHANGELOG
 ---------
 
+#### Version 1.1.4 (2026.03.30)
+* Minor update to package due to changes in dependency Biostrings (addition of pwalign)
+
 #### Version 1.1.3 (2024.05.31)
 * Refactoring of `coverage` to an R6 class
 * Updates to how outliers are handled for artifacts created by `scripts_for_figures_tables`
