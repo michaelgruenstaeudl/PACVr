@@ -1,7 +1,7 @@
 #!/usr/bin/env RScript
 #contributors=c("Gregory Smith", "Nils Jenke", "Michael Gruenstaeudl")
 #email="m_gruenstaeudl@fhsu.edu"
-#version="2024.05.31.0457"
+#version="2026.03.30.2019"
 
 read.gbWithHandling <- function(gbkRaw, count=0) {
   gbkData <- tryCatch({
