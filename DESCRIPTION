@@ -1,6 +1,6 @@
 Package: PACVr
-Version: 1.1.4
-Date: 2026-03-30
+Version: 1.1.5
+Date: 2026-04-17
 Title: Plastome Assembly Coverage Visualization
 Authors@R: c(person("Michael", "Gruenstaeudl", role=c("aut", "cre"), email="m_gruenstaeudl@fhsu.edu", comment=c(ORCID="0000-0002-1666-1773")),
 			 person("Gregory", "Smith", role=c("ctb")),

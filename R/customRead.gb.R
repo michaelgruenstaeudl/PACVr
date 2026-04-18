@@ -42,44 +42,28 @@ read.gbOnFix <- function(gbkRaw, count) {
   return(gbkData)
 }
 
-# adapted from read.gb::read.gb
 fixGbkChar <- function(gbkRaw) {
-  gbkFile <- gbkRaw$file
   gbkChar <- gbkRaw$char
-  
-  # intended directory of fixed file if file was provided
-  if (!is.null(gbkFile)) {
-    gbkFileFixed <- gsub("\\.gb$", "-PACVr.gb",  gbkFile)
-  } else {
-    gbkFileFixed <- NULL
-  }
-
-  # used fixed file if already created
-  if (!is.null(gbkFileFixed) && file.exists(gbkFileFixed)) {
-    return(getGbkRaw(gbkFileFixed))
-  }
 
   ## Separation of reports :
   gbkCharFixed <- ""
   SampleS <- gregexpr("LOCUS {2,}", gbkChar)[[1]]
-  SampleE <- gregexpr("(?<!:)//", gbkChar, perl = T)[[1]]
-  
+  SampleE <- gregexpr("(?<!:)//", gbkChar, perl = TRUE)[[1]]
+
   ## Treatment of reports
-  for(k in 1:length(SampleS)){
+  for (k in seq_along(SampleS)) {
     startIndex <- SampleS[k]
-    endIndex <- SampleE[k]+1
+    endIndex <- SampleE[k] + 1
+
     Temp <- substr(gbkChar, startIndex, endIndex)
     y <- Reorganize.report(Temp)
     y <- fixReferences(y)
     Temp <- Collapse.report(y)
+
     gbkCharFixed <- paste0(gbkCharFixed, Temp)
   }
-  
-  if (!is.null(gbkFileFixed)) {
-    writeLines(gbkCharFixed, gbkFileFixed)
-    logger::log_info('Fixed GenBank file saved as `{gbkFileFixed}`')
-  }
-  
+
+  # Keep everything in memory
   gbkRaw$char <- gbkCharFixed
   return(gbkRaw)
 }
